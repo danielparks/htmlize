@@ -21,7 +21,14 @@ bench_func!(encode_text_small_clean, encode_text, SMALL_CLEAN);
 bench_func!(encode_text_big_dirty, encode_text, BIG_DIRTY);
 bench_func!(encode_text_big_clean, encode_text, BIG_CLEAN);
 
+bench_func!(encode_text_small_dirty_old, old_encode_text, SMALL_DIRTY);
+bench_func!(encode_text_small_clean_old, old_encode_text, SMALL_CLEAN);
+bench_func!(encode_text_big_dirty_old, old_encode_text, BIG_DIRTY);
+bench_func!(encode_text_big_clean_old, old_encode_text, BIG_CLEAN);
+
 benchmark_group!(benches,
     encode_text_small_dirty, encode_text_small_clean,
-    encode_text_big_dirty, encode_text_big_clean);
+    encode_text_big_dirty, encode_text_big_clean,
+    encode_text_small_dirty_old, encode_text_small_clean_old,
+    encode_text_big_dirty_old, encode_text_big_clean_old);
 benchmark_main!(benches);
