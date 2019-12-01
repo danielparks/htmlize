@@ -1,11 +1,12 @@
-pub fn map_u8(c: u8) -> Option<&'static [u8]> {
+#[inline]
+fn map_u8(c: u8) -> &'static [u8] {
     match c {
-        b'\'' => Some(b"&apos;"),
-        b'"' => Some(b"&quot;"),
-        b'&' => Some(b"&amp;"),
-        b'<' => Some(b"&lt;"),
-        b'>' => Some(b"&gt;"),
-        _ => None,
+        b'\'' => b"&apos;",
+        b'"' => b"&quot;",
+        b'&' => b"&amp;",
+        b'<' => b"&lt;",
+        b'>' => b"&gt;",
+        _ => panic!("map_u8 called on invalid character {}", char::from(c)),
     }
 }
 
@@ -19,7 +20,7 @@ macro_rules! encoder {
 
             for c in raw {
                 match c {
-                    $($ch => output.extend_from_slice(map_u8(*c).unwrap()),)+
+                    $($ch => output.extend_from_slice(map_u8(*c)),)+
                     _ => output.push(*c),
                 }
             }
