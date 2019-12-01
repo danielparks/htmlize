@@ -1,11 +1,12 @@
 #[inline]
 fn map_u8(c: u8) -> &'static [u8] {
     match c {
-        b'\'' => b"&apos;",
-        b'"' => b"&quot;",
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
+        b'"' => b"&quot;", // Attributes
+        b'\'' => b"&apos;", // Paranoid
+        b'/' => b"&#x2F;", // Paranoid (very paranoid)
         _ => panic!("map_u8 called on invalid character {}", char::from(c)),
     }
 }
@@ -32,7 +33,9 @@ macro_rules! encoder {
 
 encoder!(encode_text, b'&', b'<', b'>');
 encoder!(encode_attribute, b'&', b'<', b'>', b'"');
-encoder!(encode_paranoid, b'&', b'<', b'>', b'"', b'\'');
+
+// https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-1---html-escape-before-inserting-untrusted-data-into-html-element-content
+encoder!(encode_paranoid, b'&', b'<', b'>', b'"', b'\'', b'/');
 
 pub fn old_encode_text<S>(raw: S) -> String
     where S: AsRef<[u8]>
@@ -97,6 +100,7 @@ mod tests {
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
         ("He said, \"That's mine.\"", "He said, &quot;That&apos;s mine.&quot;"),
+        ("<div class=foo/>", "&lt;div class=foo&#x2F;&gt;"),
     ]);
 
     const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
