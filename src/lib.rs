@@ -42,8 +42,10 @@ pub fn encode_attribute<S: AsRef<[u8]>>(raw: S) -> String {
 
 /// Escape a string including both apostrophes and double quotes.
 ///
-/// **Do not use this outside of quoted attributes or in comments.**
-pub fn encode_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
+/// **Do not use this outside of quoted attributes or in comments.** You should
+/// avoid using this unless you need to use single-quoted attributes. Generally,
+/// it is safe to leave apostrophes unescaped.
+pub fn encode_quotes<S: AsRef<[u8]>>(raw: S) -> String {
     encoder!(raw, b'&', b'<', b'>', b'"', b'\'')
 }
 
@@ -103,7 +105,7 @@ mod tests {
         ("He said, \"That's mine.\"", "He said, &quot;That's mine.&quot;"),
     ]);
 
-    test_corpus!(encode_all_quotes_short_strings, encode_all_quotes, [
+    test_corpus!(encode_quotes_short_strings, encode_quotes, [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
