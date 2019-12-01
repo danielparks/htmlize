@@ -97,4 +97,13 @@ mod tests {
         ("&amp;", "&amp;amp;"),
         ("He said, \"That's mine.\"", "He said, &quot;That&apos;s mine.&quot;"),
     ]);
+
+    const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
+    const BIG_DIRTY_ENCODED: &str = include_str!("../tests/corpus/html-encoded.txt");
+    const BIG_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
+
+    test_corpus!(encode_text_html, encode_text, [
+        (BIG_DIRTY, BIG_DIRTY_ENCODED),
+        (BIG_CLEAN, BIG_CLEAN),
+    ]);
 }
