@@ -13,6 +13,6 @@ paste = "0.1"
 bencher = "0.1"
 
 [[bench]]
-name = "encode"
-path = "benchmarks/encode.rs"
+name = "escape"
+path = "benchmarks/escape.rs"
 harness = false
