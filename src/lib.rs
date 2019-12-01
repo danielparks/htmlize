@@ -74,7 +74,7 @@ mod tests {
 
     // FIXME corpus isn’t the right word.
     macro_rules! test_corpus {
-        ($name:ident, $func:ident, $corpus:tt) => {
+        ($name:ident, $func:ident, $corpus:expr) => {
             paste::item! {
                 #[test]
                 fn $name() {
@@ -89,36 +89,35 @@ mod tests {
         }
     }
 
-    test_corpus!(encode_text_short_strings, encode_text, [
+    const BASIC_CORPUS: [(&str, &str); 4] = [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
+    ];
+
+    test_corpus!(encode_text_basic, encode_text, BASIC_CORPUS);
+    test_corpus!(encode_attribute_basic, encode_attribute, BASIC_CORPUS);
+    test_corpus!(encode_quotes_basic, encode_quotes, BASIC_CORPUS);
+
+    test_corpus!(encode_text_quotes, encode_text, [
         ("He said, \"That's mine.\"", "He said, \"That's mine.\""),
     ]);
 
-    test_corpus!(encode_attribute_short_strings, encode_attribute, [
-        ("", ""),
-        ("clean", "clean"),
-        ("< >", "&lt; &gt;"),
-        ("&amp;", "&amp;amp;"),
+    test_corpus!(encode_attribute_quotes, encode_attribute, [
         ("He said, \"That's mine.\"", "He said, &quot;That's mine.&quot;"),
     ]);
 
-    test_corpus!(encode_quotes_short_strings, encode_quotes, [
-        ("", ""),
-        ("clean", "clean"),
-        ("< >", "&lt; &gt;"),
-        ("&amp;", "&amp;amp;"),
+    test_corpus!(encode_quotes_quotes, encode_quotes, [
         ("He said, \"That's mine.\"", "He said, &quot;That&apos;s mine.&quot;"),
     ]);
 
-    const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
-    const BIG_DIRTY_ENCODED: &str = include_str!("../tests/corpus/html-encoded.txt");
-    const BIG_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
+    const HTML_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
+    const HTML_DIRTY_ENCODED: &str = include_str!("../tests/corpus/html-encoded.txt");
+    const HTML_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
 
     test_corpus!(encode_text_html, encode_text, [
-        (BIG_DIRTY, BIG_DIRTY_ENCODED),
-        (BIG_CLEAN, BIG_CLEAN),
+        (HTML_DIRTY, HTML_DIRTY_ENCODED),
+        (HTML_CLEAN, HTML_CLEAN),
     ]);
 }
