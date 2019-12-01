@@ -5,37 +5,47 @@ fn map_u8(c: u8) -> &'static [u8] {
         b'<' => b"&lt;",
         b'>' => b"&gt;",
         b'"' => b"&quot;", // Attributes
-        b'\'' => b"&apos;", // Paranoid
-        b'/' => b"&#x2F;", // Paranoid (very paranoid)
+        b'\'' => b"&apos;", // Single quoted attributes
         _ => panic!("map_u8 called on invalid character {}", char::from(c)),
     }
 }
 
 macro_rules! encoder {
-    ($name:ident $(, $ch:literal)+) => {
-        pub fn $name<S>(raw: S) -> String
-            where S: AsRef<[u8]>
-        {
-            let raw = raw.as_ref();
-            let mut output:Vec<u8> = Vec::with_capacity(raw.len());
+    ($raw:expr, $($ch:literal),+) => {{
+        let raw = $raw.as_ref();
+        let mut output:Vec<u8> = Vec::with_capacity(raw.len());
 
-            for c in raw {
-                match c {
-                    $($ch => output.extend_from_slice(map_u8(*c)),)+
-                    _ => output.push(*c),
-                }
+        for c in raw {
+            match c {
+                $($ch => output.extend_from_slice(map_u8(*c)),)+
+                _ => output.push(*c),
             }
-
-            String::from_utf8(output).unwrap()
         }
-    }
+
+        String::from_utf8(output).unwrap()
+    }}
 }
 
-encoder!(encode_text, b'&', b'<', b'>');
-encoder!(encode_attribute, b'&', b'<', b'>', b'"');
+/// Escape a string used in a text node, i.e. regular text.
+///
+/// **Do not use this in attributes or comments.**
+pub fn encode_text<S: AsRef<[u8]>>(raw: S) -> String {
+    encoder!(raw, b'&', b'<', b'>')
+}
 
-// https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-1---html-escape-before-inserting-untrusted-data-into-html-element-content
-encoder!(encode_paranoid, b'&', b'<', b'>', b'"', b'\'', b'/');
+/// Escape a string used in quoted attribute.
+///
+/// **Do not use this in of unquoted or single-quoted attributes, or in comments.**
+pub fn encode_attribute<S: AsRef<[u8]>>(raw: S) -> String {
+    encoder!(raw, b'&', b'<', b'>', b'"')
+}
+
+/// Escape a string including both apostrophes and double quotes.
+///
+/// **Do not use this outside of quoted attributes or in comments.**
+pub fn encode_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
+    encoder!(raw, b'&', b'<', b'>', b'"', b'\'')
+}
 
 pub fn old_encode_text<S>(raw: S) -> String
     where S: AsRef<[u8]>
@@ -54,7 +64,6 @@ pub fn old_encode_text<S>(raw: S) -> String
 
     String::from_utf8(output).unwrap()
 }
-
 
 
 #[cfg(test)]
@@ -94,13 +103,12 @@ mod tests {
         ("He said, \"That's mine.\"", "He said, &quot;That's mine.&quot;"),
     ]);
 
-    test_corpus!(encode_paranoid_short_strings, encode_paranoid, [
+    test_corpus!(encode_all_quotes_short_strings, encode_all_quotes, [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
         ("He said, \"That's mine.\"", "He said, &quot;That&apos;s mine.&quot;"),
-        ("<div class=foo/>", "&lt;div class=foo&#x2F;&gt;"),
     ]);
 
     const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
