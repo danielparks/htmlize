@@ -1,0 +1,12 @@
+[package]
+name = "htmlentity"
+version = "0.1.0"
+authors = ["Daniel Parks <dp+git@oxidized.org>"]
+description = "Encode and decode HTML entities in UTF-8"
+license = "MIT OR Apache-2.0"
+edition = "2018"
+
+[dependencies]
+
+[dev-dependencies]
+paste = "0.1"
