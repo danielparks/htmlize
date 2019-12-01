@@ -10,9 +10,7 @@ macro_rules! bench_func {
     ($name:ident, $func:ident, $sample:expr) => {
         fn $name(bench: &mut Bencher) {
             let sample = $sample;
-            bench.iter(|| {
-                encode_text(sample);
-            });
+            bench.iter(|| { $func(sample) });
             bench.bytes = sample.len() as u64;
         }
     }
