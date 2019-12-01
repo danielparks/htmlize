@@ -49,24 +49,6 @@ pub fn escape_quotes<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>', b'"', b'\'')
 }
 
-pub fn old_escape_text<S>(raw: S) -> String
-    where S: AsRef<[u8]>
-{
-    let raw = raw.as_ref();
-    let mut output:Vec<u8> = Vec::with_capacity(raw.len());
-
-    for c in raw {
-        match c {
-            b'&' => output.extend_from_slice(b"&amp;"),
-            b'<' => output.extend_from_slice(b"&lt;"),
-            b'>' => output.extend_from_slice(b"&gt;"),
-            _ => output.push(*c),
-        }
-    }
-
-    String::from_utf8(output).unwrap()
-}
-
 
 #[cfg(test)]
 mod tests {
