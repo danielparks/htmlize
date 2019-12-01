@@ -10,7 +10,7 @@ fn map_u8(c: u8) -> &'static [u8] {
     }
 }
 
-macro_rules! escaper {
+macro_rules! escape {
     ($raw:expr, $($ch:literal),+) => {{
         let raw = $raw.as_ref();
         let mut output:Vec<u8> = Vec::with_capacity(raw.len());
@@ -30,14 +30,14 @@ macro_rules! escaper {
 ///
 /// **Do not use this in attributes or comments.**
 pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
-    escaper!(raw, b'&', b'<', b'>')
+    escape!(raw, b'&', b'<', b'>')
 }
 
 /// Escape a string used in quoted attribute.
 ///
 /// **Do not use this in of unquoted or single-quoted attributes, or in comments.**
 pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
-    escaper!(raw, b'&', b'<', b'>', b'"')
+    escape!(raw, b'&', b'<', b'>', b'"')
 }
 
 /// Escape a string including both apostrophes and double quotes.
@@ -46,7 +46,7 @@ pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
 /// avoid using this unless you need to use single-quoted attributes. Generally,
 /// it is safe to leave apostrophes unescaped.
 pub fn escape_quotes<S: AsRef<[u8]>>(raw: S) -> String {
-    escaper!(raw, b'&', b'<', b'>', b'"', b'\'')
+    escape!(raw, b'&', b'<', b'>', b'"', b'\'')
 }
 
 pub fn old_escape_text<S>(raw: S) -> String
