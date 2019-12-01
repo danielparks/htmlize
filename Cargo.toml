@@ -10,3 +10,9 @@ edition = "2018"
 
 [dev-dependencies]
 paste = "0.1"
+bencher = "0.1"
+
+[[bench]]
+name = "encode"
+path = "benchmarks/encode.rs"
+harness = false
