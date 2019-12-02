@@ -31,15 +31,32 @@ fn main() {
         }
     }
 
-    w!("/// All valid HTML entities and their equivalents as \
-        `(\"&entity;\", \"c\")` tuples.");
+    w!(r#"/// All valid HTML entities and their expansions as `(b"&copy;", b"©")` tuples."#);
     w!("///");
     w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
-    w!("/// for a table of all entities with their codepoints and glyphs.");
-    w!("pub const ENTITIES: [(&str, &str); {}] = [", entities.len());
+    w!("/// the canonical list of entities with their codepoints and glyphs. The");
+    w!("/// [entries.json](https://html.spec.whatwg.org/entities.json) file linked");
+    w!("/// there is used to generate this constant.");
+    w!("///");
+    w!("/// Entity                         | Codepoints         | Glyph");
+    w!("/// -------------------------------|--------------------|------");
+    for (name, value) in &entities {
+        let mut codepoints: Vec<String> = Vec::new();
+        for c in value.to_string().chars() {
+            let ord: u32 = c.into();
+            codepoints.push(format!("U+{:06.X}", ord));
+        }
+
+        let name = format!("`{}`", name);
+
+        // \n is a possible value. As long as the “glyph” is last, it’s fine.
+        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
+    }
+
+    w!("pub const ENTITIES: [(&[u8], &[u8]); {}] = [", entities.len());
 
     for (name, value) in &entities {
-        w!("    ({:?}, {:?}),", name, value);
+        w!("    (b{:?}, &{:?}), // {}", name, value.as_bytes(), value);
     }
 
     w!("];");
