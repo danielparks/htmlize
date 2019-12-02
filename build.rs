@@ -25,16 +25,24 @@ fn main() {
     let out_path = Path::new(&out_dir).join("entities.rs");
     let mut out = File::create(&out_path).unwrap();
 
-    writeln!(out, "/// All valid HTML entities and their equivalents as \
-        `(\"&entity;\", \"c\")` tuples.").unwrap();
-    writeln!(out, "pub const ENTITIES: [(&str, &str); {}] = [", entities.len())
-        .unwrap();
-
-    for (name, value) in entities {
-        writeln!(out, "    ({:?}, {:?}),", name, value).unwrap();
+    macro_rules! w {
+        ($msg:literal $(, $args:expr)*) => {
+            writeln!(out, $msg $(, $args)*).unwrap();
+        }
     }
 
-    writeln!(out, "];").unwrap();
+    w!("/// All valid HTML entities and their equivalents as \
+        `(\"&entity;\", \"c\")` tuples.");
+    w!("///");
+    w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
+    w!("/// for a table of all entities with their codepoints and glyphs.");
+    w!("pub const ENTITIES: [(&str, &str); {}] = [", entities.len());
+
+    for (name, value) in &entities {
+        w!("    ({:?}, {:?}),", name, value);
+    }
+
+    w!("];");
 }
 
 pub fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
