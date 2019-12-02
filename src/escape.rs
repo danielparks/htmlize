@@ -62,7 +62,7 @@ mod tests {
                     let actual = $func(&input);
                     assert_eq!(actual, *expected,
                         "{}({:?}) == {:?}",
-                        stringify!($func), actual, expected);
+                        stringify!($func), input, expected);
                 }
             }
         }
