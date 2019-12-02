@@ -9,7 +9,6 @@ edition = "2018"
 [dependencies]
 
 [dev-dependencies]
-paste = "0.1"
 bencher = "0.1"
 
 [[bench]]
