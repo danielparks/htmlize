@@ -14,3 +14,16 @@ macro_rules! test_multiple {
         }
     }
 }
+
+#[macro_export]
+macro_rules! test_eq {
+    ($name:ident, $func:ident, $input:expr, $expected:expr) => {
+        #[test]
+        fn $name() {
+            let actual = $func($input);
+            assert_eq!(actual, $expected,
+                "{}({:?}) == {:?}",
+                stringify!($func), $input, $expected);
+        }
+    }
+}
