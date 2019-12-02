@@ -13,11 +13,11 @@ fn map_u8(c: u8) -> &'static [u8] {
 macro_rules! escape {
     ($raw:expr, $($ch:literal),+) => {{
         let raw = $raw.as_ref();
-        let mut output:Vec<u8> = Vec::with_capacity(raw.len());
+        let mut output: Vec<u8> = Vec::with_capacity(raw.len());
 
         for c in raw {
             match c {
-                $($ch => output.extend_from_slice(map_u8(*c)),)+
+                $($ch)|+ => output.extend_from_slice(map_u8(*c)),
                 _ => output.push(*c),
             }
         }
