@@ -49,46 +49,55 @@ fn find_entity_by_prefix<S: AsRef<[u8]>>(needle: S) -> SearchResult {
     }
 }
 
-// Expects the initial & to already have been consumed.
-fn match_entity(iter: &mut dyn Iterator<Item = &u8>) -> Vec<u8> {
-    let mut buffer = vec![b'&'];
-    let mut candidate = vec![b'&'];
-
-    while let Some(c) = iter.next() {
-        buffer.push(*c);
-        candidate.push(*c);
-        match find_entity_by_prefix(&buffer) {
-            SearchResult::Exact(expansion) => {
-                return expansion.into();
-            },
-            SearchResult::ExactPlusPrefix(expansion) => {
-                // We match an entity exactly as well as at least one other
-                // entity as a prefix.
-                candidate.truncate(0);
-                candidate.extend_from_slice(expansion);
-            },
-            SearchResult::Prefix => {
-            },
-            SearchResult::None => {
-                return candidate;
-            }
-        }
-    }
-
-    candidate
-}
-
 pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
     let escaped = escaped.as_ref();
     let mut iter = escaped.iter();
     let mut buffer = Vec::new();
 
-    while let Some(c) = iter.next() {
-        if *c == b'&' {
-            buffer.append(&mut match_entity(&mut iter));
-        } else {
+    'no_entity: while let Some(c) = iter.next() {
+        if *c != b'&' {
             buffer.push(*c);
+            continue;
         }
+
+        // Found an entity.
+        let mut match_buffer = vec![b'&'];
+        let mut fallback = vec![b'&'];
+
+        'matching_entity: while let Some(c) = iter.next() {
+            if *c == b'&' {
+                // Potential start of new entity. End this matching cycle and
+                // start a new one.
+                buffer.append(&mut fallback);
+
+                match_buffer = vec![b'&'];
+                fallback = vec![b'&'];
+                continue 'matching_entity;
+            }
+
+            match_buffer.push(*c);
+            fallback.push(*c);
+            match find_entity_by_prefix(&match_buffer) {
+                SearchResult::Exact(expansion) => {
+                    buffer.extend_from_slice(expansion);
+                    continue 'no_entity;
+                },
+                SearchResult::ExactPlusPrefix(expansion) => {
+                    // We match an entity exactly as well as at least one other
+                    // entity as a prefix.
+                    fallback = expansion.into();
+                },
+                SearchResult::Prefix => {
+                },
+                SearchResult::None => {
+                    buffer.append(&mut fallback);
+                    continue 'no_entity;
+                }
+            }
+        }
+
+        // Iterator ended during matching.
+        buffer.append(&mut fallback);
     }
 
     String::from_utf8(buffer).unwrap()
