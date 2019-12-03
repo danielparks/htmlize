@@ -1,5 +1,5 @@
 use bencher::*;
-use htmlentity::*;
+use html_entities::*;
 
 const SMALL_DIRTY: &str = "<a href=\"http://example.com/\">link</a> & [link]";
 const SMALL_CLEAN: &str = ".a href=.http://example.com/..link./a. . [link]";
