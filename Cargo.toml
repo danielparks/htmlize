@@ -9,3 +9,5 @@ edition = "2018"
 [build-dependencies]
 serde_json = "1.0"
 
+[dependencies]
+phf = { version = "0", features = ["macros"] }

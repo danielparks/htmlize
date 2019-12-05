@@ -32,6 +32,8 @@ fn main() {
         }
     }
 
+    w!("use phf::phf_map;");
+    w!("");
     w!(r#"/// All valid HTML entities and their expansions as `(b"&copy;", b"©")` tuples."#);
     w!("///");
     w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
@@ -54,7 +56,7 @@ fn main() {
         w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
     }
 
-    w!("pub const ENTITIES: [(&[u8], &[u8]); {}] = [", entities.len());
+    w!("{}", "pub static ENTITIES: phf::Map<&[u8], &[u8]> = phf_map! {");
 
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::max_value();
@@ -62,10 +64,10 @@ fn main() {
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
 
-        w!("    (b{:?}, &{:?}), // {}", name, value.as_bytes(), value);
+        w!("    b{:?} => &{:?}, // {}", name, value.as_bytes(), value);
     }
 
-    w!("];");
+    w!("{}", "};");
 
     w!("");
     w!("/// Length of longest entity including & and possibly ;");
