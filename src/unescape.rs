@@ -71,11 +71,11 @@ fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
         },
     };
 
-    match iter.peek() {
-        Some(&b';') => {
-            best_expansion.push(*iter.next().expect(PEEK_MATCH_ERROR));
-        },
-        _ => { return best_expansion; },
+    if let Some(&b';') = iter.peek() {
+        best_expansion.push(*iter.next().expect(PEEK_MATCH_ERROR));
+    } else {
+        // missing-semicolon-after-character-reference: end the entity anyway.
+        // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
     }
 
     if number.is_ok() {
@@ -338,6 +338,11 @@ mod tests {
     test_eq!(correct_hex_upperx_upper, unescape, "&#X7A;", "z");
     test_eq!(correct_dec, unescape, "&#122;", "z");
     test_eq!(correct_hex_unicode, unescape, "&#x21D2;", "⇒");
+
+    test_eq!(hex_no_semicolon, unescape, "&#x7Az", "zz");
+    test_eq!(hex_no_semicolon_end, unescape, "&#x7A", "z");
+    test_eq!(dec_no_semicolon, unescape, "&#122z", "zz");
+    test_eq!(dec_no_semicolon_end, unescape, "&#122", "z");
 
     test_eq!(hex_instead_of_dec, unescape, "&#7a;", "&#7a;");
     test_eq!(invalid_hex_lowerx, unescape, "&#xZ;", "&#xZ;");
