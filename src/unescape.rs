@@ -168,11 +168,7 @@ fn correct_numeric_entity(number: u32) -> Option<Vec<u8>> {
         // noncharacter-character-reference parse error:
         c if is_noncharacter(c) => None,
 
-        // control-character-reference parse error:
-        0x0D => None,
-        c if is_ascii_whitespace(c) => u32_to_vecu8(c),
-        c if is_control(c) => None,
-
+        // control-character-reference parse error exceptions:
         0x80 => u32_to_vecu8(0x20AC), // EURO SIGN (€)
         0x82 => u32_to_vecu8(0x201A), // SINGLE LOW-9 QUOTATION MARK (‚)
         0x83 => u32_to_vecu8(0x0192), // LATIN SMALL LETTER F WITH HOOK (ƒ)
@@ -200,6 +196,11 @@ fn correct_numeric_entity(number: u32) -> Option<Vec<u8>> {
         0x9C => u32_to_vecu8(0x0153), // LATIN SMALL LIGATURE OE (œ)
         0x9E => u32_to_vecu8(0x017E), // LATIN SMALL LETTER Z WITH CARON (ž)
         0x9F => u32_to_vecu8(0x0178), // LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
+
+        // control-character-reference parse error:
+        0x0D => None,
+        c if is_ascii_whitespace(c) => u32_to_vecu8(c),
+        c if is_control(c) => None,
 
         // Everything else.
         c => match char::from_u32(c) {
@@ -289,9 +290,14 @@ mod tests {
     test_eq!(exact_timesb, unescape, "&timesb;", "⊠");
 
     test_eq!(no_entities, unescape, "none", "none");
+    test_eq!(only_ampersand, unescape, "&", "&");
+    test_eq!(empty_entity, unescape, "&;", "&;");
     test_eq!(middle_entity, unescape, " &amp; ", " & ");
     test_eq!(extra_ampersands, unescape, "&&amp;&", "&&&");
     test_eq!(two_entities, unescape, "AND &amp;&AMP; and", "AND && and");
+    test_eq!(long_entity, unescape,
+        "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;",
+        "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;");
 
     test_eq!(correct_hex_lowerx_lower, unescape, "&#x7a;", "z");
     test_eq!(correct_hex_lowerx_upper, unescape, "&#x7A;", "z");
@@ -308,4 +314,9 @@ mod tests {
     test_eq!(hex_instead_of_dec, unescape, "&#7a;", "&#7a;");
     test_eq!(invalid_hex_lowerx, unescape, "&#xZ;", "&#xZ;");
     test_eq!(invalid_hex_upperx, unescape, "&#XZ;", "&#XZ;");
+
+    test_eq!(special_entity_null, unescape, "&#0;", "\u{fffd}");
+    test_eq!(special_entity_bullet, unescape, "&#x95;", "•");
+    test_eq!(special_entity_bullets, unescape, "&#x95;&#149;&#x2022;•", "••••");
+    test_eq!(special_entity_space, unescape, "&#x20", " ");
 }
