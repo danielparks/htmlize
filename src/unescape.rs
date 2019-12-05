@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 // See the normative reference for HTML5 entities:
 // https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references
 //
@@ -289,48 +288,6 @@ fn find_entity<S: AsRef<[u8]>>(needle: S) -> Option<&'static [u8]> {
 
     None
 }
-
-enum SearchResult {
-    Exact(&'static [u8]),
-    ExactPlusPrefix(&'static [u8]),
-    Prefix,
-    None,
-}
-
-// This does not assume that ENTITIES is sorted.
-fn find_entity_by_prefix<S: AsRef<[u8]>>(needle: S) -> SearchResult {
-    let needle = needle.as_ref();
-    let mut found: &[u8] = &[];
-    let mut found_prefix = false;
-
-    for (entity, expansion) in ENTITIES.iter() {
-        if entity.starts_with(needle) {
-            if entity.len() == needle.len() { // => entity == needle
-                if found != [] {
-                    panic!("Found two identical entities in ENTITIES: {:?}",
-                        entity);
-                }
-
-                found = &expansion;
-            } else {
-                found_prefix = true;
-            }
-
-            if found_prefix && found != [] {
-                return SearchResult::ExactPlusPrefix(found);
-            }
-        }
-    }
-
-    if found_prefix {
-        SearchResult::Prefix
-    } else if found != [] {
-        SearchResult::Exact(found)
-    } else {
-        SearchResult::None
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
