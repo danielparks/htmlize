@@ -19,3 +19,5 @@ macro_rules! bench_func {
 bench_func!(unescape_none, unescape, "sdfasfdasfsdf");
 bench_func!(unescape_single, unescape, "&amp;");
 bench_func!(unescape_single_prefix, unescape, "sdfasfdasfsdf&amp;");
+bench_func!(unescape_long, unescape,
+    "&abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd");
