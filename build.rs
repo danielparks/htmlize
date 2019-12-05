@@ -12,6 +12,7 @@
 /// }
 
 use serde_json::{Map, Value};
+use std::cmp::{max, min};
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -55,11 +56,24 @@ fn main() {
 
     w!("pub const ENTITIES: [(&[u8], &[u8]); {}] = [", entities.len());
 
+    let mut max_len: usize = 0;
+    let mut min_len: usize = usize::max_value();
     for (name, value) in &entities {
+        max_len = max(max_len, name.len());
+        min_len = min(min_len, name.len());
+
         w!("    (b{:?}, &{:?}), // {}", name, value.as_bytes(), value);
     }
 
     w!("];");
+
+    w!("");
+    w!("/// Length of longest entity including & and possibly ;");
+    w!("pub const ENTITY_MAX_LENGTH: usize = {};", max_len);
+
+    w!("");
+    w!("/// Length of shortest entity including & and possibly ;");
+    w!("pub const ENTITY_MIN_LENGTH: usize = {};", min_len);
 }
 
 pub fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
