@@ -1,5 +1,3 @@
-#[cfg(test)]
-
 #[macro_export]
 macro_rules! check {
     ($func:ident($($arg:expr),*) == $expected:expr) => {
