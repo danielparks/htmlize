@@ -282,41 +282,41 @@ fn match_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
 mod tests {
     use super::*;
 
-    test_eq!(almost_entity, unescape, "&time", "&time");
-    test_eq!(exact_no_semicolon, unescape, "&times", "×");
-    test_eq!(exact, unescape, "&times;", "×");
-    test_eq!(entity_char, unescape, "&timesa", "×a");
-    test_eq!(entity_char_is_prefix, unescape, "&timesb", "×b");
-    test_eq!(exact_timesb, unescape, "&timesb;", "⊠");
+    test!(almost_entity, unescape("&time") == "&time");
+    test!(exact_no_semicolon, unescape("&times") == "×");
+    test!(exact, unescape("&times;") == "×");
+    test!(entity_char, unescape("&timesa") == "×a");
+    test!(entity_char_is_prefix, unescape("&timesb") == "×b");
+    test!(exact_timesb, unescape("&timesb;") == "⊠");
 
-    test_eq!(no_entities, unescape, "none", "none");
-    test_eq!(only_ampersand, unescape, "&", "&");
-    test_eq!(empty_entity, unescape, "&;", "&;");
-    test_eq!(middle_entity, unescape, " &amp; ", " & ");
-    test_eq!(extra_ampersands, unescape, "&&amp;&", "&&&");
-    test_eq!(two_entities, unescape, "AND &amp;&AMP; and", "AND && and");
-    test_eq!(long_entity, unescape,
-        "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;",
-        "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;");
+    test!(no_entities, unescape("none") == "none");
+    test!(only_ampersand, unescape("&") == "&");
+    test!(empty_entity, unescape("&;") == "&;");
+    test!(middle_entity, unescape(" &amp; ") == " & ");
+    test!(extra_ampersands, unescape("&&amp;&") == "&&&");
+    test!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
+    test!(long_entity,
+        unescape("&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;")
+        == "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;");
 
-    test_eq!(correct_hex_lowerx_lower, unescape, "&#x7a;", "z");
-    test_eq!(correct_hex_lowerx_upper, unescape, "&#x7A;", "z");
-    test_eq!(correct_hex_upperx_lower, unescape, "&#X7a;", "z");
-    test_eq!(correct_hex_upperx_upper, unescape, "&#X7A;", "z");
-    test_eq!(correct_dec, unescape, "&#122;", "z");
-    test_eq!(correct_hex_unicode, unescape, "&#x21D2;", "⇒");
+    test!(correct_hex_lowerx_lower, unescape("&#x7a;") == "z");
+    test!(correct_hex_lowerx_upper, unescape("&#x7A;") == "z");
+    test!(correct_hex_upperx_lower, unescape("&#X7a;") == "z");
+    test!(correct_hex_upperx_upper, unescape("&#X7A;") == "z");
+    test!(correct_dec, unescape("&#122;") == "z");
+    test!(correct_hex_unicode, unescape("&#x21D2;") == "⇒");
 
-    test_eq!(hex_no_semicolon, unescape, "&#x7Az", "zz");
-    test_eq!(hex_no_semicolon_end, unescape, "&#x7A", "z");
-    test_eq!(dec_no_semicolon, unescape, "&#122z", "zz");
-    test_eq!(dec_no_semicolon_end, unescape, "&#122", "z");
+    test!(hex_no_semicolon, unescape("&#x7Az") == "zz");
+    test!(hex_no_semicolon_end, unescape("&#x7A") == "z");
+    test!(dec_no_semicolon, unescape("&#122z") == "zz");
+    test!(dec_no_semicolon_end, unescape("&#122") == "z");
 
-    test_eq!(hex_instead_of_dec, unescape, "&#7a;", "&#7a;");
-    test_eq!(invalid_hex_lowerx, unescape, "&#xZ;", "&#xZ;");
-    test_eq!(invalid_hex_upperx, unescape, "&#XZ;", "&#XZ;");
+    test!(hex_instead_of_dec, unescape("&#7a;") == "&#7a;");
+    test!(invalid_hex_lowerx, unescape("&#xZ;") == "&#xZ;");
+    test!(invalid_hex_upperx, unescape("&#XZ;") == "&#XZ;");
 
-    test_eq!(special_entity_null, unescape, "&#0;", "\u{fffd}");
-    test_eq!(special_entity_bullet, unescape, "&#x95;", "•");
-    test_eq!(special_entity_bullets, unescape, "&#x95;&#149;&#x2022;•", "••••");
-    test_eq!(special_entity_space, unescape, "&#x20", " ");
+    test!(special_entity_null, unescape("&#0;") == "\u{fffd}");
+    test!(special_entity_bullet, unescape("&#x95;") == "•");
+    test!(special_entity_bullets, unescape("&#x95;&#149;&#x2022;•") == "••••");
+    test!(special_entity_space, unescape("&#x20") == " ");
 }
