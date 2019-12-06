@@ -1,21 +1,22 @@
-use std::iter::Peekable;
 
-pub fn do_match<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
+const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous iter.peek()";
+
+pub fn do_match<'a, I>(iter: &mut I) -> Vec<u8>
     where I: Iterator<Item = &'a u8>
-    // FIXME does this need to be peekable?
 {
+    let mut iter = iter.peekable();
     let mut buffer: Vec<u8> = Vec::new(); // FIXME capacity?
 
     loop {
         match iter.peek() {
             Some(b'a') => {
-                iter.next();
+                iter.next().expect(PEEK_MATCH_ERROR);
                 match iter.peek() {
                     Some(b'a') => {
-                        iter.next();
+                        iter.next().expect(PEEK_MATCH_ERROR);
                         match iter.peek() {
                             Some(b'a') => {
-                                iter.next();
+                                iter.next().expect(PEEK_MATCH_ERROR);
                                 buffer.extend_from_slice(&[b'A']);
                             },
                             _ => {
@@ -29,10 +30,10 @@ pub fn do_match<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
                 }
             },
             Some(b'b') => {
-                iter.next();
+                iter.next().expect(PEEK_MATCH_ERROR);
                 match iter.peek() {
                     Some(b'b') => {
-                        iter.next();
+                        iter.next().expect(PEEK_MATCH_ERROR);
                         buffer.extend_from_slice(&[b'B']);
                     }
                     _ => {
@@ -40,7 +41,7 @@ pub fn do_match<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
                     },
                 }
             }
-            Some(_) => buffer.push(*iter.next().expect("peek and next didn't match")),
+            Some(_) => buffer.push(*iter.next().expect(PEEK_MATCH_ERROR)),
             None => return buffer,
         }
     }
