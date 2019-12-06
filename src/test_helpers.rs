@@ -21,9 +21,10 @@ macro_rules! test_eq {
         #[test]
         fn $name() {
             let actual = $func($input);
-            assert_eq!(actual, $expected,
-                "{}({:?}) == {:?}",
-                stringify!($func), $input, $expected);
+            if actual != $expected {
+                panic!("failed: {}({:?})\n  expected: {:?}\n  actual:   {:?}\n",
+                    stringify!($func), $input, $expected, actual);
+            }
         }
     }
 }
