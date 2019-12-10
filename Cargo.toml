@@ -1,9 +1,15 @@
 [package]
 name = "html_entities"
 version = "0.1.0"
-authors = ["Daniel Parks <dp+git@oxidized.org>"]
+authors = ["Daniel Parks <oss-html-entities@demonhorse.org>"]
 description = "Encode and decode HTML entities in UTF-8"
+homepage = "https://github.com/danielparks/html_entities"
+repository = "https://github.com/danielparks/html_entities"
+readme = "README.md"
+keywords = ["html"]
+categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
+maintenance = { status = "actively-developed" }
 edition = "2018"
 
 [build-dependencies]
