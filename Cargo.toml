@@ -17,3 +17,6 @@ serde_json = "1.0"
 
 [dependencies]
 phf = { version = "0", features = ["macros"] }
+
+[dev-dependencies]
+assertify = "0"

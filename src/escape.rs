@@ -53,6 +53,7 @@ pub fn escape_quotes<S: AsRef<[u8]>>(raw: S) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assertify::testify;
 
     const BASIC_CORPUS: [(&str, &str); 4] = [
         ("", ""),
@@ -65,24 +66,22 @@ mod tests {
     test_multiple!(escape_attribute_basic, escape_attribute, BASIC_CORPUS);
     test_multiple!(escape_quotes_basic, escape_quotes, BASIC_CORPUS);
 
-    test_multiple!(escape_text_quotes, escape_text, [
-        ("He said, \"That's mine.\"", "He said, \"That's mine.\""),
-    ]);
+    testify!(escape_text_quotes,
+        escape_text("He said, \"That's mine.\"")
+            == "He said, \"That's mine.\"");
 
-    test_multiple!(escape_attribute_quotes, escape_attribute, [
-        ("He said, \"That's mine.\"", "He said, &quot;That's mine.&quot;"),
-    ]);
+    testify!(escape_attribute_quotes,
+        escape_attribute("He said, \"That's mine.\"")
+            == "He said, &quot;That's mine.&quot;");
 
-    test_multiple!(escape_quotes_quotes, escape_quotes, [
-        ("He said, \"That's mine.\"", "He said, &quot;That&apos;s mine.&quot;"),
-    ]);
+    testify!(escape_quotes_quotes,
+        escape_quotes("He said, \"That's mine.\"")
+            == "He said, &quot;That&apos;s mine.&quot;");
 
     const HTML_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
     const HTML_DIRTY_ESCAPED: &str = include_str!("../tests/corpus/html-escaped.txt");
     const HTML_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
 
-    test_multiple!(escape_text_html, escape_text, [
-        (HTML_DIRTY, HTML_DIRTY_ESCAPED),
-        (HTML_CLEAN, HTML_CLEAN),
-    ]);
+    testify!(escape_text_dirty_html, escape_text(HTML_DIRTY) == HTML_DIRTY_ESCAPED);
+    testify!(escape_text_clean_html, escape_text(HTML_CLEAN) == HTML_CLEAN);
 }
