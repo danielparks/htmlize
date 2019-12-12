@@ -2,7 +2,7 @@
 
 extern crate test;
 
-use html_entities::*;
+use htmlize::*;
 
 bench_func!(unescape_none, unescape, "sdfasfdasfsdf");
 bench_func!(unescape_single, unescape, "&amp;");

@@ -2,7 +2,7 @@
 
 extern crate test;
 
-use html_entities::*;
+use htmlize::*;
 
 const SMALL_DIRTY: &str = "<a href=\"http://example.com/\">link</a> & [link]";
 const SMALL_CLEAN: &str = ".a href=.http://example.com/..link./a. . [link]";
