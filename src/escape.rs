@@ -33,19 +33,18 @@ pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>')
 }
 
-/// Escape a string used in quoted attribute.
+/// Escape a string used in a quoted attribute.
 ///
-/// **Do not use this in of unquoted or single-quoted attributes, or in comments.**
+/// **Do not use this in comments.**
 pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>', b'"')
 }
 
-/// Escape a string including both apostrophes and double quotes.
+/// Escape a string including both single and double quotes.
 ///
-/// **Do not use this outside of quoted attributes or in comments.** You should
-/// avoid using this unless you need to use single-quoted attributes. Generally,
-/// it is safe to leave apostrophes unescaped.
-pub fn escape_quotes<S: AsRef<[u8]>>(raw: S) -> String {
+/// **Do not use this in comments.** Generally, it is safe to leave single
+/// quotes (apostrophes) unescaped.
+pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>', b'"', b'\'')
 }
 
@@ -64,7 +63,7 @@ mod tests {
 
     test_multiple!(escape_text_basic, escape_text, BASIC_CORPUS);
     test_multiple!(escape_attribute_basic, escape_attribute, BASIC_CORPUS);
-    test_multiple!(escape_quotes_basic, escape_quotes, BASIC_CORPUS);
+    test_multiple!(escape_all_quotes_basic, escape_all_quotes, BASIC_CORPUS);
 
     testify!(escape_text_quotes,
         escape_text("He said, \"That's mine.\"")
@@ -74,8 +73,8 @@ mod tests {
         escape_attribute("He said, \"That's mine.\"")
             == "He said, &quot;That's mine.&quot;");
 
-    testify!(escape_quotes_quotes,
-        escape_quotes("He said, \"That's mine.\"")
+    testify!(escape_all_quotes_quotes,
+        escape_all_quotes("He said, \"That's mine.\"")
             == "He said, &quot;That&apos;s mine.&quot;");
 
     const HTML_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
