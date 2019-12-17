@@ -4,6 +4,9 @@ extern crate test;
 
 use htmlize::*;
 
+#[macro_use]
+mod helpers;
+
 const SMALL_DIRTY: &str = "<a href=\"http://example.com/\">link</a> & [link]";
 const SMALL_CLEAN: &str = ".a href=.http://example.com/..link./a. . [link]";
 const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
