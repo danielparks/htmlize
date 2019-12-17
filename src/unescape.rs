@@ -320,4 +320,8 @@ mod tests {
     testify!(special_entity_bullet, unescape("&#x95;") == "•");
     testify!(special_entity_bullets, unescape("&#x95;&#149;&#x2022;•") == "••••");
     testify!(special_entity_space, unescape("&#x20") == " ");
+
+    const ALL_SOURCE: &str = include_str!("../tests/corpus/all-entities-source.txt");
+    const ALL_EXPANDED: &str = include_str!("../tests/corpus/all-entities-expanded.txt");
+    testify!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 }
