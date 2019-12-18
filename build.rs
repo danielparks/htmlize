@@ -38,7 +38,7 @@ fn main() {
     w!("///");
     w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
     w!("/// the canonical list of entities with their codepoints and glyphs. The");
-    w!("/// [entries.json](https://html.spec.whatwg.org/entities.json) file linked");
+    w!("/// [entities.json](https://html.spec.whatwg.org/entities.json) file linked");
     w!("/// there is used to generate this constant.");
     w!("///");
     w!("/// Entity                         | Codepoints         | Glyph");
