@@ -1,3 +1,4 @@
+#[cfg(test)]
 #[macro_export]
 macro_rules! test_multiple {
     ($name:ident, $func:ident, $tests:expr) => {
