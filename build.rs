@@ -51,7 +51,13 @@ fn main() {
 
         let name = format!("`{}`", name);
 
-        // \n is a possible value. As long as the “glyph” is last, it’s fine.
+        // Suppress a few weird values. They wouldn’t actually hurt anything,
+        // but newline adds an extra line, and tab causes a clippy warning.
+        let value = match value.as_str() {
+            "\n" | "\t" => "",
+            v => v,
+        };
+
         w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
     }
 

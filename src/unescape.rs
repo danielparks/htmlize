@@ -39,13 +39,14 @@ pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
 
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous iter.peek()";
 
+#[allow(clippy::from_str_radix_10)]
 fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
 where
     I: Iterator<Item = &'a u8>,
 {
     let c = iter.next().expect(PEEK_MATCH_ERROR);
     if *c != b'#' {
-        panic!(PEEK_MATCH_ERROR);
+        panic!("{}", PEEK_MATCH_ERROR);
     }
 
     let mut best_expansion = vec![b'&', b'#'];
@@ -80,8 +81,8 @@ where
         // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
     }
 
-    if number.is_ok() {
-        if let Some(expansion) = correct_numeric_entity(number.unwrap()) {
+    if let Ok(number) = number {
+        if let Some(expansion) = correct_numeric_entity(number) {
             return expansion;
         }
     }
@@ -101,44 +102,44 @@ pub const REPLACEMENT_CHAR: char = '\u{fffd}';
 
 // https://infra.spec.whatwg.org/#noncharacter
 fn is_noncharacter<C: Into<u32>>(c: C) -> bool {
-    match c.into() {
-        0xFDD0..=0xFDEF
-        | 0xFFFE
-        | 0xFFFF
-        | 0x1FFFE
-        | 0x1FFFF
-        | 0x2FFFE
-        | 0x2FFFF
-        | 0x3FFFE
-        | 0x3FFFF
-        | 0x4FFFE
-        | 0x4FFFF
-        | 0x5FFFE
-        | 0x5FFFF
-        | 0x6FFFE
-        | 0x6FFFF
-        | 0x7FFFE
-        | 0x7FFFF
-        | 0x8FFFE
-        | 0x8FFFF
-        | 0x9FFFE
-        | 0x9FFFF
-        | 0xAFFFE
-        | 0xAFFFF
-        | 0xBFFFE
-        | 0xBFFFF
-        | 0xCFFFE
-        | 0xCFFFF
-        | 0xDFFFE
-        | 0xDFFFF
-        | 0xEFFFE
-        | 0xEFFFF
-        | 0xFFFFE
-        | 0xFFFFF
-        | 0x10FFFE
-        | 0x10FFFF => true,
-        _ => false,
-    }
+    matches!(
+        c.into(),
+        (0xFDD0..=0xFDEF)
+            | 0xFFFE
+            | 0xFFFF
+            | 0x1FFFE
+            | 0x1FFFF
+            | 0x2FFFE
+            | 0x2FFFF
+            | 0x3FFFE
+            | 0x3FFFF
+            | 0x4FFFE
+            | 0x4FFFF
+            | 0x5FFFE
+            | 0x5FFFF
+            | 0x6FFFE
+            | 0x6FFFF
+            | 0x7FFFE
+            | 0x7FFFF
+            | 0x8FFFE
+            | 0x8FFFF
+            | 0x9FFFE
+            | 0x9FFFF
+            | 0xAFFFE
+            | 0xAFFFF
+            | 0xBFFFE
+            | 0xBFFFF
+            | 0xCFFFE
+            | 0xCFFFF
+            | 0xDFFFE
+            | 0xDFFFF
+            | 0xEFFFE
+            | 0xEFFFF
+            | 0xFFFFE
+            | 0xFFFFF
+            | 0x10FFFE
+            | 0x10FFFF
+    )
 }
 
 // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-character-reference-outside-unicode-range
@@ -162,14 +163,8 @@ fn is_control<C: Into<u32>>(c: C) -> bool {
 // This is the same as char::is_ascii_whitespace(), but I’m implementing it
 // by hand for consistency.
 fn is_ascii_whitespace<C: Into<u32>>(c: C) -> bool {
-    match c.into() {
-        0x09 => true, // (horizontal) tab
-        0x0A => true, // line feed
-        0x0C => true, // form feed
-        0x0D => true, // carriage return
-        0x20 => true, // space
-        _ => false,
-    }
+    // (horizontal) tab, line feed, form feed, carriage return, space
+    matches!(c.into(), 0x09 | 0x0A | 0x0C | 0x0D | 0x20)
 }
 
 // https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
