@@ -10,7 +10,6 @@
 ///    "&AElig": { "codepoints": [198], "characters": "\u00C6" },
 ///    . . .
 /// }
-
 use serde_json::{Map, Value};
 use std::cmp::{max, min};
 use std::env;
@@ -56,7 +55,10 @@ fn main() {
         w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
     }
 
-    w!("{}", "pub static ENTITIES: phf::Map<&[u8], &[u8]> = phf_map! {");
+    w!(
+        "{}",
+        "pub static ENTITIES: phf::Map<&[u8], &[u8]> = phf_map! {"
+    );
 
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::max_value();

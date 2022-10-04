@@ -8,5 +8,5 @@ macro_rules! test_multiple {
                 ::assertify::assertify!($func(&input) == *expected);
             }
         }
-    }
+    };
 }

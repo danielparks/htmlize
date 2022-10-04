@@ -40,7 +40,8 @@ pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous iter.peek()";
 
 fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
-    where I: Iterator<Item = &'a u8>
+where
+    I: Iterator<Item = &'a u8>,
 {
     let c = iter.next().expect(PEEK_MATCH_ERROR);
     if *c != b'#' {
@@ -58,18 +59,18 @@ fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
             best_expansion.extend_from_slice(&hex);
 
             u32::from_str_radix(&String::from_utf8(hex).unwrap(), 16)
-        },
+        }
         Some(_) => {
             // Presumably a decimal entity
             let dec = consume_decimal(iter);
             best_expansion.extend_from_slice(&dec);
 
             u32::from_str_radix(&String::from_utf8(dec).unwrap(), 10)
-        },
+        }
         None => {
             // Iterator reached end
             return best_expansion;
-        },
+        }
     };
 
     if let Some(&b';') = iter.peek() {
@@ -101,13 +102,41 @@ pub const REPLACEMENT_CHAR: char = '\u{fffd}';
 // https://infra.spec.whatwg.org/#noncharacter
 fn is_noncharacter<C: Into<u32>>(c: C) -> bool {
     match c.into() {
-        0xFDD0..=0xFDEF | 0xFFFE | 0xFFFF | 0x1FFFE | 0x1FFFF | 0x2FFFE
-            | 0x2FFFF | 0x3FFFE | 0x3FFFF | 0x4FFFE | 0x4FFFF | 0x5FFFE
-            | 0x5FFFF | 0x6FFFE | 0x6FFFF | 0x7FFFE | 0x7FFFF | 0x8FFFE
-            | 0x8FFFF | 0x9FFFE | 0x9FFFF | 0xAFFFE | 0xAFFFF | 0xBFFFE
-            | 0xBFFFF | 0xCFFFE | 0xCFFFF | 0xDFFFE | 0xDFFFF | 0xEFFFE
-            | 0xEFFFF | 0xFFFFE | 0xFFFFF | 0x10FFFE | 0x10FFFF
-        => true,
+        0xFDD0..=0xFDEF
+        | 0xFFFE
+        | 0xFFFF
+        | 0x1FFFE
+        | 0x1FFFF
+        | 0x2FFFE
+        | 0x2FFFF
+        | 0x3FFFE
+        | 0x3FFFF
+        | 0x4FFFE
+        | 0x4FFFF
+        | 0x5FFFE
+        | 0x5FFFF
+        | 0x6FFFE
+        | 0x6FFFF
+        | 0x7FFFE
+        | 0x7FFFF
+        | 0x8FFFE
+        | 0x8FFFF
+        | 0x9FFFE
+        | 0x9FFFF
+        | 0xAFFFE
+        | 0xAFFFF
+        | 0xBFFFE
+        | 0xBFFFF
+        | 0xCFFFE
+        | 0xCFFFF
+        | 0xDFFFE
+        | 0xDFFFF
+        | 0xEFFFE
+        | 0xEFFFF
+        | 0xFFFFE
+        | 0xFFFFF
+        | 0x10FFFE
+        | 0x10FFFF => true,
         _ => false,
     }
 }
@@ -234,9 +263,9 @@ consumer!(consume_decimal, b'0'..=b'9');
 consumer!(consume_hexadecimal, b'0'..=b'9' | b'a'..=b'f' | b'A'..=b'F');
 consumer!(consume_alphanumeric, b'0'..=b'9' | b'a'..=b'z' | b'A'..=b'Z');
 
-
 fn match_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
-    where I: Iterator<Item = &'a u8>
+where
+    I: Iterator<Item = &'a u8>,
 {
     if let Some(&b'#') = iter.peek() {
         // Numeric entity.
@@ -280,8 +309,8 @@ fn match_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
 
 #[cfg(test)]
 mod tests {
-    use assertify::testify;
     use super::*;
+    use assertify::testify;
 
     testify!(almost_entity, unescape("&time") == "&time");
     testify!(exact_no_semicolon, unescape("&times") == "×");
@@ -296,9 +325,11 @@ mod tests {
     testify!(middle_entity, unescape(" &amp; ") == " & ");
     testify!(extra_ampersands, unescape("&&amp;&") == "&&&");
     testify!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
-    testify!(long_entity,
+    testify!(
+        long_entity,
         unescape("&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;")
-        == "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;");
+            == "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;"
+    );
 
     testify!(correct_hex_lowerx_lower, unescape("&#x7a;") == "z");
     testify!(correct_hex_lowerx_upper, unescape("&#x7A;") == "z");
@@ -318,7 +349,10 @@ mod tests {
 
     testify!(special_entity_null, unescape("&#0;") == "\u{fffd}");
     testify!(special_entity_bullet, unescape("&#x95;") == "•");
-    testify!(special_entity_bullets, unescape("&#x95;&#149;&#x2022;•") == "••••");
+    testify!(
+        special_entity_bullets,
+        unescape("&#x95;&#149;&#x2022;•") == "••••"
+    );
     testify!(special_entity_space, unescape("&#x20") == " ");
 
     const ALL_SOURCE: &str = include_str!("../tests/corpus/all-entities-source.txt");
