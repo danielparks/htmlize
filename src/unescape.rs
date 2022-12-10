@@ -305,52 +305,51 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use assertify::testify;
 
-    testify!(almost_entity, unescape("&time") == "&time");
-    testify!(exact_no_semicolon, unescape("&times") == "×");
-    testify!(exact, unescape("&times;") == "×");
-    testify!(entity_char, unescape("&timesa") == "×a");
-    testify!(entity_char_is_prefix, unescape("&timesb") == "×b");
-    testify!(exact_timesb, unescape("&timesb;") == "⊠");
+    test!(almost_entity, unescape("&time") == "&time");
+    test!(exact_no_semicolon, unescape("&times") == "×");
+    test!(exact, unescape("&times;") == "×");
+    test!(entity_char, unescape("&timesa") == "×a");
+    test!(entity_char_is_prefix, unescape("&timesb") == "×b");
+    test!(exact_timesb, unescape("&timesb;") == "⊠");
 
-    testify!(no_entities, unescape("none") == "none");
-    testify!(only_ampersand, unescape("&") == "&");
-    testify!(empty_entity, unescape("&;") == "&;");
-    testify!(middle_entity, unescape(" &amp; ") == " & ");
-    testify!(extra_ampersands, unescape("&&amp;&") == "&&&");
-    testify!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
-    testify!(
+    test!(no_entities, unescape("none") == "none");
+    test!(only_ampersand, unescape("&") == "&");
+    test!(empty_entity, unescape("&;") == "&;");
+    test!(middle_entity, unescape(" &amp; ") == " & ");
+    test!(extra_ampersands, unescape("&&amp;&") == "&&&");
+    test!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
+    test!(
         long_entity,
         unescape("&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;")
             == "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;"
     );
 
-    testify!(correct_hex_lowerx_lower, unescape("&#x7a;") == "z");
-    testify!(correct_hex_lowerx_upper, unescape("&#x7A;") == "z");
-    testify!(correct_hex_upperx_lower, unescape("&#X7a;") == "z");
-    testify!(correct_hex_upperx_upper, unescape("&#X7A;") == "z");
-    testify!(correct_dec, unescape("&#122;") == "z");
-    testify!(correct_hex_unicode, unescape("&#x21D2;") == "⇒");
+    test!(correct_hex_lowerx_lower, unescape("&#x7a;") == "z");
+    test!(correct_hex_lowerx_upper, unescape("&#x7A;") == "z");
+    test!(correct_hex_upperx_lower, unescape("&#X7a;") == "z");
+    test!(correct_hex_upperx_upper, unescape("&#X7A;") == "z");
+    test!(correct_dec, unescape("&#122;") == "z");
+    test!(correct_hex_unicode, unescape("&#x21D2;") == "⇒");
 
-    testify!(hex_no_semicolon, unescape("&#x7Az") == "zz");
-    testify!(hex_no_semicolon_end, unescape("&#x7A") == "z");
-    testify!(dec_no_semicolon, unescape("&#122z") == "zz");
-    testify!(dec_no_semicolon_end, unescape("&#122") == "z");
+    test!(hex_no_semicolon, unescape("&#x7Az") == "zz");
+    test!(hex_no_semicolon_end, unescape("&#x7A") == "z");
+    test!(dec_no_semicolon, unescape("&#122z") == "zz");
+    test!(dec_no_semicolon_end, unescape("&#122") == "z");
 
-    testify!(hex_instead_of_dec, unescape("&#7a;") == "&#7a;");
-    testify!(invalid_hex_lowerx, unescape("&#xZ;") == "&#xZ;");
-    testify!(invalid_hex_upperx, unescape("&#XZ;") == "&#XZ;");
+    test!(hex_instead_of_dec, unescape("&#7a;") == "&#7a;");
+    test!(invalid_hex_lowerx, unescape("&#xZ;") == "&#xZ;");
+    test!(invalid_hex_upperx, unescape("&#XZ;") == "&#XZ;");
 
-    testify!(special_entity_null, unescape("&#0;") == "\u{fffd}");
-    testify!(special_entity_bullet, unescape("&#x95;") == "•");
-    testify!(
+    test!(special_entity_null, unescape("&#0;") == "\u{fffd}");
+    test!(special_entity_bullet, unescape("&#x95;") == "•");
+    test!(
         special_entity_bullets,
         unescape("&#x95;&#149;&#x2022;•") == "••••"
     );
-    testify!(special_entity_space, unescape("&#x20") == " ");
+    test!(special_entity_space, unescape("&#x20") == " ");
 
     const ALL_SOURCE: &str = include_str!("../tests/corpus/all-entities-source.txt");
     const ALL_EXPANDED: &str = include_str!("../tests/corpus/all-entities-expanded.txt");
-    testify!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
+    test!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 }
