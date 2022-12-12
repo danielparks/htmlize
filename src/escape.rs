@@ -51,7 +51,6 @@ pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use assertify::testify;
 
     const BASIC_CORPUS: [(&str, &str); 4] = [
         ("", ""),
@@ -64,17 +63,17 @@ mod tests {
     test_multiple!(escape_attribute_basic, escape_attribute, BASIC_CORPUS);
     test_multiple!(escape_all_quotes_basic, escape_all_quotes, BASIC_CORPUS);
 
-    testify!(
+    test!(
         escape_text_quotes,
         escape_text("He said, \"That's mine.\"") == "He said, \"That's mine.\""
     );
 
-    testify!(
+    test!(
         escape_attribute_quotes,
         escape_attribute("He said, \"That's mine.\"") == "He said, &quot;That's mine.&quot;"
     );
 
-    testify!(
+    test!(
         escape_all_quotes_quotes,
         escape_all_quotes("He said, \"That's mine.\"") == "He said, &quot;That&apos;s mine.&quot;"
     );
@@ -83,11 +82,11 @@ mod tests {
     const HTML_DIRTY_ESCAPED: &str = include_str!("../tests/corpus/html-escaped.txt");
     const HTML_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
 
-    testify!(
+    test!(
         escape_text_dirty_html,
         escape_text(HTML_DIRTY) == HTML_DIRTY_ESCAPED
     );
-    testify!(
+    test!(
         escape_text_clean_html,
         escape_text(HTML_CLEAN) == HTML_CLEAN
     );
