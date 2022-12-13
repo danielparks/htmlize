@@ -1,6 +1,6 @@
 [package]
 name = "htmlize"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Daniel Parks <oss-htmlize@demonhorse.org>"]
 description = "Encode and decode HTML entities in UTF-8"
 homepage = "https://github.com/danielparks/htmlize"
@@ -10,9 +10,6 @@ keywords = ["html"]
 categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
-
-[badges]
-maintenance = { status = "actively-developed" }
 
 [build-dependencies]
 serde_json = "1.0"
