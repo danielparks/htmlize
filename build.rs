@@ -23,7 +23,7 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_path = Path::new(&out_dir).join("entities.rs");
-    let mut out = File::create(&out_path).unwrap();
+    let mut out = File::create(out_path).unwrap();
 
     macro_rules! w {
         ($msg:literal $(, $args:expr)*) => {
@@ -46,7 +46,7 @@ fn main() {
         let mut codepoints: Vec<String> = Vec::new();
         for c in value.to_string().chars() {
             let ord: u32 = c.into();
-            codepoints.push(format!("U+{:06.X}", ord));
+            codepoints.push(format!("U+{:06X}", ord));
         }
 
         let name = format!("`{}`", name);
