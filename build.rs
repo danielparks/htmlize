@@ -15,7 +15,7 @@ use std::cmp::{max, min};
 use std::env;
 use std::fs;
 use std::fs::File;
-use std::io::Write;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 
 fn main() {
@@ -23,7 +23,7 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_path = Path::new(&out_dir).join("entities.rs");
-    let mut out = File::create(out_path).unwrap();
+    let mut out = BufWriter::new(File::create(out_path).unwrap());
 
     macro_rules! w {
         ($msg:literal $(, $args:expr)*) => {
@@ -31,8 +31,6 @@ fn main() {
         }
     }
 
-    w!("use phf::phf_map;");
-    w!("");
     w!("/// A map of all valid HTML entities to their expansions.");
     w!("///");
     w!(r#"/// The keys of the map are full entity byte strings, e.g. `b"&copy;"`, and the"#);
@@ -66,21 +64,19 @@ fn main() {
         w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), glyph);
     }
 
-    w!(
-        "{}",
-        "pub static ENTITIES: phf::Map<&[u8], &[u8]> = phf_map! {"
-    );
-
+    let mut map_builder = phf_codegen::Map::<&[u8]>::new();
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::max_value();
     for (name, value) in &entities {
+        map_builder.entry(name.as_bytes(), &format!("&{:?}", value.as_bytes()));
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
-
-        w!("    b{:?} => &{:?}, // {}", name, value.as_bytes(), value);
     }
 
-    w!("{}", "};");
+    w!(
+        "pub static ENTITIES: phf::Map<&[u8], &[u8]> = {};",
+        map_builder.build()
+    );
 
     w!("");
     w!("/// Length of longest entity including & and possibly ;");
