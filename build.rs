@@ -42,23 +42,23 @@ fn main() {
     w!("///");
     w!("/// Entity                         | Codepoints         | Glyph");
     w!("/// -------------------------------|--------------------|------");
-    for (name, value) in &entities {
+    for (name, glyph) in &entities {
         let mut codepoints: Vec<String> = Vec::new();
-        for c in value.to_string().chars() {
+        for c in glyph.to_string().chars() {
             let ord: u32 = c.into();
             codepoints.push(format!("U+{:06X}", ord));
         }
 
         let name = format!("`{}`", name);
 
-        // Suppress a few weird values. They wouldn’t actually hurt anything,
-        // but newline adds an extra line, and tab causes a clippy warning.
-        let value = match value.as_str() {
+        // Suppress a few inconvenient glyphs. Newline adds an extra line, and
+        // tab causes a clippy warning.
+        let glyph = match glyph.as_str() {
             "\n" | "\t" => "",
             v => v,
         };
 
-        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
+        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), glyph);
     }
 
     w!(
