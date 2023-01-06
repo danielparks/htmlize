@@ -10,7 +10,6 @@
 ///    "&AElig": { "codepoints": [198], "characters": "\u00C6" },
 ///    . . .
 /// }
-use serde_json::{Map, Value};
 use std::cmp::{max, min};
 use std::env;
 use std::fs;
@@ -87,15 +86,18 @@ fn main() {
     w!("pub const ENTITY_MIN_LENGTH: usize = {};", min_len);
 }
 
-pub fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
-    let path = path.as_ref();
-    let input = fs::read(path).unwrap();
-    let input: Map<String, Value> = serde_json::from_slice(&input).unwrap();
+fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
+    let input = fs::read(path.as_ref()).unwrap();
+    let input: serde_json::Map<String, serde_json::Value> =
+        serde_json::from_slice(&input).unwrap();
 
-    let mut entities = Vec::new();
-    for (name, info) in input {
-        entities.push((name, info["characters"].as_str().unwrap().to_owned()))
-    }
-
-    entities
+    input
+        .iter()
+        .map(|(name, info)| {
+            (
+                name.to_owned(),
+                info["characters"].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect()
 }
