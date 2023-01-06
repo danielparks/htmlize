@@ -33,12 +33,17 @@ fn main() {
 
     w!("use phf::phf_map;");
     w!("");
-    w!(r#"/// All valid HTML entities and their expansions as `(b"&copy;", b"©")` tuples."#);
+    w!("/// A map of all valid HTML entities to their expansions.");
     w!("///");
-    w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
-    w!("/// the canonical list of entities with their codepoints and glyphs. The");
-    w!("/// [entities.json](https://html.spec.whatwg.org/entities.json) file linked");
-    w!("/// there is used to generate this constant.");
+    w!(r#"/// The keys of the map are full entity byte strings, e.g. `b"&copy;"`, and the"#);
+    w!(r#"/// values are their expansions, e.g. `b"©"`."#);
+    w!("///");
+    w!("/// See the [WHATWG HTML spec][spec] for the canonical list of entities with");
+    w!("/// their codepoints and glyphs. The [entities.json][] file linked there is");
+    w!("/// used to generate this constant.");
+    w!("///");
+    w!("/// [spec]: https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references");
+    w!("/// [entities.json]: https://html.spec.whatwg.org/entities.json");
     w!("///");
     w!("/// Entity                         | Codepoints         | Glyph");
     w!("/// -------------------------------|--------------------|------");

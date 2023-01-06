@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
+  a collection of tuples.
+
 ## Release 0.5.1 (2022-12-13)
 
 ### Bugfixes
