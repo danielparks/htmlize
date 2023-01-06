@@ -70,16 +70,19 @@ mod tests {
 
     test!(
         escape_attribute_quotes,
-        escape_attribute("He said, \"That's mine.\"") == "He said, &quot;That's mine.&quot;"
+        escape_attribute("He said, \"That's mine.\"")
+            == "He said, &quot;That's mine.&quot;"
     );
 
     test!(
         escape_all_quotes_quotes,
-        escape_all_quotes("He said, \"That's mine.\"") == "He said, &quot;That&apos;s mine.&quot;"
+        escape_all_quotes("He said, \"That's mine.\"")
+            == "He said, &quot;That&apos;s mine.&quot;"
     );
 
     const HTML_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
-    const HTML_DIRTY_ESCAPED: &str = include_str!("../tests/corpus/html-escaped.txt");
+    const HTML_DIRTY_ESCAPED: &str =
+        include_str!("../tests/corpus/html-escaped.txt");
     const HTML_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
 
     test!(

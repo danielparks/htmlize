@@ -33,8 +33,8 @@ fn main() {
 
     w!("/// A map of all valid HTML entities to their expansions.");
     w!("///");
-    w!(r#"/// The keys of the map are full entity byte strings, e.g. `b"&copy;"`, and the"#);
-    w!(r#"/// values are their expansions, e.g. `b"©"`."#);
+    w!("/// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the");
+    w!("/// values are their expansions, e.g. `b\"©\"`.");
     w!("///");
     w!("/// See the [WHATWG HTML spec][spec] for the canonical list of entities with");
     w!("/// their codepoints and glyphs. The [entities.json][] file linked there is");
@@ -94,7 +94,7 @@ pub fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
 
     let mut entities = Vec::new();
     for (name, info) in input {
-        entities.push((name, String::from(info["characters"].as_str().unwrap())))
+        entities.push((name, info["characters"].as_str().unwrap().to_owned()))
     }
 
     entities
