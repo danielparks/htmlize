@@ -33,32 +33,37 @@ fn main() {
 
     w!("use phf::phf_map;");
     w!("");
-    w!(r#"/// All valid HTML entities and their expansions as `(b"&copy;", b"©")` tuples."#);
+    w!("/// A map of all valid HTML entities to their expansions.");
     w!("///");
-    w!("/// See the [WHATWG HTML spec](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references)");
-    w!("/// the canonical list of entities with their codepoints and glyphs. The");
-    w!("/// [entities.json](https://html.spec.whatwg.org/entities.json) file linked");
-    w!("/// there is used to generate this constant.");
+    w!(r#"/// The keys of the map are full entity byte strings, e.g. `b"&copy;"`, and the"#);
+    w!(r#"/// values are their expansions, e.g. `b"©"`."#);
+    w!("///");
+    w!("/// See the [WHATWG HTML spec][spec] for the canonical list of entities with");
+    w!("/// their codepoints and glyphs. The [entities.json][] file linked there is");
+    w!("/// used to generate this constant.");
+    w!("///");
+    w!("/// [spec]: https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references");
+    w!("/// [entities.json]: https://html.spec.whatwg.org/entities.json");
     w!("///");
     w!("/// Entity                         | Codepoints         | Glyph");
     w!("/// -------------------------------|--------------------|------");
-    for (name, value) in &entities {
+    for (name, glyph) in &entities {
         let mut codepoints: Vec<String> = Vec::new();
-        for c in value.to_string().chars() {
+        for c in glyph.to_string().chars() {
             let ord: u32 = c.into();
             codepoints.push(format!("U+{:06X}", ord));
         }
 
         let name = format!("`{}`", name);
 
-        // Suppress a few weird values. They wouldn’t actually hurt anything,
-        // but newline adds an extra line, and tab causes a clippy warning.
-        let value = match value.as_str() {
+        // Suppress a few inconvenient glyphs. Newline adds an extra line, and
+        // tab causes a clippy warning.
+        let glyph = match glyph.as_str() {
             "\n" | "\t" => "",
             v => v,
         };
 
-        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), value);
+        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), glyph);
     }
 
     w!(
