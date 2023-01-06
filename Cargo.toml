@@ -11,13 +11,17 @@ categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
 
+[features]
+default = []
+unescape = ["serde_json", "phf", "phf_codegen"]
+
 [build-dependencies]
-phf = { version = "0.11.1", default-features = false }
-phf_codegen = "0.11.1"
-serde_json = "1.0"
+phf = { version = "0.11.1", default-features = false, optional = true }
+phf_codegen = { version = "0.11.1", optional = true }
+serde_json = { version = "1.0", optional = true }
 
 [dependencies]
-phf = { version = "0.11.1", default-features = false }
+phf = { version = "0.11.1", default-features = false, optional = true }
 
 [dev-dependencies]
 assert2 = "0.3.7"

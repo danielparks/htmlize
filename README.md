@@ -44,6 +44,8 @@ not need to use this.
 
 ## Unescaping entities into text
 
+This requires the `unescape` feature.
+
 ### `unescape(string) -> String`
 
 This follows the [official WHATWG algorithm] for expanding entities. The only
@@ -52,6 +54,11 @@ differently when they are in the main body of the text as opposed to within an
 attribute.
 
 [API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html)
+
+## Features
+
+  * `unescape`: build `ENTITIES` map and provide `unescape()` function. Enabling
+    this will add a dependency on [phf] and may slow builds by a few seconds.
 
 ## License
 
@@ -72,3 +79,4 @@ additional terms or conditions.
 [`escape_attribute`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html
 [`escape_text`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+[phf]: https://crates.io/crates/phf
