@@ -286,7 +286,9 @@ where
     for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
         if let Some(expansion) = ENTITIES.get(&candidate[..check_len]) {
             // Found a match.
-            let mut result = Vec::with_capacity(expansion.len() + candidate.len() - check_len);
+            let mut result = Vec::with_capacity(
+                expansion.len() + candidate.len() - check_len,
+            );
             result.extend_from_slice(expansion);
 
             if check_len < candidate.len() {
@@ -349,7 +351,9 @@ mod tests {
     );
     test!(special_entity_space, unescape("&#x20") == " ");
 
-    const ALL_SOURCE: &str = include_str!("../tests/corpus/all-entities-source.txt");
-    const ALL_EXPANDED: &str = include_str!("../tests/corpus/all-entities-expanded.txt");
+    const ALL_SOURCE: &str =
+        include_str!("../tests/corpus/all-entities-source.txt");
+    const ALL_EXPANDED: &str =
+        include_str!("../tests/corpus/all-entities-expanded.txt");
     test!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 }
