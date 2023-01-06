@@ -45,12 +45,12 @@ fn main() {
     w!("/// Entity                         | Codepoints         | Glyph");
     w!("/// -------------------------------|--------------------|------");
     for (name, glyph) in &entities {
-        let mut codepoints: Vec<String> = Vec::new();
-        for c in glyph.to_string().chars() {
-            let ord: u32 = c.into();
-            codepoints.push(format!("U+{:06X}", ord));
-        }
+        let codepoints: Vec<String> = glyph
+            .chars()
+            .map(|c| format!("U+{:06X}", u32::from(c)))
+            .collect();
 
+        // `{:28}` would pad the output inside the backticks.
         let name = format!("`{}`", name);
 
         // Suppress a few inconvenient glyphs. Newline adds an extra line, and
