@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## main branch
+
 ## Release 0.5.1 (2022-12-13)
 
 ### Bugfixes
