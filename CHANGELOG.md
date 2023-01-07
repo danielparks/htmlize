@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
-* Switch to the [phf_codegen][] crate instead of using the `phf_map!` macro.
+* Switched to the [phf_codegen][] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
   a collection of tuples.
