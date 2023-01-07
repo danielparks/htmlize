@@ -19,13 +19,35 @@ All notable changes to this project will be documented in this file.
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
   a collection of tuples.
 
+### Bug fixes
+
+* `unescape()` incorrectly outputted the replacement character (U+FFFD “�”) for
+  certain numeric entities:
+
+    * [Noncharacters]
+    * [Control] characters
+    * `0x0D` (carriage return)
+
+  A close reading of the [spec] and some browser testing shows that behavior to
+  be incorrect. Those characters are now outputted as themselves.
+
+* `unescape()` incorrectly outputted long numeric entities as the literal text
+  of the entity.
+
+  A close reading of the [spec] and some browser testing shows that behavior to
+  be incorrect. Those long entities are now outputted as the replacement
+  character (U+FFFD “�”).
+
 [phf]: https://crates.io/crates/phf
 [phf_codegen]: https://crates.io/crates/phf_codegen
 [serde_json]: https://crates.io/crates/serde_json
+[Noncharacters]: https://infra.spec.whatwg.org/#noncharacter
+[Control]: https://infra.spec.whatwg.org/#control
+[spec]: https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
 
 ## Release 0.5.1 (2022-12-13)
 
-### Bugfixes
+### Bug fixes
 
 * Switched from [assertify][] (deprecated) to [assert2][] for testing.
 * Fixed typo of in docs: “entries.json” should have been “entities.json”.
