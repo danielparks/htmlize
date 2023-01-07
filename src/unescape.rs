@@ -23,7 +23,11 @@ include!(concat!(env!("OUT_DIR"), "/entities.rs"));
 pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
     let escaped = escaped.as_ref();
     let mut iter = escaped.iter().peekable();
-    let mut buffer = Vec::new(); // FIXME Vec::with_capacity(escaped.len())? Shrink on return?
+
+    // Most (all?) entities are longer than their expansion, so allocating the
+    // output buffer to be the same size as the input will usually prevent
+    // multiple allocations and generally won’t over-allocate by very much.
+    let mut buffer = Vec::with_capacity(escaped.len());
 
     while let Some(c) = iter.next() {
         if *c == b'&' {
