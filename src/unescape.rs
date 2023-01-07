@@ -90,7 +90,7 @@ where
     best_expansion
 }
 
-/// Unicode replacement character (U+FFFD �)
+/// Unicode replacement character (U+FFFD “�”)
 ///
 /// According to the WHATWG HTML spec, this is used as an expansion for certain
 /// invalid numeric entities.
