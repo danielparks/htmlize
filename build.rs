@@ -1,4 +1,4 @@
-/// Generates code from entities.json.
+/// Generates code from entities.json when feature “unescape“ is enabled.
 ///
 /// The canonical source is https://html.spec.whatwg.org/entities.json (see
 /// https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
@@ -9,14 +9,22 @@
 ///         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
 ///         . . .
 ///     }
-use std::cmp::{max, min};
-use std::env;
-use std::fs;
-use std::fs::File;
-use std::io::{BufWriter, Write};
-use std::path::Path;
+#[cfg(feature = "unescape")]
+use std::{
+    cmp::{max, min},
+    env, fs,
+    fs::File,
+    io::{BufWriter, Write},
+    path::Path,
+};
 
 fn main() {
+    #[cfg(feature = "unescape")]
+    generate_entities_rs();
+}
+
+#[cfg(feature = "unescape")]
+fn generate_entities_rs() {
     let entities = load_entities("entities.json");
 
     let out_dir = env::var("OUT_DIR").unwrap();
@@ -29,7 +37,8 @@ fn main() {
         }
     }
 
-    w!("/// A map of all valid HTML entities to their expansions.");
+    w!("/// A map of all valid HTML entities to their expansions (requires `unescape`");
+    w!("/// feature).");
     w!("///");
     w!("/// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the");
     w!("/// values are their expansions, e.g. `b\"©\"`.");
@@ -77,14 +86,17 @@ fn main() {
     );
 
     w!("");
-    w!("/// Length of longest entity including & and possibly ;");
+    w!("/// Length of longest entity including & and possibly ; (requires `unescape`");
+    w!("/// feature)");
     w!("pub const ENTITY_MAX_LENGTH: usize = {};", max_len);
 
     w!("");
-    w!("/// Length of shortest entity including & and possibly ;");
+    w!("/// Length of shortest entity including & and possibly ; (requires `unescape`");
+    w!("/// feature)");
     w!("pub const ENTITY_MIN_LENGTH: usize = {};", min_len);
 }
 
+#[cfg(feature = "unescape")]
 fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
     let input = fs::read(path.as_ref()).unwrap();
     let input: serde_json::Map<String, serde_json::Value> =

@@ -15,6 +15,16 @@
 //! `'`       | `&apos;` |               |                    | ✔
 //!
 //! **Note:** These are not sufficient to escape strings embedded in comments.
+//!
+//! # Features
+//!
+//!   * `unescape`: build [`ENTITIES`] map and provide [`unescape()`]. Enabling
+//!     this will add a dependency on [phf][] and may slow builds by a few
+//!     seconds.
+//!
+//! The `escape` functions are all available with no features enabled.
+//!
+//! [phf]: https://crates.io/crates/phf
 
 #[cfg(test)]
 #[macro_use]
@@ -23,5 +33,7 @@ pub mod test_helpers;
 mod escape;
 pub use escape::*;
 
+#[cfg(feature = "unescape")]
 mod unescape;
+#[cfg(feature = "unescape")]
 pub use unescape::*;
