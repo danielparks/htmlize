@@ -38,7 +38,6 @@ awk-in-place Cargo.toml '
   }
   { print }'
 
-sed -i '' -e 's/^version *= *".*"/version = "'$version'"/' Cargo.toml
 cargo check --quiet
 
 awk-in-place CHANGELOG.md '
