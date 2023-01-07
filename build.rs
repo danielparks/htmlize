@@ -1,15 +1,14 @@
-/// Generates code from entities.json
+/// Generates code from entities.json.
 ///
-/// The canonical source for entities.json is
-/// https://html.spec.whatwg.org/entities.json (see
+/// The canonical source is https://html.spec.whatwg.org/entities.json (see
 /// https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
 ///
 /// The entities.json file looks like:
 ///
-/// {
-///    "&AElig": { "codepoints": [198], "characters": "\u00C6" },
-///    . . .
-/// }
+///     {
+///         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
+///         . . .
+///     }
 use std::cmp::{max, min};
 use std::env;
 use std::fs;
