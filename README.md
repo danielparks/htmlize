@@ -45,8 +45,8 @@ attribute.
 This project dual-licensed under the Apache 2 and MIT licenses. You may choose
 to use either.
 
- * [Apache License, Version 2.0](LICENSE-APACHE)
- * [MIT license](LICENSE-MIT)
+  * [Apache License, Version 2.0](LICENSE-APACHE)
+  * [MIT license](LICENSE-MIT)
 
 ### Contributions
 
