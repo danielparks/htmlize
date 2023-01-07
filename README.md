@@ -15,21 +15,21 @@ Character | Entity   | `escape_text` | `escape_attribute` | `escape_all_quotes`
 Escape a string so that it can be embedded in the main text. This does not
 escape quotes at all.
 
-[API docs.](https://docs.rs/htmlize/0.5.0/htmlize/fn.escape_text.html)
+[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html)
 
 ### `escape_attribute(string) -> String`
 
 Escape a string so that it can be embedded in an attribute. Always use double
 quotes around attributes.
 
-[API docs.](https://docs.rs/htmlize/0.5.0/htmlize/fn.escape_attribute.html)
+[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html)
 
 ### `escape_all_quotes(string) -> String`
 
 Escape a string including both single and double quotes. In general you should
 not need to use this.
 
-[API docs.](https://docs.rs/htmlize/0.5.0/htmlize/fn.escape_all_quotes.html)
+[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes.html)
 
 ### `unescape(string) -> String`
 
@@ -38,7 +38,7 @@ exception should be that entities are supposed to be expanded slightly
 differently when they are in the main body of the text as opposed to within an
 attribute.
 
-[API docs.](https://docs.rs/htmlize/0.5.0/htmlize/fn.unescape.html)
+[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html)
 
 ## License
 
