@@ -12,6 +12,15 @@
 //! You should almost never need [`escape_all_quotes()`], but is included
 //! because sometimes it’s convenient to wrap attribute values in single quotes.
 //!
+//! # Which `unescape` function to use
+//!
+//! [`unescape()`] is probably fine for most uses. To be strictly correct, you
+//! should use [`unescape_attribute()`] for attribute values.
+//!
+//! [`unescape_in()`] handles either depending on the value of the `context`
+//! parameter. See its documentation for a discussion of the differences between
+//! expanding attribute values and general text.
+//!
 //! # Features
 //!
 //!   * `unescape`: build [`ENTITIES`] map and provide [`unescape()`]. Enabling

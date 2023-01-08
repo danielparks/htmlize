@@ -53,10 +53,28 @@ cargo add htmlize --features unescape
 
 ### `unescape(string) -> String` ([reference][`unescape()`])
 
-This follows the [official WHATWG algorithm] for expanding entities. The only
-exception should be that entities are supposed to be expanded slightly
-differently when they are in the main body of the text as opposed to within an
-attribute.
+This follows the [official WHATWG algorithm] for expanding entities in general.
+
+Strictly speaking, this does not correctly handle text from the value of
+attributes. It’s probably fine for most uses, but if you know that the input
+string came from the value of an attribute, use [`unescape_attribute()`]
+instead. See the [`unescape_in()` reference documentation][`unescape_in()`] for
+more information.
+
+### `unescape_attribute(string) -> String` ([reference][`unescape_attribute()`])
+
+This follows the [official WHATWG algorithm] for expanding entities found in the
+value of an attribute.
+
+The only difference is in how this handles named entities without a trailing
+semicolon. See the [`unescape_in()` reference documentation][`unescape_in()`]
+for more information.
+
+### `unescape_in(string, Htmlize::Context) -> String` ([reference][`unescape_in()`])
+
+This follows the [official WHATWG algorithm] for expanding entities based on
+the context where they are found. See the [reference
+documentation][`unescape_in()`] for more information.
 
 ## Features
 
@@ -83,5 +101,7 @@ additional terms or conditions.
 [`escape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html
 [`escape_all_quotes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes.html
 [`unescape()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html
+[`unescape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_attribute.html
+[`unescape_in()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_in.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
