@@ -1,20 +1,16 @@
-//! # What each `escape` function escapes
+//! # Which `escape` function to use
 //!
-//! The `escape` functions should cover most cases where you need to safely
-//! embed a string in HTML. Generally, if the text goes in an attribute, use
-//! [`escape_attribute`], otherwise use [`escape_text`].
+//! Generally, if the text goes in an attribute, use [`escape_attribute()`],
+//! otherwise, use [`escape_text()`].
 //!
-//! The differences between the functions are more exactly summed up below.
+//! |                         | `&` | `<` | `>` | `"` | `'` |
+//! |-------------------------|:---:|:---:|:---:|:---:|:---:|
+//! | [`escape_text()`]       |  ✔  |  ✔  |  ✔  |     |     |
+//! | [`escape_attribute()`]  |  ✔  |  ✔  |  ✔  |  ✔  |     |
+//! | [`escape_all_quotes()`] |  ✔  |  ✔  |  ✔  |  ✔  |  ✔  |
 //!
-//! Character | Entity   | `escape_text` | `escape_attribute` | `escape_all_quotes`
-//! ----------|----------|---------------|--------------------|--------------------
-//! `&`       | `&amp;`  | ✔             | ✔                  | ✔
-//! `<`       | `&lt;`   | ✔             | ✔                  | ✔
-//! `>`       | `&gt;`   | ✔             | ✔                  | ✔
-//! `"`       | `&quot;` |               | ✔                  | ✔
-//! `'`       | `&apos;` |               |                    | ✔
-//!
-//! **Note:** These are not sufficient to escape strings embedded in comments.
+//! You should almost never need [`escape_all_quotes()`], but is included
+//! because sometimes it’s convenient to wrap attribute values in single quotes.
 //!
 //! # Features
 //!

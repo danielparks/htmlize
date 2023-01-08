@@ -28,22 +28,47 @@ macro_rules! escape {
 
 /// Escape a string used in a text node, i.e. regular text.
 ///
-/// **Do not use this in attributes or comments.**
+/// **Do not use this in attributes.**
+///
+/// ```rust
+/// use htmlize::escape_text;
+///
+/// assert_eq!(
+///     escape_text(r#"Björk & Борис O'Brien <3, "love > hate""#),
+///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
+/// );
+/// ```
 pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>')
 }
 
-/// Escape a string used in a quoted attribute.
+/// Escape a string to be used in a quoted attribute.
 ///
-/// **Do not use this in comments.**
+/// ```rust
+/// use htmlize::escape_attribute;
+///
+/// assert_eq!(
+///     escape_attribute(r#"Björk & Борис O'Brien <3, "love > hate""#),
+///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
+/// );
+/// ```
 pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>', b'"')
 }
 
 /// Escape a string including both single and double quotes.
 ///
-/// **Do not use this in comments.** Generally, it is safe to leave single
-/// quotes (apostrophes) unescaped.
+/// Generally, it is safe to leave single quotes (apostrophes) unescaped, so you
+/// should use [`escape_text()`] or [`escape_attribute()`].
+///
+/// ```rust
+/// use htmlize::escape_all_quotes;
+///
+/// assert_eq!(
+///     escape_all_quotes(r#"Björk & Борис O'Brien <3, "love > hate""#),
+///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
+/// );
+/// ```
 pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
     escape!(raw, b'&', b'<', b'>', b'"', b'\'')
 }
