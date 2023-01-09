@@ -7,53 +7,42 @@
 
 The `escape` functions should cover most cases where you need to safely embed a
 string in HTML. Generally, if the text goes in an attribute, use
-[`escape_attribute`], otherwise use [`escape_text`].
+[`escape_attribute()`], otherwise use [`escape_text()`].
 
-The differences between the functions are more exactly summed up below.
+|                         | `&` | `<` | `>` | `"` | `'` |
+|-------------------------|:---:|:---:|:---:|:---:|:---:|
+| [`escape_text()`]       |  ✓  |  ✓  |  ✓  |     |     |
+| [`escape_attribute()`]  |  ✓  |  ✓  |  ✓  |  ✓  |     |
+| [`escape_all_quotes()`] |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
 
-Character | Entity   | `escape_text` | `escape_attribute` | `escape_all_quotes`
-----------|----------|---------------|--------------------|--------------------
-`&`       | `&amp;`  | ✔             | ✔                  | ✔
-`<`       | `&lt;`   | ✔             | ✔                  | ✔
-`>`       | `&gt;`   | ✔             | ✔                  | ✔
-`"`       | `&quot;` |               | ✔                  | ✔
-`'`       | `&apos;` |               |                    | ✔
+You should almost never need [`escape_all_quotes()`], but is included because
+sometimes it’s convenient to wrap attribute values in single quotes.
 
-**Note:** These are not sufficient to escape strings embedded in comments.
-
-### `escape_text(string) -> String`
+### `escape_text(string) -> String` ([reference][`escape_text()`])
 
 Escape a string so that it can be embedded in the main text. This does not
 escape quotes at all.
 
-[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html)
-
-### `escape_attribute(string) -> String`
+### `escape_attribute(string) -> String` ([reference][`escape_attribute()`])
 
 Escape a string so that it can be embedded in an attribute. Always use double
 quotes around attributes.
 
-[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html)
+### `escape_all_quotes(string) -> String` ([reference][`escape_all_quotes()`])
 
-### `escape_all_quotes(string) -> String`
-
-Escape a string including both single and double quotes. In general you should
-not need to use this.
-
-[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes.html)
+Escape both single and double quotes in a string along with other standard
+characters. In general you should not need to use this.
 
 ## Unescaping entities into text
 
 This requires the `unescape` feature.
 
-### `unescape(string) -> String`
+### `unescape(string) -> String` ([reference][`unescape()`])
 
 This follows the [official WHATWG algorithm] for expanding entities. The only
 exception should be that entities are supposed to be expanded slightly
 differently when they are in the main body of the text as opposed to within an
 attribute.
-
-[API docs.](https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html)
 
 ## Features
 
@@ -76,7 +65,9 @@ additional terms or conditions.
 
 [docs.rs]: https://docs.rs/htmlize/latest/htmlize/
 [crates.io]: https://crates.io/crates/htmlize
-[`escape_attribute`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html
-[`escape_text`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html
+[`escape_text()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html
+[`escape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html
+[`escape_all_quotes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes.html
+[`unescape()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
