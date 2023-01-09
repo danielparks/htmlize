@@ -1,4 +1,5 @@
 #![feature(test)]
+#![cfg(feature = "unescape")]
 
 extern crate test;
 
