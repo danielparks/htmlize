@@ -18,6 +18,10 @@ All notable changes to this project will be documented in this file.
   performance slightly.
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
   a collection of tuples.
+* Added `unescape_attribute()` to handle the special rules for dealing with
+  entities in the value of an HTML attribute. Also adds `unescape_in()`, which
+  takes a context parameter that can either be `Context::Attribute` or
+  `Context::General` (for everything else).
 
 ### Bug fixes
 
