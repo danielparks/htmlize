@@ -25,7 +25,7 @@ string in HTML. Generally, if the text goes in an attribute, use
 | [`escape_attribute()`]  |  ✓  |  ✓  |  ✓  |  ✓  |     |
 | [`escape_all_quotes()`] |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
 
-You should almost never need [`escape_all_quotes()`], but is included because
+You should almost never need [`escape_all_quotes()`], but it is included because
 sometimes it’s convenient to wrap attribute values in single quotes.
 
 ### `escape_text(string) -> String` ([reference][`escape_text()`])
