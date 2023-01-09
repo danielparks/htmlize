@@ -3,6 +3,16 @@
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
 
+If you only need to escape text for embedding into HTML then installing is as
+simple as running:
+
+```sh
+cargo add htmlize
+```
+
+If you want to unescape entities back into raw text, see [Unescaping entities
+into text](#unescaping-entities-into-text) below.
+
 ## Escaping text into entities
 
 The `escape` functions should cover most cases where you need to safely embed a
@@ -35,7 +45,11 @@ characters. In general you should not need to use this.
 
 ## Unescaping entities into text
 
-This requires the `unescape` feature.
+This requires the `unescape` feature. To configure it:
+
+```sh
+cargo add htmlize --features unescape
+```
 
 ### `unescape(string) -> String` ([reference][`unescape()`])
 
