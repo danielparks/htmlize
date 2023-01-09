@@ -5,9 +5,9 @@
 //!
 //! |                         | `&` | `<` | `>` | `"` | `'` |
 //! |-------------------------|:---:|:---:|:---:|:---:|:---:|
-//! | [`escape_text()`]       |  ✔  |  ✔  |  ✔  |     |     |
-//! | [`escape_attribute()`]  |  ✔  |  ✔  |  ✔  |  ✔  |     |
-//! | [`escape_all_quotes()`] |  ✔  |  ✔  |  ✔  |  ✔  |  ✔  |
+//! | [`escape_text()`]       |  ✓  |  ✓  |  ✓  |     |     |
+//! | [`escape_attribute()`]  |  ✓  |  ✓  |  ✓  |  ✓  |     |
+//! | [`escape_all_quotes()`] |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
 //!
 //! You should almost never need [`escape_all_quotes()`], but is included
 //! because sometimes it’s convenient to wrap attribute values in single quotes.
