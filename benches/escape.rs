@@ -17,18 +17,18 @@ fn benchmarks(c: &mut Criterion) {
 
     [
         (
-            "small_dirty",
-            "<a href=\"http://example.com/\">link</a> & [link]",
-        ),
-        (
             "small_clean",
             ".a href=.http://example.com/..link./a. . [link]",
         ),
-        ("big_dirty", include_str!("../tests/corpus/html-raw.txt")),
         (
             "big_clean",
             include_str!("../tests/corpus/html-cleaned.txt"),
         ),
+        (
+            "small_dirty",
+            "<a href=\"http://example.com/\">link</a> & [link]",
+        ),
+        ("big_dirty", include_str!("../tests/corpus/html-raw.txt")),
     ]
     .iter()
     .for_each(|(name, input)| {
