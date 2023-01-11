@@ -24,12 +24,16 @@
 //! # Features
 //!
 //!   * `unescape`: build [`ENTITIES`] map and provide [`unescape()`]. Enabling
-//!     this will add a dependency on [phf][] and may slow builds by a few
+//!     this will add a dependency on [phf] and may slow builds by a few
 //!     seconds.
+//!   * `iai`: enable [iai] benchmarks. This should only be used when running
+//!     benchmarks. See the [Benchmarks section in the README][benchmarks].
 //!
 //! The `escape` functions are all available with no features enabled.
 //!
 //! [phf]: https://crates.io/crates/phf
+//! [iai]: https://crates.io/crates/iai
+//! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
 #[cfg(test)]
 #[macro_use]
