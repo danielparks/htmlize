@@ -1,18 +1,47 @@
-#![feature(test)]
-
-extern crate test;
-
+use criterion::{
+    criterion_group, criterion_main, BenchmarkId, Criterion, Throughput,
+};
 use htmlize::*;
+use std::convert::TryInto;
+use std::time::Duration;
 
-#[macro_use]
-mod helpers;
+fn benchmarks(c: &mut Criterion) {
+    let mut group = c.benchmark_group("escape");
+    group
+        .noise_threshold(0.10)
+        .significance_level(0.01)
+        .confidence_level(0.99)
+        .sample_size(500)
+        .warm_up_time(Duration::from_secs(1))
+        .measurement_time(Duration::from_secs(5));
 
-const SMALL_DIRTY: &str = "<a href=\"http://example.com/\">link</a> & [link]";
-const SMALL_CLEAN: &str = ".a href=.http://example.com/..link./a. . [link]";
-const BIG_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
-const BIG_CLEAN: &str = include_str!("../tests/corpus/html-cleaned.txt");
+    [
+        (
+            "small_dirty",
+            "<a href=\"http://example.com/\">link</a> & [link]",
+        ),
+        (
+            "small_clean",
+            ".a href=.http://example.com/..link./a. . [link]",
+        ),
+        ("big_dirty", include_str!("../tests/corpus/html-raw.txt")),
+        (
+            "big_clean",
+            include_str!("../tests/corpus/html-cleaned.txt"),
+        ),
+    ]
+    .iter()
+    .for_each(|(name, input)| {
+        group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
+        group.bench_with_input(
+            BenchmarkId::new("escape_text", name),
+            input,
+            |b, input| b.iter(|| escape_text(&**input)),
+        );
+    });
 
-bench_func!(escape_text_small_dirty, escape_text, SMALL_DIRTY);
-bench_func!(escape_text_small_clean, escape_text, SMALL_CLEAN);
-bench_func!(escape_text_big_dirty, escape_text, BIG_DIRTY);
-bench_func!(escape_text_big_clean, escape_text, BIG_CLEAN);
+    group.finish();
+}
+
+criterion_group!(escape_group, benchmarks);
+criterion_main!(escape_group);

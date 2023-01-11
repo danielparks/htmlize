@@ -25,4 +25,17 @@ phf = { version = "0.11.1", default-features = false, optional = true }
 
 [dev-dependencies]
 assert2 = "0.3.7"
+criterion = "0.4.0"
 paste = "1.0.11"
+
+[lib]
+bench = false
+
+[[bench]]
+name = "escape"
+harness = false
+
+[[bench]]
+name = "unescape"
+harness = false
+required-features = ["unescape"]
