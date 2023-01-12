@@ -1,5 +1,21 @@
 use std::borrow::Cow;
 
+macro_rules! find_u8_fn {
+    ($($ch:literal),+) => {
+        #[inline]
+        fn find_u8(haystack: &[u8]) -> Option<usize> {
+            let mut i: usize = 0;
+            for c in haystack {
+                if matches!(c, $($ch)|+) {
+                    return Some(i);
+                }
+                i += 1;
+            }
+            None
+        }
+    };
+}
+
 macro_rules! escape_fn {
     (
         $(#[$meta:meta])*
@@ -12,22 +28,33 @@ macro_rules! escape_fn {
             let input = input.into();
             let raw = input.as_bytes();
 
-            for (i, c) in raw.iter().enumerate() {
-                if matches!(c, $($ch)|+) {
-                    let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
-                    output.extend_from_slice(&raw[..i]);
+            find_u8_fn!($($ch),+);
 
-                    for c in &raw[i..] {
-                        match c {
-                            $(
-                                $ch => output.extend_from_slice($entity),
-                            )+
-                            _ => output.push(*c),
-                        }
-                    }
-
-                    return String::from_utf8(output).unwrap().into();
+            #[inline]
+            fn map_u8(c: u8) -> &'static [u8] {
+                match c {
+                    $( $ch => $entity, )+
+                    // This should never happen, but using unreachable!()
+                    // actually makes other parts of the function slower.
+                    _ => b"",
                 }
+            }
+
+            if let Some(i) = find_u8(raw) {
+                let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
+                output.extend_from_slice(&raw[..i]);
+                output.extend_from_slice(map_u8(raw[i]));
+                let mut remainder = &raw[i+1..];
+
+                while let Some(i) = find_u8(remainder) {
+                    output.extend_from_slice(&remainder[..i]);
+                    output.extend_from_slice(map_u8(remainder[i]));
+                    remainder = &remainder[i+1..];
+                }
+
+                output.extend_from_slice(&remainder);
+
+                return String::from_utf8(output).unwrap().into();
             }
 
             input
@@ -101,12 +128,13 @@ escape_fn! {
 mod tests {
     use super::*;
 
-    const BASIC_CORPUS: [(&str, &str); 6] = [
+    const BASIC_CORPUS: [(&str, &str); 7] = [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
         ("prefix&", "prefix&amp;"),
+        ("☺️&☺️", "☺️&amp;☺️"),
         (
             "Björk and Борис OBrien ❤️, “love beats hate”",
             "Björk and Борис OBrien ❤️, “love beats hate”",
