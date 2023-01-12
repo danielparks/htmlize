@@ -1,23 +1,13 @@
-#[inline]
-fn map_u8(c: u8) -> &'static [u8] {
-    match c {
-        b'&' => b"&amp;",
-        b'<' => b"&lt;",
-        b'>' => b"&gt;",
-        b'"' => b"&quot;",  // Attributes
-        b'\'' => b"&apos;", // Single quoted attributes
-        _ => panic!("map_u8 called on invalid character {}", char::from(c)),
-    }
-}
-
 macro_rules! escape {
-    ($raw:expr, $($ch:literal),+) => {{
+    ($raw:expr, { $($ch:literal => $entity:literal,)+ }) => {{
         let raw = $raw.as_ref();
         let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
 
         for c in raw {
             match c {
-                $($ch)|+ => output.extend_from_slice(map_u8(*c)),
+                $(
+                    $ch => output.extend_from_slice($entity),
+                )+
                 _ => output.push(*c),
             }
         }
@@ -39,7 +29,11 @@ macro_rules! escape {
 /// );
 /// ```
 pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, b'&', b'<', b'>')
+    escape!(raw, {
+        b'&' => b"&amp;",
+        b'<' => b"&lt;",
+        b'>' => b"&gt;",
+    })
 }
 
 /// Escape a string to be used in a quoted attribute.
@@ -53,7 +47,12 @@ pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
 /// );
 /// ```
 pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, b'&', b'<', b'>', b'"')
+    escape!(raw, {
+        b'&' => b"&amp;",
+        b'<' => b"&lt;",
+        b'>' => b"&gt;",
+        b'"' => b"&quot;", // Attributes
+    })
 }
 
 /// Escape a string including both single and double quotes.
@@ -70,7 +69,13 @@ pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
 /// );
 /// ```
 pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, b'&', b'<', b'>', b'"', b'\'')
+    escape!(raw, {
+        b'&' => b"&amp;",
+        b'<' => b"&lt;",
+        b'>' => b"&gt;",
+        b'"' => b"&quot;",  // Attributes
+        b'\'' => b"&apos;", // Single quoted attributes
+    })
 }
 
 #[cfg(test)]
