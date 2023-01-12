@@ -5,7 +5,7 @@ macro_rules! test_multiple {
         #[test]
         fn $name() {
             for (input, expected) in &$tests {
-                ::assert2::assert!($func(&input) == *expected);
+                ::assert2::assert!($func(&**input) == *expected);
             }
         }
     };

@@ -1,6 +1,7 @@
 use htmlize::*;
 use iai::black_box;
 use paste::paste;
+use std::borrow::Cow;
 
 mod util;
 
@@ -8,13 +9,13 @@ macro_rules! iai_benchmarks {
     ( $( ($name:ident, $input:expr), )+ ) => {
         paste! {
             $(
-                fn [<iai_escape_text_ $name>]() -> String {
+                fn [<iai_escape_text_ $name>]() -> Cow<'static, str> {
                     escape_text(black_box($input))
                 }
             )+
 
             $(
-                fn [<iai_escape_all_quotes_ $name>]() -> String {
+                fn [<iai_escape_all_quotes_ $name>]() -> Cow<'static, str> {
                     escape_all_quotes(black_box($input))
                 }
             )+

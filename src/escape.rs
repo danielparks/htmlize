@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 macro_rules! escape_fn {
     (
         $(#[$meta:meta])*
@@ -6,20 +8,29 @@ macro_rules! escape_fn {
         }
     ) => {
         $(#[$meta])*
-        $vis fn $name<S: AsRef<[u8]>>(raw: S) -> String {
-            let raw = raw.as_ref();
-            let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
+        $vis fn $name<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
+            let input = input.into();
+            let raw = input.as_bytes();
 
-            for c in raw {
-                match c {
-                    $(
-                        $ch => output.extend_from_slice($entity),
-                    )+
-                    _ => output.push(*c),
+            for (i, c) in raw.iter().enumerate() {
+                if matches!(c, $($ch)|+) {
+                    let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
+                    output.extend_from_slice(&raw[..i]);
+
+                    for c in &raw[i..] {
+                        match c {
+                            $(
+                                $ch => output.extend_from_slice($entity),
+                            )+
+                            _ => output.push(*c),
+                        }
+                    }
+
+                    return String::from_utf8(output).unwrap().into();
                 }
             }
 
-            String::from_utf8(output).unwrap()
+            input
         }
     }
 }
@@ -90,11 +101,12 @@ escape_fn! {
 mod tests {
     use super::*;
 
-    const BASIC_CORPUS: [(&str, &str); 5] = [
+    const BASIC_CORPUS: [(&str, &str); 6] = [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
+        ("prefix&", "prefix&amp;"),
         (
             "Björk and Борис OBrien ❤️, “love beats hate”",
             "Björk and Борис OBrien ❤️, “love beats hate”",
