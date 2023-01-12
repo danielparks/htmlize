@@ -39,6 +39,18 @@ fn benchmarks(c: &mut Criterion) {
         for (size_name, input) in inputs {
             util::benchmark!(group, escape_text, size_name, input);
             util::benchmark!(group, escape_all_quotes, size_name, input);
+            util::benchmark!(
+                group,
+                escape_text_bytes,
+                size_name,
+                input.as_bytes()
+            );
+            util::benchmark!(
+                group,
+                escape_all_quotes_bytes,
+                size_name,
+                input.as_bytes()
+            );
         }
 
         group.finish();

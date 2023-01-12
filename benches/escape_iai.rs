@@ -20,13 +20,23 @@ macro_rules! iai_benchmarks {
                 }
             )+
 
+            $(
+                fn [<iai_escape_text_bytes_ $name>]() -> Cow<'static, [u8]> {
+                    escape_text_bytes(black_box($input.as_bytes()))
+                }
+            )+
+
+            $(
+                fn [<iai_escape_all_quotes_bytes_ $name>]() -> Cow<'static, [u8]> {
+                    escape_all_quotes_bytes(black_box($input.as_bytes()))
+                }
+            )+
+
             iai::main!(
-                $(
-                    [<iai_escape_text_ $name>],
-                )+
-                $(
-                    [<iai_escape_all_quotes_ $name>],
-                )+
+                $([<iai_escape_text_ $name>],)+
+                $([<iai_escape_all_quotes_ $name>],)+
+                $([<iai_escape_text_bytes_ $name>],)+
+                $([<iai_escape_all_quotes_bytes_ $name>],)+
             );
         }
     }

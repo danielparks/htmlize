@@ -1,146 +1,224 @@
-[0m[0m[1m[32m   Compiling[0m htmlize v0.5.1 (/work)
-[0m[0m[1m[32m    Finished[0m bench [optimized] target(s) in 15.07s
-[0m[0m[1m[32m     Running[0m benches/escape.rs (target/release/deps/escape-387d880c8586ecbe)
-[0m[0m[1m[32m     Running[0m benches/escape_iai.rs (target/release/deps/escape_iai-de731fbc0a454e49)
 iai_escape_text_clean_small
-  Instructions:                 374 (  +inf%)
-  L1 Accesses:                  417 (-100.0000%)
-  L2 Accesses:                    5 (+66.66667%)
-  RAM Accesses:                  29 (+3.571429%)
-  Estimated Cycles:            1457 (+51.14108%)
+  Instructions:                 375 (  +inf%)
+  L1 Accesses:                  418 (-100.0000%)
+  L2 Accesses:                    4 (-42.85714%)
+  RAM Accesses:                  30 (+3.448276%)
+  Estimated Cycles:            1488 (+46.74556%)
 
 iai_escape_text_clean_medium
-  Instructions:                 394 (  +inf%)
-  L1 Accesses:                  435 (-100.0000%)
-  L2 Accesses:                    5 (+66.66667%)
-  RAM Accesses:                  33 (+13.79310%)
-  Estimated Cycles:            1615 (+61.82365%)
+  Instructions:                 379 (  +inf%)
+  L1 Accesses:                  421 (-100.0000%)
+  L2 Accesses:                    4 (-42.85714%)
+  RAM Accesses:                  32 (No change)
+  Estimated Cycles:            1561 (+39.87455%)
 
 iai_escape_text_clean_big
-  Instructions:                 451 (  +inf%)
-  L1 Accesses:                  496 (-100.0000%)
-  L2 Accesses:                    5 (+66.66667%)
-  RAM Accesses:                  35 (+16.66667%)
-  Estimated Cycles:            1746 (+69.18605%)
+  Instructions:                 452 (  +inf%)
+  L1 Accesses:                  497 (-100.0000%)
+  L2 Accesses:                    4 (-42.85714%)
+  RAM Accesses:                  36 (+16.12903%)
+  Estimated Cycles:            1777 (+64.23290%)
 
 iai_escape_text_dirty_small
-  Instructions:                1570 (  +inf%)
-  L1 Accesses:                 1887 (-100.00000%)
-  L2 Accesses:                    4 (+33.33333%)
-  RAM Accesses:                  43 (+16.21622%)
-  Estimated Cycles:            3412 (+168.6614%)
+  Instructions:                1571 (  +inf%)
+  L1 Accesses:                 1883 (-100.00000%)
+  L2 Accesses:                    8 (+33.33333%)
+  RAM Accesses:                  43 (+10.25641%)
+  Estimated Cycles:            3428 (+153.9259%)
 
 iai_escape_text_dirty_medium
-  Instructions:                1060 (  +inf%)
-  L1 Accesses:                 1279 (-100.00000%)
-  L2 Accesses:                    4 (+33.33333%)
-  RAM Accesses:                  47 (+11.90476%)
-  Estimated Cycles:            2944 (+104.4444%)
+  Instructions:                1039 (  +inf%)
+  L1 Accesses:                 1253 (-100.00000%)
+  L2 Accesses:                    6 (No change)
+  RAM Accesses:                  46 (+4.545455%)
+  Estimated Cycles:            2893 (+90.32895%)
 
 iai_escape_text_dirty_big
-  Instructions:                5334 (  +inf%)
-  L1 Accesses:                 6501 (-100.00000%)
-  L2 Accesses:                    7 (+133.3333%)
-  RAM Accesses:                  61 (+35.55556%)
-  Estimated Cycles:            8671 (+462.3217%)
+  Instructions:                5333 (  +inf%)
+  L1 Accesses:                 6498 (-100.00000%)
+  L2 Accesses:                    9 (+50.00000%)
+  RAM Accesses:                  60 (+30.43478%)
+  Estimated Cycles:            8643 (+444.2695%)
 
 iai_escape_all_quotes_clean_small
-  Instructions:                 463 (  +inf%)
-  L1 Accesses:                  614 (-100.0000%)
-  L2 Accesses:                    2 (+100.0000%)
+  Instructions:                 465 (  +inf%)
+  L1 Accesses:                  616 (-100.0000%)
+  L2 Accesses:                    3 (-25.00000%)
   RAM Accesses:                   6 (No change)
-  Estimated Cycles:             834 (+300.9615%)
+  Estimated Cycles:             841 (+282.2727%)
 
 iai_escape_all_quotes_clean_medium
-  Instructions:                 908 (  +inf%)
-  L1 Accesses:                 1177 (-100.00000%)
-  L2 Accesses:                    2 (+100.0000%)
-  RAM Accesses:                   8 (+60.00000%)
-  Estimated Cycles:            1467 (+743.1034%)
+  Instructions:                 910 (  +inf%)
+  L1 Accesses:                 1180 (-100.00000%)
+  L2 Accesses:                    3 (-25.00000%)
+  RAM Accesses:                   7 (No change)
+  Estimated Cycles:            1440 (+466.9291%)
 
 iai_escape_all_quotes_clean_big
-  Instructions:                4801 (  +inf%)
-  L1 Accesses:                 6006 (-100.00000%)
-  L2 Accesses:                    2 (+100.0000%)
+  Instructions:                4806 (  +inf%)
+  L1 Accesses:                 6008 (-100.00000%)
+  L2 Accesses:                    6 (+50.00000%)
   RAM Accesses:                  38 (+65.21739%)
-  Estimated Cycles:            7346 (+834.6056%)
+  Estimated Cycles:            7368 (+823.3083%)
 
 iai_escape_all_quotes_dirty_small
-  Instructions:                1610 (  +inf%)
-  L1 Accesses:                 2040 (-100.00000%)
-  L2 Accesses:                    3 (+200.0000%)
-  RAM Accesses:                  27 (+35.00000%)
-  Estimated Cycles:            3000 (+338.5965%)
+  Instructions:                1615 (  +inf%)
+  L1 Accesses:                 2044 (-100.00000%)
+  L2 Accesses:                    6 (+50.00000%)
+  RAM Accesses:                  26 (+36.84211%)
+  Estimated Cycles:            2984 (+350.7553%)
 
 iai_escape_all_quotes_dirty_medium
-  Instructions:                1534 (  +inf%)
-  L1 Accesses:                 1900 (-100.00000%)
-  L2 Accesses:                    2 (+100.0000%)
-  RAM Accesses:                  23 (+21.05263%)
-  Estimated Cycles:            2715 (+317.6923%)
+  Instructions:                1539 (  +inf%)
+  L1 Accesses:                 1904 (-100.00000%)
+  L2 Accesses:                    4 (No change)
+  RAM Accesses:                  23 (+27.77778%)
+  Estimated Cycles:            2729 (+334.5541%)
 
 iai_escape_all_quotes_dirty_big
-  Instructions:                7400 (  +inf%)
-  L1 Accesses:                 9445 (-100.00000%)
-  L2 Accesses:                    7 (+600.0000%)
+  Instructions:                7405 (  +inf%)
+  L1 Accesses:                 9452 (-100.00000%)
+  L2 Accesses:                    6 (+50.00000%)
   RAM Accesses:                  42 (+82.60870%)
-  Estimated Cycles:           10950 (+1293.130%)
+  Estimated Cycles:           10952 (+1272.431%)
 
-[0m[0m[1m[32m     Running[0m benches/unescape.rs (target/release/deps/unescape-c39baa2cbb4fb509)
-[0m[0m[1m[32m     Running[0m benches/unescape_iai.rs (target/release/deps/unescape_iai-55423651f0c34913)
+iai_escape_text_bytes_clean_small
+  Instructions:                 391
+  L1 Accesses:                  437
+  L2 Accesses:                    3
+  RAM Accesses:                  32
+  Estimated Cycles:            1572
+
+iai_escape_text_bytes_clean_medium
+  Instructions:                 395
+  L1 Accesses:                  440
+  L2 Accesses:                    3
+  RAM Accesses:                  34
+  Estimated Cycles:            1645
+
+iai_escape_text_bytes_clean_big
+  Instructions:                 468
+  L1 Accesses:                  515
+  L2 Accesses:                    4
+  RAM Accesses:                  38
+  Estimated Cycles:            1865
+
+iai_escape_text_bytes_dirty_small
+  Instructions:                1197
+  L1 Accesses:                 1451
+  L2 Accesses:                    6
+  RAM Accesses:                  41
+  Estimated Cycles:            2916
+
+iai_escape_text_bytes_dirty_medium
+  Instructions:                 932
+  L1 Accesses:                 1117
+  L2 Accesses:                    5
+  RAM Accesses:                  46
+  Estimated Cycles:            2752
+
+iai_escape_text_bytes_dirty_big
+  Instructions:                4710
+  L1 Accesses:                 5759
+  L2 Accesses:                    5
+  RAM Accesses:                  56
+  Estimated Cycles:            7744
+
+iai_escape_all_quotes_bytes_clean_small
+  Instructions:                 480
+  L1 Accesses:                  631
+  L2 Accesses:                    3
+  RAM Accesses:                   9
+  Estimated Cycles:             961
+
+iai_escape_all_quotes_bytes_clean_medium
+  Instructions:                 925
+  L1 Accesses:                 1195
+  L2 Accesses:                    3
+  RAM Accesses:                  10
+  Estimated Cycles:            1560
+
+iai_escape_all_quotes_bytes_clean_big
+  Instructions:                4257
+  L1 Accesses:                 5354
+  L2 Accesses:                    6
+  RAM Accesses:                  34
+  Estimated Cycles:            6574
+
+iai_escape_all_quotes_bytes_dirty_small
+  Instructions:                1231
+  L1 Accesses:                 1597
+  L2 Accesses:                    6
+  RAM Accesses:                  24
+  Estimated Cycles:            2467
+
+iai_escape_all_quotes_bytes_dirty_medium
+  Instructions:                1408
+  L1 Accesses:                 1735
+  L2 Accesses:                    6
+  RAM Accesses:                  23
+  Estimated Cycles:            2570
+
+iai_escape_all_quotes_bytes_dirty_big
+  Instructions:                6755
+  L1 Accesses:                 8681
+  L2 Accesses:                    7
+  RAM Accesses:                  36
+  Estimated Cycles:            9976
+
 iai_unescape_sample_128
-  Instructions:              313438 (-15.83072%)
-  L1 Accesses:               383904 (-16.20872%)
-  L2 Accesses:                  183 (-2.139037%)
-  RAM Accesses:                 618 (-81.97200%)
-  Estimated Cycles:          406449 (-29.81149%)
+  Instructions:              313438 (-15.71415%)
+  L1 Accesses:               383906 (-16.08667%)
+  L2 Accesses:                  183 (-5.670103%)
+  RAM Accesses:                 616 (-81.88235%)
+  Estimated Cycles:          406381 (-29.62771%)
 
 iai_unescape_attribute_sample_128
-  Instructions:              310494 (-15.95687%)
-  L1 Accesses:               380577 (-16.32710%)
-  L2 Accesses:                  183 (-2.659574%)
-  RAM Accesses:                 617 (-81.99591%)
-  Estimated Cycles:          403087 (-29.98607%)
+  Instructions:              310494 (-15.83955%)
+  L1 Accesses:               380579 (-16.20451%)
+  L2 Accesses:                  183 (-5.670103%)
+  RAM Accesses:                 615 (-81.90644%)
+  Estimated Cycles:          403019 (-29.80121%)
 
 iai_unescape_sample_128_bare
-  Instructions:             1311199 (-4.302591%)
-  L1 Accesses:              1490999 (-4.744567%)
-  L2 Accesses:                  359 (-0.828729%)
-  RAM Accesses:                 653 (-81.13807%)
-  Estimated Cycles:         1515649 (-10.22334%)
+  Instructions:             1311199 (-4.266608%)
+  L1 Accesses:              1491000 (-4.703956%)
+  L2 Accesses:                  359 (-2.972973%)
+  RAM Accesses:                 652 (-81.01892%)
+  Estimated Cycles:         1515615 (-10.14174%)
 
 iai_unescape_attribute_sample_128_bare
-  Instructions:              313237 (-15.83926%)
-  L1 Accesses:               369522 (-16.73457%)
-  L2 Accesses:                   48 (-4.000000%)
-  RAM Accesses:                 338 (-89.25961%)
-  Estimated Cycles:          381592 (-31.14332%)
+  Instructions:              313237 (-15.72265%)
+  L1 Accesses:               369519 (-16.60991%)
+  L2 Accesses:                   51 (-13.55932%)
+  RAM Accesses:                 338 (-89.16667%)
+  Estimated Cycles:          381604 (-30.94590%)
 
 iai_unescape_sample_128_none
-  Instructions:              247299 (-19.24957%)
-  L1 Accesses:               298602 (-19.91729%)
-  L2 Accesses:                   41 (-10.86957%)
-  RAM Accesses:                 311 (-90.02566%)
-  Estimated Cycles:          309692 (-35.77879%)
+  Instructions:              247299 (-19.11355%)
+  L1 Accesses:               298600 (-19.77453%)
+  L2 Accesses:                   43 (-17.30769%)
+  RAM Accesses:                 311 (-89.94504%)
+  Estimated Cycles:          309700 (-35.57527%)
 
 iai_unescape_attribute_sample_128_none
-  Instructions:              247299 (-19.24957%)
-  L1 Accesses:               298602 (-19.91729%)
-  L2 Accesses:                   41 (-10.86957%)
-  RAM Accesses:                 311 (-90.02566%)
-  Estimated Cycles:          309692 (-35.77879%)
+  Instructions:              247299 (-19.11355%)
+  L1 Accesses:               298600 (-19.77453%)
+  L2 Accesses:                   43 (-17.30769%)
+  RAM Accesses:                 311 (-89.94504%)
+  Estimated Cycles:          309700 (-35.57527%)
 
 iai_unescape_sample_128_invalid
-  Instructions:             1233964 (-4.559616%)
-  L1 Accesses:              1395973 (-5.051288%)
-  L2 Accesses:                  109 (-1.801802%)
-  RAM Accesses:                 371 (-88.33333%)
-  Estimated Cycles:         1409503 (-10.90902%)
+  Instructions:             1233964 (-4.521584%)
+  L1 Accesses:              1395971 (-5.008329%)
+  L2 Accesses:                  111 (-7.500000%)
+  RAM Accesses:                 371 (-88.23343%)
+  Estimated Cycles:         1409511 (-10.82019%)
 
 iai_unescape_attribute_sample_128_invalid
-  Instructions:              313237 (-15.83926%)
-  L1 Accesses:               369520 (-16.73408%)
-  L2 Accesses:                   51 (-8.928571%)
-  RAM Accesses:                 337 (-89.28798%)
-  Estimated Cycles:          381570 (-31.14605%)
+  Instructions:              313237 (-15.72265%)
+  L1 Accesses:               369517 (-16.60999%)
+  L2 Accesses:                   53 (-14.51613%)
+  RAM Accesses:                 338 (-89.16319%)
+  Estimated Cycles:          381612 (-30.94170%)
 

@@ -1,3 +1,4 @@
+use paste::paste;
 use std::borrow::Cow;
 
 macro_rules! find_u8_body {
@@ -18,48 +19,72 @@ macro_rules! find_u8_body {
 macro_rules! escape_fn {
     (
         $(#[$meta:meta])*
-        $vis:vis fn $name:ident {
+        $vis:vis fn $name:ident;
+
+        $(#[$bytes_meta:meta])*
+        $bytes_vis:vis fn $bytes_name:ident;
+
+        {
             $($ch:literal => $entity:literal,)+
         }
     ) => {
-        $(#[$meta])*
-        $vis fn $name<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
-            let input = input.into();
-            let raw = input.as_bytes();
+        paste! {
+            $(#[$meta])*
+            $vis fn $name<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
+                let input = input.into();
 
-            #[inline]
-            fn find_u8(haystack: &[u8]) -> Option<usize> {
-                find_u8_body!(haystack, $($ch),+)
-            }
-
-            #[inline]
-            fn map_u8(c: u8) -> &'static [u8] {
-                match c {
-                    $( $ch => $entity, )+
-                    // This should never happen, but using unreachable!()
-                    // actually makes other parts of the function slower.
-                    _ => b"",
+                match [<$name _bytes_internal>](input.as_bytes()) {
+                    Some(output) => String::from_utf8(output).unwrap().into(),
+                    None => input,
                 }
             }
 
-            if let Some(i) = find_u8(raw) {
-                let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
-                output.extend_from_slice(&raw[..i]);
-                output.extend_from_slice(map_u8(raw[i]));
-                let mut remainder = &raw[i+1..];
+            $(#[$bytes_meta])*
+            $bytes_vis fn $bytes_name<'a, S: Into<Cow<'a, [u8]>>>(input: S) -> Cow<'a, [u8]> {
+                let input = input.into();
 
-                while let Some(i) = find_u8(remainder) {
-                    output.extend_from_slice(&remainder[..i]);
-                    output.extend_from_slice(map_u8(remainder[i]));
-                    remainder = &remainder[i+1..];
+                match [<$name _bytes_internal>](&*input) {
+                    Some(output) => output.into(),
+                    None => input,
                 }
-
-                output.extend_from_slice(&remainder);
-
-                return String::from_utf8(output).unwrap().into();
             }
 
-            input
+            #[inline(always)]
+            fn [<$name _bytes_internal>](raw: &[u8]) -> Option<Vec<u8>> {
+                #[inline]
+                fn find_u8(haystack: &[u8]) -> Option<usize> {
+                    find_u8_body!(haystack, $($ch),+)
+                }
+
+                #[inline]
+                fn map_u8(c: u8) -> &'static [u8] {
+                    match c {
+                        $( $ch => $entity, )+
+                        // This should never happen, but using unreachable!()
+                        // actually makes other parts of the function slower.
+                        _ => b"",
+                    }
+                }
+
+                if let Some(i) = find_u8(raw) {
+                    let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
+                    output.extend_from_slice(&raw[..i]);
+                    output.extend_from_slice(map_u8(raw[i]));
+                    let mut remainder = &raw[i+1..];
+
+                    while let Some(i) = find_u8(remainder) {
+                        output.extend_from_slice(&remainder[..i]);
+                        output.extend_from_slice(map_u8(remainder[i]));
+                        remainder = &remainder[i+1..];
+                    }
+
+                    output.extend_from_slice(&remainder);
+
+                    Some(output)
+                } else {
+                    None
+                }
+            }
         }
     }
 }
@@ -77,7 +102,23 @@ escape_fn! {
     ///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
     /// );
     /// ```
-    pub fn escape_text {
+    pub fn escape_text;
+
+    /// Escape a byte string used in a text node, i.e. regular text.
+    ///
+    /// **Do not use this in attributes.**
+    ///
+    /// ```rust
+    /// use htmlize::escape_text_bytes;
+    ///
+    /// assert_eq!(
+    ///     escape_text_bytes(b"test: &<>\"'".as_slice()),
+    ///     b"test: &amp;&lt;&gt;\"'".as_slice()
+    /// );
+    /// ```
+    pub fn escape_text_bytes;
+
+    {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
@@ -95,7 +136,21 @@ escape_fn! {
     ///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
     /// );
     /// ```
-    pub fn escape_attribute {
+    pub fn escape_attribute;
+
+    /// Escape a byte string to be used in a quoted attribute.
+    ///
+    /// ```rust
+    /// use htmlize::escape_attribute_bytes;
+    ///
+    /// assert_eq!(
+    ///     escape_attribute_bytes(b"test: &<>\"'".as_slice()),
+    ///     b"test: &amp;&lt;&gt;&quot;'".as_slice()
+    /// );
+    /// ```
+    pub fn escape_attribute_bytes;
+
+    {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
@@ -117,7 +172,24 @@ escape_fn! {
     ///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
     /// );
     /// ```
-    pub fn escape_all_quotes {
+    pub fn escape_all_quotes;
+
+    /// Escape a byte string including both single and double quotes.
+    ///
+    /// Generally, it is safe to leave single quotes (apostrophes) unescaped, so you
+    /// should use [`escape_text_bytes()`] or [`escape_attribute_bytes()`].
+    ///
+    /// ```rust
+    /// use htmlize::escape_all_quotes_bytes;
+    ///
+    /// assert_eq!(
+    ///     escape_all_quotes_bytes(b"test: &<>\"'".as_slice()),
+    ///     b"test: &amp;&lt;&gt;&quot;&apos;".as_slice()
+    /// );
+    /// ```
+    pub fn escape_all_quotes_bytes;
+
+    {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
@@ -154,6 +226,18 @@ mod tests {
                     [<escape_all_quotes_ $name>],
                     escape_all_quotes($in) == $out
                 );
+                test!(
+                    [<escape_text_bytes_ $name>],
+                    escape_text_bytes($in.as_bytes()) == $out.as_bytes()
+                );
+                test!(
+                    [<escape_attribute_bytes_ $name>],
+                    escape_attribute_bytes($in.as_bytes()) == $out.as_bytes()
+                );
+                test!(
+                    [<escape_all_quotes_bytes_ $name>],
+                    escape_all_quotes_bytes($in.as_bytes()) == $out.as_bytes()
+                );
             }
         };
     }
@@ -187,6 +271,24 @@ mod tests {
             == "He said, &quot;That&apos;s mine.&quot;"
     );
 
+    test!(
+        escape_all_quotes_bytes_quotes,
+        &*escape_all_quotes_bytes(&b"He said, \"That's mine.\""[..])
+            == b"He said, &quot;That&apos;s mine.&quot;"
+    );
+
+    test!(
+        escape_text_bytes_quotes,
+        &*escape_text_bytes(&b"He said, \"That's mine.\""[..])
+            == b"He said, \"That's mine.\""
+    );
+
+    test!(
+        escape_attribute_bytes_quotes,
+        &*escape_attribute_bytes(&b"He said, \"That's mine.\""[..])
+            == b"He said, &quot;That's mine.&quot;"
+    );
+
     const HTML_DIRTY: &str = include_str!("../tests/corpus/html-raw.txt");
     const HTML_DIRTY_ESCAPED: &str =
         include_str!("../tests/corpus/html-escaped.txt");
@@ -199,5 +301,15 @@ mod tests {
     test!(
         escape_text_clean_html,
         escape_text(HTML_CLEAN) == HTML_CLEAN
+    );
+
+    test!(
+        escape_text_bytes_dirty_html,
+        escape_text_bytes(HTML_DIRTY.as_bytes())
+            == HTML_DIRTY_ESCAPED.as_bytes()
+    );
+    test!(
+        escape_text_bytes_clean_html,
+        escape_text_bytes(HTML_CLEAN.as_bytes()) == HTML_CLEAN.as_bytes()
     );
 }

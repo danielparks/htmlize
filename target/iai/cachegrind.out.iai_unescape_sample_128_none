@@ -1,7 +1,7 @@
 desc: I1 cache:         32768 B, 64 B, 8-way associative
 desc: D1 cache:         32768 B, 64 B, 8-way associative
 desc: LL cache:         8388608 B, 64 B, 16-way associative
-cmd: /work/target/release/deps/unescape_iai-55423651f0c34913 --iai-run 4
+cmd: /work/target/release/deps/unescape_iai-ad753169aa74163c --iai-run 4
 events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
 fl=./csu/../csu/libc-start.c
 fn=__libc_start_main@@GLIBC_2.34
@@ -3856,7 +3856,7 @@ fl=./posix/../sysdeps/unix/sysv/linux/x86/sysconf.c
 fn=sysconf
 32 60 4 2 6 0 0 30 0 0
 33 18 0 0 0 0 0 0 0 0
-37 54 1 1 42 0 0 0 0 0
+37 54 2 1 42 0 0 0 0 0
 fl=./posix/./posix/register-atfork.c
 fn=__unregister_atfork
 65 6 0 0 0 0 0 0 0 0
@@ -6577,11 +6577,11 @@ fn=(below main)
 0 12 1 1 2 1 0 3 0 0
 fn=???
 0 1114 78 70 330 14 0 48 1 1
-fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h56aaea41645ca2b8E.llvm.16235166440081181285
+fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17ha6922bb328db1016E.llvm.2159943397214793483
 0 6 1 1 3 0 0 2 0 0
-fn=_ZN5alloc7raw_vec11finish_grow17hc67917c1df65de07E.llvm.3315900049937453588
-0 26 2 1 7 0 0 7 0 0
-fn=_ZN7htmlize8unescape11unescape_in17h31907223a4f6347cE.llvm.11889061918462378672
+fn=_ZN5alloc7raw_vec11finish_grow17h55af2c613b7e5c31E.llvm.6665115379947910646
+0 26 2 2 7 0 0 7 0 0
+fn=_ZN7htmlize8unescape11unescape_in17he1bb22a180f81445E.llvm.396426450174493631
 0 236587 4 4 16909 0 0 16911 0 0
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
@@ -6598,11 +6598,11 @@ fn=iai::runner
 fn=main
 0 11 2 2 3 1 0 3 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
-0 4 1 0 2 0 0 2 0 0
+0 4 0 0 2 0 0 2 0 0
 fn=unescape_iai::iai_wrappers::iai_unescape_sample_128_none
 0 28 3 3 7 0 0 5 0 0
 fn=unescape_iai::main
 0 3 0 0 1 0 0 0 0 0
 fn=unescape_iai::util::inputs::make_sample
-0 53 4 4 16 0 0 12 0 0
-summary: 668632 1788 1730 128600 4593 3864 68471 2404 2329
+0 53 3 3 16 0 0 12 0 0
+summary: 668632 1787 1730 128600 4593 3864 68471 2404 2329

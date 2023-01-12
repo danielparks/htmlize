@@ -1,7 +1,7 @@
 desc: I1 cache:         32768 B, 64 B, 8-way associative
 desc: D1 cache:         32768 B, 64 B, 8-way associative
 desc: LL cache:         8388608 B, 64 B, 16-way associative
-cmd: /work/target/release/deps/unescape_iai-55423651f0c34913 --iai-run 6
+cmd: /work/target/release/deps/unescape_iai-ad753169aa74163c --iai-run 6
 events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
 fl=./csu/../csu/libc-start.c
 fn=__libc_start_main@@GLIBC_2.34
@@ -1346,7 +1346,7 @@ fn=_dl_fini
 66 1 0 0 0 0 0 1 0 0
 68 3 0 0 0 0 0 1 0 0
 73 17 2 2 1 0 0 0 0 0
-78 19 1 1 6 2 0 0 0 0
+78 19 1 1 6 1 0 0 0 0
 80 10 0 0 5 3 0 0 0 0
 82 10 0 0 0 0 0 0 0 0
 84 10 0 0 0 0 0 5 0 0
@@ -1361,7 +1361,7 @@ fn=_dl_fini
 115 5 0 0 5 0 0 0 0 0
 117 15 0 0 5 0 0 0 0 0
 120 10 0 0 0 0 0 5 0 0
-123 15 1 1 5 4 0 0 0 0
+123 15 1 1 5 5 0 0 0 0
 124 9 0 0 3 3 0 0 0 0
 127 6 0 0 3 0 0 0 0 0
 138 8 0 0 4 1 0 2 0 0
@@ -4162,7 +4162,7 @@ fl=./stdlib/./stdlib/cxa_thread_atexit_impl.c
 fn=__call_tls_dtors
 149 4 0 0 0 0 0 2 0 0
 150 8 0 0 3 0 0 0 0 0
-155 3 0 0 2 0 0 0 0 0
+155 3 0 0 2 1 0 0 0 0
 158 2 1 1 1 0 0 1 0 0
 159 2 0 0 1 0 0 1 0 0
 165 2 0 0 3 1 0 0 0 0
@@ -6446,7 +6446,7 @@ fn=std::sys::unix::stack_overflow::imp::make_handler
 2987 1 0 0 1 0 0 0 0 0
 fn=std::sys_common::once::futex::Once::call
 2987 1 1 1 1 0 0 0 0 0
-2988 17 1 1 7 2 1 0 0 0
+2988 17 1 1 7 3 1 0 0 0
 3005 2 1 1 4 0 0 0 0 0
 3098 4 1 1 2 0 0 0 0 0
 fn=std::sys_common::thread_info::THREAD_INFO::__getit::destroy
@@ -6626,12 +6626,12 @@ fn=<&str as phf_shared::PhfBorrow<str>>::borrow
 0 11817 1 1 11817 43 0 0 0 0
 fn=???
 0 1114 79 70 330 15 0 48 1 1
-fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h56aaea41645ca2b8E.llvm.16235166440081181285
+fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17ha6922bb328db1016E.llvm.2159943397214793483
 0 6 1 1 3 0 0 2 0 0
-fn=_ZN5alloc7raw_vec11finish_grow17hc67917c1df65de07E.llvm.3315900049937453588
-0 26 2 1 7 0 0 7 0 0
-fn=_ZN7htmlize8unescape11unescape_in17h31907223a4f6347cE.llvm.11889061918462378672
-0 180030 4 4 13482 2 0 12844 0 0
+fn=_ZN5alloc7raw_vec11finish_grow17h55af2c613b7e5c31E.llvm.6665115379947910646
+0 26 2 2 7 0 0 7 0 0
+fn=_ZN7htmlize8unescape11unescape_in17he1bb22a180f81445E.llvm.396426450174493631
+0 180030 4 4 13482 1 0 12844 0 0
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
 fn=__rust_alloc
@@ -6651,11 +6651,11 @@ fn=main
 fn=phf::map::Map<K,V>::get
 0 869682 13 13 68484 28 25 23888 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
-0 4 1 0 2 0 0 2 0 0
+0 4 0 0 2 0 0 2 0 0
 fn=unescape_iai::iai_wrappers::iai_unescape_sample_128_invalid
 0 28 3 3 7 0 0 5 0 0
 fn=unescape_iai::main
 0 3 0 0 1 0 0 0 0 0
 fn=unescape_iai::util::inputs::make_sample
-0 53 4 4 16 0 0 12 0 0
-summary: 1655297 1824 1763 212858 4683 3891 95047 2406 2329
+0 53 3 3 16 0 0 12 0 0
+summary: 1655297 1822 1763 212858 4684 3891 95047 2406 2329
