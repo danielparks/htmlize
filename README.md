@@ -80,6 +80,42 @@ documentation][`unescape_in()`] for more information.
 
   * `unescape`: build `ENTITIES` map and provide `unescape()` function. Enabling
     this will add a dependency on [phf] and may slow builds by a few seconds.
+  * `iai`: enable [iai] benchmarks. This should only be used when running
+    benchmarks. See the [Benchmarks](#benchmarks) section below.
+
+## Benchmarks
+
+This has two suites of benchmarks. One is a typical multi-run benchmark using
+[criterion]. These can be run with `cargo bench` or [`cargo criterion`] if you
+have it installed.
+
+The other suite of benchmarks uses [iai] to count instructions, cache accesses,
+and to estimate cycles. It requires the `iai` feature to be enabled, and only
+really works well on Linux.
+
+To run iai benchmarks locally:
+
+```sh
+cargo bench --features iai iai
+```
+
+You may want to use `--all-features` or `--features iai,unescape` to enable
+benchmarks of the `unescape()` function.
+
+To run in a Docker container, use the `docker.sh` script. It will build an image
+if necessary, then use that image for all future runs:
+
+```sh
+./docker.sh cargo bench --features iai iai
+```
+
+You can also start it in interactive mode and run the benchmark multiple times:
+
+```
+❯ ./docker.sh
+root@d0a0db46770d:/work# cargo bench --features iai iai
+   Compiling htmlize [...]
+```
 
 ## License
 
@@ -105,3 +141,6 @@ additional terms or conditions.
 [`unescape_in()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_in.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
+[iai]: https://crates.io/crates/iai
+[criterion]: https://crates.io/crates/criterion
+[`cargo criterion`]: https://crates.io/crates/cargo-criterion
