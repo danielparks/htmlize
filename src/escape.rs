@@ -1,11 +1,28 @@
 use std::borrow::Cow;
+use std::cmp::min;
 
-macro_rules! find_u8_fn {
-    ($($ch:literal),+) => {
-        #[inline]
-        fn find_u8(haystack: &[u8]) -> Option<usize> {
-            haystack.iter().position(|c| matches!(c, $($ch)|+))
+macro_rules! find_u8_body {
+    ($slice:expr, $ch1:literal $(,)?) => {
+        memchr::memchr($ch1, $slice)
+    };
+    ($slice:expr, $ch1:literal, $ch2:literal $(,)?) => {
+        memchr::memchr2($ch1, $ch2, $slice)
+    };
+    ($slice:expr, $ch1:literal, $ch2:literal, $ch3:literal $(,)?) => {
+        memchr::memchr3($ch1, $ch2, $ch3, $slice)
+    };
+    ($slice:expr, $ch1:literal, $ch2:literal, $ch3:literal, $ch4:literal, $ch5:literal $(,)?) => {{
+        let found1 = memchr::memchr3($ch1, $ch2, $ch3, $slice);
+        let found2 = memchr::memchr2($ch4, $ch5, $slice);
+        match (found1, found2) {
+            (Some(i), None) => Some(i),
+            (None, Some(i)) => Some(i),
+            (Some(i), Some(j)) => Some(min(i, j)),
+            (None, None) => None,
         }
+    }};
+    ($slice:expr, $($ch:literal),+) => {
+        $slice.iter().position(|c| matches!(c, $($ch)|+))
     };
 }
 
@@ -21,7 +38,10 @@ macro_rules! escape_fn {
             let input = input.into();
             let raw = input.as_bytes();
 
-            find_u8_fn!($($ch),+);
+            #[inline]
+            fn find_u8(haystack: &[u8]) -> Option<usize> {
+                find_u8_body!(haystack, $($ch),+)
+            }
 
             #[inline]
             fn map_u8(c: u8) -> &'static [u8] {
