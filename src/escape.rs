@@ -10,20 +10,8 @@ macro_rules! find_u8_body {
     ($slice:expr, $ch1:literal, $ch2:literal, $ch3:literal $(,)?) => {
         memchr::memchr3($ch1, $ch2, $ch3, $slice)
     };
-    ($slice:expr, $ch1:literal, $ch2:literal, $ch3:literal, $ch4:literal, $ch5:literal $(,)?) => {{
-        if let Some(i) = memchr::memchr3($ch1, $ch2, $ch3, $slice) {
-            if let Some(j) = memchr::memchr2($ch4, $ch5, &$slice[..i]) {
-                // j has to be less than i
-                Some(j)
-            } else {
-                Some(i)
-            }
-        } else {
-            memchr::memchr2($ch4, $ch5, $slice)
-        }
-    }};
     ($slice:expr, $($ch:literal),+) => {
-        $slice.iter().position(|c| matches!(c, $($ch)|+))
+        jetscii::bytes!($($ch),+).find($slice)
     };
 }
 
