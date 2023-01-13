@@ -82,11 +82,15 @@ pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
 mod tests {
     use super::*;
 
-    const BASIC_CORPUS: [(&str, &str); 4] = [
+    const BASIC_CORPUS: [(&str, &str); 5] = [
         ("", ""),
         ("clean", "clean"),
         ("< >", "&lt; &gt;"),
         ("&amp;", "&amp;amp;"),
+        (
+            "Björk and Борис OBrien ❤️, “love beats hate”",
+            "Björk and Борис OBrien ❤️, “love beats hate”",
+        ),
     ];
 
     test_multiple!(escape_text_basic, escape_text, BASIC_CORPUS);
