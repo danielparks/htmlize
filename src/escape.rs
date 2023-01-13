@@ -11,7 +11,7 @@ macro_rules! find_u8_body {
         memchr::memchr3($ch1, $ch2, $ch3, $slice)
     };
     ($slice:expr, $($ch:literal),+) => {
-        jetscii::bytes!($($ch),+).find($slice)
+        $slice.iter().position(|c| matches!(c, $($ch)|+))
     };
 }
 
