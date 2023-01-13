@@ -13,9 +13,18 @@ macro_rules! iai_benchmarks {
                 }
             )+
 
+            $(
+                fn [<iai_escape_all_quotes_ $name>]() -> String {
+                    escape_all_quotes(black_box($input))
+                }
+            )+
+
             iai::main!(
                 $(
                     [<iai_escape_text_ $name>],
+                )+
+                $(
+                    [<iai_escape_all_quotes_ $name>],
                 )+
             );
         }

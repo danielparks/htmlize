@@ -33,6 +33,11 @@ fn benchmarks(c: &mut Criterion) {
             input,
             |b, input| b.iter(|| escape_text(&**input)),
         );
+        group.bench_with_input(
+            BenchmarkId::new("escape_all_quotes", name),
+            input,
+            |b, input| b.iter(|| escape_all_quotes(&**input)),
+        );
     });
 
     group.finish();
