@@ -1,81 +1,89 @@
-macro_rules! escape {
-    ($raw:expr, { $($ch:literal => $entity:literal,)+ }) => {{
-        let raw = $raw.as_ref();
-        let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
-
-        for c in raw {
-            match c {
-                $(
-                    $ch => output.extend_from_slice($entity),
-                )+
-                _ => output.push(*c),
-            }
+macro_rules! escape_fn {
+    (
+        $(#[$meta:meta])*
+        $vis:vis fn $name:ident {
+            $($ch:literal => $entity:literal,)+
         }
+    ) => {
+        $(#[$meta])*
+        $vis fn $name<S: AsRef<[u8]>>(raw: S) -> String {
+            let raw = raw.as_ref();
+            let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
 
-        String::from_utf8(output).unwrap()
-    }}
+            for c in raw {
+                match c {
+                    $(
+                        $ch => output.extend_from_slice($entity),
+                    )+
+                    _ => output.push(*c),
+                }
+            }
+
+            String::from_utf8(output).unwrap()
+        }
+    }
 }
 
-/// Escape a string used in a text node, i.e. regular text.
-///
-/// **Do not use this in attributes.**
-///
-/// ```rust
-/// use htmlize::escape_text;
-///
-/// assert_eq!(
-///     escape_text(r#"Björk & Борис O'Brien <3, "love > hate""#),
-///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
-/// );
-/// ```
-pub fn escape_text<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, {
+escape_fn! {
+    /// Escape a string used in a text node, i.e. regular text.
+    ///
+    /// **Do not use this in attributes.**
+    ///
+    /// ```rust
+    /// use htmlize::escape_text;
+    ///
+    /// assert_eq!(
+    ///     escape_text(r#"Björk & Борис O'Brien <3, "love > hate""#),
+    ///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
+    /// );
+    /// ```
+    pub fn escape_text {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
-    })
+    }
 }
 
-/// Escape a string to be used in a quoted attribute.
-///
-/// ```rust
-/// use htmlize::escape_attribute;
-///
-/// assert_eq!(
-///     escape_attribute(r#"Björk & Борис O'Brien <3, "love > hate""#),
-///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
-/// );
-/// ```
-pub fn escape_attribute<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, {
+escape_fn! {
+    /// Escape a string to be used in a quoted attribute.
+    ///
+    /// ```rust
+    /// use htmlize::escape_attribute;
+    ///
+    /// assert_eq!(
+    ///     escape_attribute(r#"Björk & Борис O'Brien <3, "love > hate""#),
+    ///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
+    /// );
+    /// ```
+    pub fn escape_attribute {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
         b'"' => b"&quot;", // Attributes
-    })
+    }
 }
 
-/// Escape a string including both single and double quotes.
-///
-/// Generally, it is safe to leave single quotes (apostrophes) unescaped, so you
-/// should use [`escape_text()`] or [`escape_attribute()`].
-///
-/// ```rust
-/// use htmlize::escape_all_quotes;
-///
-/// assert_eq!(
-///     escape_all_quotes(r#"Björk & Борис O'Brien <3, "love > hate""#),
-///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
-/// );
-/// ```
-pub fn escape_all_quotes<S: AsRef<[u8]>>(raw: S) -> String {
-    escape!(raw, {
+escape_fn! {
+    /// Escape a string including both single and double quotes.
+    ///
+    /// Generally, it is safe to leave single quotes (apostrophes) unescaped, so you
+    /// should use [`escape_text()`] or [`escape_attribute()`].
+    ///
+    /// ```rust
+    /// use htmlize::escape_all_quotes;
+    ///
+    /// assert_eq!(
+    ///     escape_all_quotes(r#"Björk & Борис O'Brien <3, "love > hate""#),
+    ///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
+    /// );
+    /// ```
+    pub fn escape_all_quotes {
         b'&' => b"&amp;",
         b'<' => b"&lt;",
         b'>' => b"&gt;",
         b'"' => b"&quot;",  // Attributes
         b'\'' => b"&apos;", // Single quoted attributes
-    })
+    }
 }
 
 #[cfg(test)]
