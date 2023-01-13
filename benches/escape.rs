@@ -5,6 +5,8 @@ use htmlize::*;
 use std::convert::TryInto;
 use std::time::Duration;
 
+mod util;
+
 fn benchmarks(c: &mut Criterion) {
     let mut group = c.benchmark_group("escape");
     group
@@ -16,19 +18,12 @@ fn benchmarks(c: &mut Criterion) {
         .measurement_time(Duration::from_secs(5));
 
     [
-        (
-            "small_clean",
-            ".a href=.http://example.com/..link./a. . [link]",
-        ),
-        (
-            "big_clean",
-            include_str!("../tests/corpus/html-cleaned.txt"),
-        ),
-        (
-            "small_dirty",
-            "<a href=\"http://example.com/\">link</a> & [link]",
-        ),
-        ("big_dirty", include_str!("../tests/corpus/html-raw.txt")),
+        ("small_clean", util::inputs::SMALL_CLEAN),
+        ("medium_clean", util::inputs::MEDIUM_CLEAN),
+        ("big_clean", util::inputs::BIG_CLEAN),
+        ("small_dirty", util::inputs::SMALL_DIRTY),
+        ("medium_dirty", util::inputs::MEDIUM_DIRTY),
+        ("big_dirty", util::inputs::BIG_DIRTY),
     ]
     .iter()
     .for_each(|(name, input)| {

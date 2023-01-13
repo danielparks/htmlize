@@ -2,6 +2,8 @@ use htmlize::*;
 use iai::black_box;
 use paste::paste;
 
+mod util;
+
 macro_rules! iai_benchmarks {
     ( $( ($name:ident, $input:expr), )+ ) => {
         paste! {
@@ -21,8 +23,10 @@ macro_rules! iai_benchmarks {
 }
 
 iai_benchmarks! {
-    (small_clean, ".a href=.http://example.com/..link./a. . [link]"),
-    (big_clean, include_str!("../tests/corpus/html-cleaned.txt")),
-    (small_dirty, "<a href=\"http://example.com/\">link</a> & [link]"),
-    (big_dirty, include_str!("../tests/corpus/html-raw.txt")),
+    (small_clean, util::inputs::SMALL_CLEAN),
+    (medium_clean, util::inputs::MEDIUM_CLEAN),
+    (big_clean, util::inputs::BIG_CLEAN),
+    (small_dirty, util::inputs::SMALL_DIRTY),
+    (medium_dirty, util::inputs::MEDIUM_DIRTY),
+    (big_dirty, util::inputs::BIG_DIRTY),
 }
