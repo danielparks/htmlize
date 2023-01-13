@@ -4,14 +4,7 @@ macro_rules! find_u8_fn {
     ($($ch:literal),+) => {
         #[inline]
         fn find_u8(haystack: &[u8]) -> Option<usize> {
-            let mut i: usize = 0;
-            for c in haystack {
-                if matches!(c, $($ch)|+) {
-                    return Some(i);
-                }
-                i += 1;
-            }
-            None
+            haystack.iter().position(|c| matches!(c, $($ch)|+))
         }
     };
 }
