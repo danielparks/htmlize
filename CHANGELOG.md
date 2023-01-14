@@ -9,9 +9,17 @@ All notable changes to this project will be documented in this file.
 * Hid `unescape()` behind `unescape` feature. This allows users to avoid the
   dependency on [phf][] and the build dependency on [serde_json][], which cuts
   build times on my machine by more than 90% (from 6.2 seconds to 0.5 seconds).
+* Switched escape functions to use `Cow<'a, str>` for input and output. This
+  allows for significant performance improvements when the input has no special
+  characters (see performance improvements below for more).
 
 ### Improvements
 
+* Significantly optimized the escape functions. Many of the improvements are
+  similar to the ones outlined in Lise Henry’s [excellent blog post on
+  optimizing HTML entity escaping][optimize-blog] (see also: [its Reddit
+  discussion][optimize-reddit]), though most notably I’m using [memchr][]
+  directly rather than [regex][].
 * Switched to the [phf_codegen][] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
 * Pre-allocated the output buffer for `unescape()`, which generally improves
@@ -45,6 +53,10 @@ All notable changes to this project will be documented in this file.
 [phf]: https://crates.io/crates/phf
 [phf_codegen]: https://crates.io/crates/phf_codegen
 [serde_json]: https://crates.io/crates/serde_json
+[optimize-blog]: https://lise-henry.github.io/articles/optimising_strings.html
+[optimize-reddit]: https://www.reddit.com/r/rust/comments/55wpxh/optimising_string_processing_in_rust/
+[memchr]: https://docs.rs/memchr
+[regex]: https://docs.rs/regex
 [Noncharacters]: https://infra.spec.whatwg.org/#noncharacter
 [Control]: https://infra.spec.whatwg.org/#control
 [spec]: https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
