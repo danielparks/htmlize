@@ -32,10 +32,10 @@ macro_rules! iai_benchmarks {
 }
 
 iai_benchmarks! {
-    (small_clean, util::inputs::SMALL_CLEAN),
-    (medium_clean, util::inputs::MEDIUM_CLEAN),
-    (big_clean, util::inputs::BIG_CLEAN),
-    (small_dirty, util::inputs::SMALL_DIRTY),
-    (medium_dirty, util::inputs::MEDIUM_DIRTY),
-    (big_dirty, util::inputs::BIG_DIRTY),
+    (clean_small, util::inputs::CLEAN_SMALL),
+    (clean_medium, util::inputs::CLEAN_MEDIUM),
+    (clean_big, util::inputs::CLEAN_BIG),
+    (dirty_small, util::inputs::DIRTY_SMALL),
+    (dirty_medium, util::inputs::DIRTY_MEDIUM),
+    (dirty_big, util::inputs::DIRTY_BIG),
 }
