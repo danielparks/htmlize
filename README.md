@@ -28,17 +28,17 @@ string in HTML. Generally, if the text goes in an attribute, use
 You should almost never need [`escape_all_quotes()`], but it is included because
 sometimes it’s convenient to wrap attribute values in single quotes.
 
-### `escape_text(string) -> String` ([reference][`escape_text()`])
+### `escape_text(string) -> string` ([reference][`escape_text()`])
 
 Escape a string so that it can be embedded in the main text. This does not
 escape quotes at all.
 
-### `escape_attribute(string) -> String` ([reference][`escape_attribute()`])
+### `escape_attribute(string) -> string` ([reference][`escape_attribute()`])
 
 Escape a string so that it can be embedded in an attribute. Always use double
 quotes around attributes.
 
-### `escape_all_quotes(string) -> String` ([reference][`escape_all_quotes()`])
+### `escape_all_quotes(string) -> string` ([reference][`escape_all_quotes()`])
 
 Escape both single and double quotes in a string along with other standard
 characters. In general you should not need to use this.
@@ -51,7 +51,7 @@ This requires the `unescape` feature. To configure it:
 cargo add htmlize --features unescape
 ```
 
-### `unescape(string) -> String` ([reference][`unescape()`])
+### `unescape(string) -> string` ([reference][`unescape()`])
 
 This follows the [official WHATWG algorithm] for expanding entities in general.
 
@@ -61,7 +61,7 @@ string came from the value of an attribute, use [`unescape_attribute()`]
 instead. See the [`unescape_in()` reference documentation][`unescape_in()`] for
 more information.
 
-### `unescape_attribute(string) -> String` ([reference][`unescape_attribute()`])
+### `unescape_attribute(string) -> string` ([reference][`unescape_attribute()`])
 
 This follows the [official WHATWG algorithm] for expanding entities found in the
 value of an attribute.
@@ -70,7 +70,7 @@ The only difference is in how this handles named entities without a trailing
 semicolon. See the [`unescape_in()` reference documentation][`unescape_in()`]
 for more information.
 
-### `unescape_in(string, Htmlize::Context) -> String` ([reference][`unescape_in()`])
+### `unescape_in(string, Htmlize::Context) -> string` ([reference][`unescape_in()`])
 
 This follows the [official WHATWG algorithm] for expanding entities based on
 the context where they are found. See the [reference
