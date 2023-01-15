@@ -102,6 +102,78 @@ pub fn unescape_in<S: AsRef<[u8]>>(escaped: S, context: Context) -> String {
 
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous iter.peek()";
 
+fn match_entity<'a, I>(iter: &mut Peekable<I>, context: Context) -> Vec<u8>
+where
+    I: Iterator<Item = &'a u8>,
+{
+    if let Some(&b'#') = iter.peek() {
+        // Numeric entity.
+        return match_numeric_entity(iter);
+    }
+
+    // Determine longest possible candidate including & and any trailing ;.
+    let mut candidate = vec![b'&'];
+    candidate.extend_from_slice(&consume_alphanumeric(iter));
+
+    match iter.peek() {
+        Some(&b';') => {
+            // Actually consume the semicolon.
+            candidate.push(*iter.next().expect(PEEK_MATCH_ERROR));
+        }
+        Some(b'=') if context == Context::Attribute => {
+            // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+            // This character cannot be alphanumeric, since all alphanumeric
+            // characters were consumed above.
+            return candidate;
+        }
+        _ => {
+            // missing-semicolon-after-character-reference: ignore and continue.
+            // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
+        }
+    }
+
+    if candidate.len() < ENTITY_MIN_LENGTH {
+        // Couldn’t possibly match.
+        return candidate;
+    }
+
+    if context == Context::Attribute {
+        // If candidate does not exactly match an entity, then don't expand it.
+        // This is because of the special case described in the spec (see
+        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state)
+        // Essentially it says that *in attributes* entities must be terminated
+        // with a semicolon, EOF, or some character *other* than [a-zA-Z0-9=].
+        //
+        // In other words, “&timesa” expands to “&timesa” in an attribute rather
+        // than “×a”.
+        if let Some(expansion) = ENTITIES.get(&candidate) {
+            return expansion.to_vec();
+        }
+    } else {
+        // Find longest matching entity.
+        let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
+        for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
+            if let Some(expansion) = ENTITIES.get(&candidate[..check_len]) {
+                // Found a match.
+                let mut result = Vec::with_capacity(
+                    expansion.len() + candidate.len() - check_len,
+                );
+                result.extend_from_slice(expansion);
+
+                if check_len < candidate.len() {
+                    // Need to append the rest of the consumed bytes.
+                    result.extend_from_slice(&candidate[check_len..]);
+                }
+
+                return result;
+            }
+        }
+    }
+
+    // Did not find a match.
+    candidate
+}
+
 #[allow(clippy::from_str_radix_10)]
 fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
 where
@@ -279,78 +351,6 @@ macro_rules! consumer {
 consumer!(consume_decimal, b'0'..=b'9');
 consumer!(consume_hexadecimal, b'0'..=b'9' | b'a'..=b'f' | b'A'..=b'F');
 consumer!(consume_alphanumeric, b'0'..=b'9' | b'a'..=b'z' | b'A'..=b'Z');
-
-fn match_entity<'a, I>(iter: &mut Peekable<I>, context: Context) -> Vec<u8>
-where
-    I: Iterator<Item = &'a u8>,
-{
-    if let Some(&b'#') = iter.peek() {
-        // Numeric entity.
-        return match_numeric_entity(iter);
-    }
-
-    // Determine longest possible candidate including & and any trailing ;.
-    let mut candidate = vec![b'&'];
-    candidate.append(&mut consume_alphanumeric(iter));
-
-    match iter.peek() {
-        Some(&b';') => {
-            // Actually consume the semicolon.
-            candidate.push(*iter.next().expect(PEEK_MATCH_ERROR));
-        }
-        Some(b'=') if context == Context::Attribute => {
-            // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            // This character cannot be alphanumeric, since all alphanumeric
-            // characters were consumed above.
-            return candidate;
-        }
-        _ => {
-            // missing-semicolon-after-character-reference: ignore and continue.
-            // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
-        }
-    }
-
-    if candidate.len() < ENTITY_MIN_LENGTH {
-        // Couldn’t possibly match.
-        return candidate;
-    }
-
-    if context == Context::Attribute {
-        // If candidate does not exactly match an entity, then don't expand it.
-        // This is because of the special case described in the spec (see
-        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state)
-        // Essentially it says that *in attributes* entities must be terminated
-        // with a semicolon, EOF, or some character *other* than [a-zA-Z0-9=].
-        //
-        // In other words, “&timesa” expands to “&timesa” in an attribute rather
-        // than “×a”.
-        if let Some(expansion) = ENTITIES.get(&candidate) {
-            return expansion.to_vec();
-        }
-    } else {
-        // Find longest matching entity.
-        let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
-        for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
-            if let Some(expansion) = ENTITIES.get(&candidate[..check_len]) {
-                // Found a match.
-                let mut result = Vec::with_capacity(
-                    expansion.len() + candidate.len() - check_len,
-                );
-                result.extend_from_slice(expansion);
-
-                if check_len < candidate.len() {
-                    // Need to append the rest of the consumed bytes.
-                    result.extend_from_slice(&candidate[check_len..]);
-                }
-
-                return result;
-            }
-        }
-    }
-
-    // Did not find a match.
-    candidate
-}
 
 #[cfg(test)]
 mod tests {
