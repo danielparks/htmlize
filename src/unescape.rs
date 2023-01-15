@@ -83,9 +83,13 @@ pub fn unescape_in<S: AsRef<[u8]>>(escaped: S, context: Context) -> String {
     let escaped = escaped.as_ref();
     let mut iter = escaped.iter().peekable();
 
-    // Most (all?) entities are longer than their expansion, so allocating the
-    // output buffer to be the same size as the input will usually prevent
-    // multiple allocations and generally won’t over-allocate by very much.
+    // All but two entities are as long or longer than their expansion, so
+    // allocating the output buffer to be the same size as the input will
+    // usually prevent multiple allocations and generally won’t over-allocate
+    // by very much.
+    //
+    // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both five
+    // byte entities with six byte expansions.
     let mut buffer = Vec::with_capacity(escaped.len());
 
     while let Some(c) = iter.next() {
