@@ -240,18 +240,17 @@ where
 
     match number {
         Ok(number) => {
-            if let Some(expansion) = correct_numeric_entity(number) {
-                return expansion;
-            }
+            return correct_numeric_entity(number).to_vec();
         }
         Err(error) => match error.kind() {
             IntErrorKind::PosOverflow => {
                 // Too large a number
-                return char_to_vecu8(REPLACEMENT_CHAR).unwrap();
+                return REPLACEMENT_CHAR_BYTES.to_vec();
             }
             IntErrorKind::Empty => {
                 // No number, e.g. &#; or &#x;. Fall through.
             }
+            // Pretty sure this is impossible.
             _ => panic!("error parsing number in numeric entity: {:?}", error),
         },
     }
@@ -267,68 +266,49 @@ where
 /// According to Unicode 12, this is “used to replace an incoming character
 /// whose value is unknown or unrepresentable in Unicode.” The latest chart for
 /// the Specials block is [available as a PDF](https://www.unicode.org/charts/PDF/UFFF0.pdf).
-pub const REPLACEMENT_CHAR: char = '\u{fffd}';
-
-// https://html.spec.whatwg.org/multipage/parsing.html#parse-error-character-reference-outside-unicode-range
-fn is_outside_range<C: Into<u32>>(c: C) -> bool {
-    c.into() > 0x10FFFF
-}
-
-// https://infra.spec.whatwg.org/#surrogate
-fn is_surrogate<C: Into<u32>>(c: C) -> bool {
-    (0xD800..=0xDFFF).contains(&c.into())
-}
-
-#[inline]
-fn char_to_vecu8(c: char) -> Option<Vec<u8>> {
-    Some(c.to_string().into())
-}
-
-#[inline]
-fn u32_to_vecu8(c: u32) -> Option<Vec<u8>> {
-    Some(char::from_u32(c).unwrap().to_string().into())
-}
+pub const REPLACEMENT_CHAR_BYTES: &[u8] = "\u{fffd}".as_bytes();
 
 // https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
-fn correct_numeric_entity(number: u32) -> Option<Vec<u8>> {
+fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
     match number {
         // null-character-reference parse error:
-        0x00 => char_to_vecu8(REPLACEMENT_CHAR),
+        0x00 => REPLACEMENT_CHAR_BYTES.into(),
 
         // character-reference-outside-unicode-range parse error:
-        c if is_outside_range(c) => char_to_vecu8(REPLACEMENT_CHAR),
+        0x110000.. => REPLACEMENT_CHAR_BYTES.into(),
 
+        // https://infra.spec.whatwg.org/#surrogate
         // surrogate-character-reference parse error:
-        c if is_surrogate(c) => char_to_vecu8(REPLACEMENT_CHAR),
+        0xD800..=0xDFFF => REPLACEMENT_CHAR_BYTES.into(),
 
         // control-character-reference parse error exceptions:
-        0x80 => u32_to_vecu8(0x20AC), // EURO SIGN (€)
-        0x82 => u32_to_vecu8(0x201A), // SINGLE LOW-9 QUOTATION MARK (‚)
-        0x83 => u32_to_vecu8(0x0192), // LATIN SMALL LETTER F WITH HOOK (ƒ)
-        0x84 => u32_to_vecu8(0x201E), // DOUBLE LOW-9 QUOTATION MARK („)
-        0x85 => u32_to_vecu8(0x2026), // HORIZONTAL ELLIPSIS (…)
-        0x86 => u32_to_vecu8(0x2020), // DAGGER (†)
-        0x87 => u32_to_vecu8(0x2021), // DOUBLE DAGGER (‡)
-        0x88 => u32_to_vecu8(0x02C6), // MODIFIER LETTER CIRCUMFLEX ACCENT (ˆ)
-        0x89 => u32_to_vecu8(0x2030), // PER MILLE SIGN (‰)
-        0x8A => u32_to_vecu8(0x0160), // LATIN CAPITAL LETTER S WITH CARON (Š)
-        0x8B => u32_to_vecu8(0x2039), // SINGLE LEFT-POINTING ANGLE QUOTATION MARK (‹)
-        0x8C => u32_to_vecu8(0x0152), // LATIN CAPITAL LIGATURE OE (Œ)
-        0x8E => u32_to_vecu8(0x017D), // LATIN CAPITAL LETTER Z WITH CARON (Ž)
-        0x91 => u32_to_vecu8(0x2018), // LEFT SINGLE QUOTATION MARK (‘)
-        0x92 => u32_to_vecu8(0x2019), // RIGHT SINGLE QUOTATION MARK (’)
-        0x93 => u32_to_vecu8(0x201C), // LEFT DOUBLE QUOTATION MARK (“)
-        0x94 => u32_to_vecu8(0x201D), // RIGHT DOUBLE QUOTATION MARK (”)
-        0x95 => u32_to_vecu8(0x2022), // BULLET (•)
-        0x96 => u32_to_vecu8(0x2013), // EN DASH (–)
-        0x97 => u32_to_vecu8(0x2014), // EM DASH (—)
-        0x98 => u32_to_vecu8(0x02DC), // SMALL TILDE (˜)
-        0x99 => u32_to_vecu8(0x2122), // TRADE MARK SIGN (™)
-        0x9A => u32_to_vecu8(0x0161), // LATIN SMALL LETTER S WITH CARON (š)
-        0x9B => u32_to_vecu8(0x203A), // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (›)
-        0x9C => u32_to_vecu8(0x0153), // LATIN SMALL LIGATURE OE (œ)
-        0x9E => u32_to_vecu8(0x017E), // LATIN SMALL LETTER Z WITH CARON (ž)
-        0x9F => u32_to_vecu8(0x0178), // LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
+        0x80 => "\u{20AC}".as_bytes().into(), // EURO SIGN (€)
+        0x82 => "\u{201A}".as_bytes().into(), // SINGLE LOW-9 QUOTATION MARK (‚)
+        0x83 => "\u{0192}".as_bytes().into(), // LATIN SMALL LETTER F WITH HOOK (ƒ)
+        0x84 => "\u{201E}".as_bytes().into(), // DOUBLE LOW-9 QUOTATION MARK („)
+        0x85 => "\u{2026}".as_bytes().into(), // HORIZONTAL ELLIPSIS (…)
+        0x86 => "\u{2020}".as_bytes().into(), // DAGGER (†)
+        0x87 => "\u{2021}".as_bytes().into(), // DOUBLE DAGGER (‡)
+        0x88 => "\u{02C6}".as_bytes().into(), // MODIFIER LETTER CIRCUMFLEX ACCENT (ˆ)
+        0x89 => "\u{2030}".as_bytes().into(), // PER MILLE SIGN (‰)
+        0x8A => "\u{0160}".as_bytes().into(), // LATIN CAPITAL LETTER S WITH CARON (Š)
+        0x8B => "\u{2039}".as_bytes().into(), // SINGLE LEFT-POINTING ANGLE QUOTATION MARK (‹)
+        0x8C => "\u{0152}".as_bytes().into(), // LATIN CAPITAL LIGATURE OE (Œ)
+        0x8E => "\u{017D}".as_bytes().into(), // LATIN CAPITAL LETTER Z WITH CARON (Ž)
+        0x91 => "\u{2018}".as_bytes().into(), // LEFT SINGLE QUOTATION MARK (‘)
+        0x92 => "\u{2019}".as_bytes().into(), // RIGHT SINGLE QUOTATION MARK (’)
+        0x93 => "\u{201C}".as_bytes().into(), // LEFT DOUBLE QUOTATION MARK (“)
+        0x94 => "\u{201D}".as_bytes().into(), // RIGHT DOUBLE QUOTATION MARK (”)
+        0x95 => "\u{2022}".as_bytes().into(), // BULLET (•)
+        0x96 => "\u{2013}".as_bytes().into(), // EN DASH (–)
+        0x97 => "\u{2014}".as_bytes().into(), // EM DASH (—)
+        0x98 => "\u{02DC}".as_bytes().into(), // SMALL TILDE (˜)
+        0x99 => "\u{2122}".as_bytes().into(), // TRADE MARK SIGN (™)
+        0x9A => "\u{0161}".as_bytes().into(), // LATIN SMALL LETTER S WITH CARON (š)
+        0x9B => "\u{203A}".as_bytes().into(), // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (›)
+        0x9C => "\u{0153}".as_bytes().into(), // LATIN SMALL LIGATURE OE (œ)
+        0x9E => "\u{017E}".as_bytes().into(), // LATIN SMALL LETTER Z WITH CARON (ž)
+        0x9F => "\u{0178}".as_bytes().into(), // LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
 
         // A few parse errors and other cases are handled by the catch-all.
         //
@@ -343,10 +323,10 @@ fn correct_numeric_entity(number: u32) -> Option<Vec<u8>> {
         // but just emitting the represented code point.
 
         // Everything else.
-        c => match char::from_u32(c) {
-            Some(c) => char_to_vecu8(c),
-            None => None,
-        },
+        c => char::from_u32(c)
+            .map(|c| c.to_string().into_bytes().into())
+            // Should never fall back since we handle all the cases above.
+            .unwrap_or_else(|| REPLACEMENT_CHAR_BYTES.into()),
     }
 }
 
@@ -491,4 +471,28 @@ mod tests {
     const ALL_EXPANDED: &str =
         include_str!("../tests/corpus/all-entities-expanded.txt");
     test_both!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
+
+    #[test]
+    fn correct_numeric_entity_euro() {
+        match correct_numeric_entity(0x80) {
+            Cow::Borrowed(s) => assert!(s == "\u{20AC}".as_bytes()),
+            Cow::Owned(_) => panic!("expected borrowed"),
+        }
+    }
+
+    #[test]
+    fn correct_numeric_entity_null() {
+        match correct_numeric_entity(0) {
+            Cow::Borrowed(s) => assert!(s == "\u{fffd}".as_bytes()),
+            Cow::Owned(_) => panic!("expected borrowed"),
+        }
+    }
+
+    #[test]
+    fn correct_numeric_entity_z() {
+        match correct_numeric_entity(b'z'.into()) {
+            Cow::Borrowed(_) => panic!("expected owned"),
+            Cow::Owned(ref s) => assert!(s == b"z"),
+        }
+    }
 }
