@@ -94,8 +94,7 @@ pub fn unescape_in<S: AsRef<[u8]>>(escaped: S, context: Context) -> String {
 
     while let Some(c) = iter.next() {
         if *c == b'&' {
-            let mut expansion = match_entity(&mut iter, context);
-            buffer.append(&mut expansion);
+            buffer.extend_from_slice(&match_entity(&mut iter, context));
         } else {
             buffer.push(*c);
         }
