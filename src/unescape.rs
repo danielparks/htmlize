@@ -8,6 +8,7 @@
 // Some entities are prefixes for multiple other entities. For example:
 //   &times &times; &timesb; &timesbar; &timesd;
 
+use std::borrow::Cow;
 use std::char;
 use std::cmp::min;
 use std::iter::Peekable;
@@ -33,7 +34,7 @@ pub enum Context {
 /// This is appropriate to use on any text outside of an attribute. See
 /// [`unescape_in()`] for more information.
 ///
-pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
+pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
     unescape_in(escaped, Context::General)
 }
 
@@ -43,7 +44,9 @@ pub fn unescape<S: AsRef<[u8]>>(escaped: S) -> String {
 /// [`unescape_in()`] for more information.
 ///
 /// [specifies]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-pub fn unescape_attribute<S: AsRef<[u8]>>(escaped: S) -> String {
+pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
+    escaped: S,
+) -> Cow<'a, str> {
     unescape_in(escaped, Context::Attribute)
 }
 
@@ -79,36 +82,45 @@ pub fn unescape_attribute<S: AsRef<[u8]>>(escaped: S) -> String {
 ///
 /// [algorithm described]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 /// [named entities]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-pub fn unescape_in<S: AsRef<[u8]>>(escaped: S, context: Context) -> String {
-    let escaped = escaped.as_ref();
-    let mut iter = escaped.iter().peekable();
+pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
+    escaped: S,
+    context: Context,
+) -> Cow<'a, str> {
+    let escaped = escaped.into();
+    let mut iter = escaped.bytes().peekable();
 
-    // All but two entities are as long or longer than their expansion, so
-    // allocating the output buffer to be the same size as the input will
-    // usually prevent multiple allocations and generally won’t over-allocate
-    // by very much.
-    //
-    // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both five
-    // byte entities with six byte expansions.
-    let mut buffer = Vec::with_capacity(escaped.len());
+    if let Some(i) = iter.position(|c| c == b'&') {
+        // All but two entities are as long or longer than their expansion, so
+        // allocating the output buffer to be the same size as the input will
+        // usually prevent multiple allocations and generally won’t
+        // over-allocate by very much.
+        //
+        // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both five
+        // byte entities with six byte expansions.
+        let mut buffer = Vec::with_capacity(escaped.len());
 
-    while let Some(c) = iter.next() {
-        if *c == b'&' {
-            let mut expansion = match_entity(&mut iter, context);
-            buffer.append(&mut expansion);
-        } else {
-            buffer.push(*c);
+        buffer.extend_from_slice(&escaped.as_bytes()[0..i]);
+        buffer.extend_from_slice(&match_entity(&mut iter, context));
+
+        while let Some(c) = iter.next() {
+            if c == b'&' {
+                buffer.extend_from_slice(&match_entity(&mut iter, context));
+            } else {
+                buffer.push(c);
+            }
         }
-    }
 
-    String::from_utf8(buffer).unwrap()
+        String::from_utf8(buffer).unwrap().into()
+    } else {
+        escaped
+    }
 }
 
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous iter.peek()";
 
-fn match_entity<'a, I>(iter: &mut Peekable<I>, context: Context) -> Vec<u8>
+fn match_entity<I>(iter: &mut Peekable<I>, context: Context) -> Vec<u8>
 where
-    I: Iterator<Item = &'a u8>,
+    I: Iterator<Item = u8>,
 {
     if let Some(&b'#') = iter.peek() {
         // Numeric entity.
@@ -122,7 +134,7 @@ where
     match iter.peek() {
         Some(&b';') => {
             // Actually consume the semicolon.
-            candidate.push(*iter.next().expect(PEEK_MATCH_ERROR));
+            candidate.push(iter.next().expect(PEEK_MATCH_ERROR));
         }
         Some(b'=') if context == Context::Attribute => {
             // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
@@ -185,12 +197,12 @@ where
 }
 
 #[allow(clippy::from_str_radix_10)]
-fn match_numeric_entity<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
+fn match_numeric_entity<I>(iter: &mut Peekable<I>) -> Vec<u8>
 where
-    I: Iterator<Item = &'a u8>,
+    I: Iterator<Item = u8>,
 {
     let c = iter.next().expect(PEEK_MATCH_ERROR);
-    if *c != b'#' {
+    if c != b'#' {
         panic!("{}", PEEK_MATCH_ERROR);
     }
 
@@ -199,7 +211,7 @@ where
     let number = match iter.peek() {
         Some(&b'x') | Some(&b'X') => {
             // Hexadecimal entity
-            best_expansion.push(*iter.next().expect(PEEK_MATCH_ERROR));
+            best_expansion.push(iter.next().expect(PEEK_MATCH_ERROR));
 
             let hex = consume_hexadecimal(iter);
             best_expansion.extend_from_slice(&hex);
@@ -220,7 +232,7 @@ where
     };
 
     if let Some(&b';') = iter.peek() {
-        best_expansion.push(*iter.next().expect(PEEK_MATCH_ERROR));
+        best_expansion.push(iter.next().expect(PEEK_MATCH_ERROR));
     } else {
         // missing-semicolon-after-character-reference: ignore and continue.
         // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
@@ -340,14 +352,14 @@ fn correct_numeric_entity(number: u32) -> Option<Vec<u8>> {
 
 macro_rules! consumer {
     ($name:ident, $($accept:pat)|+) => {
-        fn $name<'a, I>(iter: &mut Peekable<I>) -> Vec<u8>
-            where I: Iterator<Item = &'a u8>
+        fn $name<I>(iter: &mut Peekable<I>) -> Vec<u8>
+            where I: Iterator<Item = u8>
         {
             let mut buffer: Vec<u8> = Vec::new();
             while let Some(c) = iter.peek() {
-                match **c {
+                match *c {
                     $($accept)|+ => {
-                        buffer.push(*iter.next().expect(PEEK_MATCH_ERROR));
+                        buffer.push(iter.next().expect(PEEK_MATCH_ERROR));
                     },
                     _ => { return buffer; },
                 }

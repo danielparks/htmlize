@@ -1,6 +1,7 @@
 use htmlize::*;
 use iai::black_box;
 use paste::paste;
+use std::borrow::Cow;
 
 mod util;
 
@@ -8,11 +9,11 @@ macro_rules! iai_benchmarks {
     ( $( ($name:ident, $input:expr), )+ ) => {
         paste! {
             $(
-                fn [<iai_unescape_ $name>]() -> String {
+                fn [<iai_unescape_ $name>]() -> Cow<'static, str> {
                     unescape(black_box($input))
                 }
 
-                fn [<iai_unescape_attribute_ $name>]() -> String {
+                fn [<iai_unescape_attribute_ $name>]() -> Cow<'static, str> {
                     unescape_attribute(black_box($input))
                 }
             )+
