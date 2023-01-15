@@ -52,7 +52,15 @@ fn generate_entities_rs() {
     w!("///");
     w!("/// Entity                         | Codepoints         | Glyph");
     w!("/// -------------------------------|--------------------|------");
+
+    let mut map_builder = phf_codegen::Map::<&[u8]>::new();
+    let mut max_len: usize = 0;
+    let mut min_len: usize = usize::max_value();
     for (name, glyph) in &entities {
+        map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
+        max_len = max(max_len, name.len());
+        min_len = min(min_len, name.len());
+
         let codepoints: Vec<String> = glyph
             .chars()
             .map(|c| format!("U+{:06X}", u32::from(c)))
@@ -69,15 +77,6 @@ fn generate_entities_rs() {
         };
 
         w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), glyph);
-    }
-
-    let mut map_builder = phf_codegen::Map::<&[u8]>::new();
-    let mut max_len: usize = 0;
-    let mut min_len: usize = usize::max_value();
-    for (name, value) in &entities {
-        map_builder.entry(name.as_bytes(), &format!("&{:?}", value.as_bytes()));
-        max_len = max(max_len, name.len());
-        min_len = min(min_len, name.len());
     }
 
     w!(
