@@ -121,31 +121,31 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
     }
 }
 
-const PEEK_MATCH_ERROR: &str =
-    "iter.next() did not match previous iter.as_slice().first()";
+const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 
-fn match_entity(iter: &mut slice::Iter<u8>, context: Context) -> Vec<u8> {
-    let remainder = iter.as_slice();
-    assert!(
-        Some(&b'&') == remainder.first(),
-        "iter.as_slice().first() returned different values"
-    );
+fn match_entity<'a>(
+    iter: &'a mut slice::Iter<u8>,
+    context: Context,
+) -> Cow<'a, [u8]> {
+    assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
-    if let Some(&b'#') = remainder.get(1) {
+    if Some(b'#') == peek_n(iter, 1) {
         // Numeric entity.
         return match_numeric_entity(iter);
     }
 
-    assert!(Some(&b'&') == iter.next(), "{}", PEEK_MATCH_ERROR);
+    // Clone iter because we need to look ahead to find the longest possible
+    // entity to match.
+    let mut candidate_iter = iter.clone();
+    assert_next_eq(&mut candidate_iter, Some(b'&'), PEEK_MATCH_ERROR);
 
-    // Determine longest possible candidate including & and any trailing ;.
-    let mut candidate = vec![b'&'];
-    candidate.extend_from_slice(&consume_alphanumeric(iter));
+    // Determine longest possible candidate.
+    slice_while(&mut candidate_iter, u8::is_ascii_alphanumeric);
 
-    match iter.as_slice().first() {
-        Some(&b';') => {
+    match peek(&candidate_iter) {
+        Some(b';') => {
             // Actually consume the semicolon.
-            candidate.push(*iter.next().expect(PEEK_MATCH_ERROR));
+            assert_next_eq(&mut candidate_iter, Some(b';'), PEEK_MATCH_ERROR);
         }
         Some(b'=') if context == Context::Attribute => {
             // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
@@ -157,7 +157,10 @@ fn match_entity(iter: &mut slice::Iter<u8>, context: Context) -> Vec<u8> {
             // Note that the longest entity will always end with a ';' since any
             // bare entity should always have a closed version with a trailing
             // semicolon, which by definition will be longer.
-            return candidate;
+            let raw = iter.as_slice();
+            let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
+            *iter = candidate_iter;
+            return candidate.into();
         }
         _ => {
             // missing-semicolon-after-character-reference: ignore and continue.
@@ -165,9 +168,12 @@ fn match_entity(iter: &mut slice::Iter<u8>, context: Context) -> Vec<u8> {
         }
     }
 
+    let raw = iter.as_slice();
+    let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
     if candidate.len() < ENTITY_MIN_LENGTH {
         // Couldn’t possibly match.
-        return candidate;
+        *iter = candidate_iter;
+        return candidate.into();
     }
 
     if context == Context::Attribute {
@@ -179,44 +185,37 @@ fn match_entity(iter: &mut slice::Iter<u8>, context: Context) -> Vec<u8> {
         //
         // In other words, “&timesa” expands to “&timesa” in an attribute rather
         // than “×a”.
-        if let Some(expansion) = ENTITIES.get(&candidate) {
-            return expansion.to_vec();
+        if let Some(&expansion) = ENTITIES.get(candidate) {
+            *iter = candidate_iter;
+            return expansion.into();
         }
     } else {
         // Find longest matching entity.
         let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
         for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
-            if let Some(expansion) = ENTITIES.get(&candidate[..check_len]) {
+            if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
                 // Found a match.
-                let mut result = Vec::with_capacity(
-                    expansion.len() + candidate.len() - check_len,
-                );
-                result.extend_from_slice(expansion);
-
-                if check_len < candidate.len() {
-                    // Need to append the rest of the consumed bytes.
-                    result.extend_from_slice(&candidate[check_len..]);
-                }
-
-                return result;
+                iter.nth(check_len - 1); // Update iter. nth(0) == next().
+                return expansion.into();
             }
         }
     }
 
     // Did not find a match.
-    candidate
+    *iter = candidate_iter;
+    candidate.into()
 }
 
 #[allow(clippy::from_str_radix_10)]
-fn match_numeric_entity(iter: &mut slice::Iter<u8>) -> Vec<u8> {
+fn match_numeric_entity<'a>(iter: &'a mut slice::Iter<u8>) -> Cow<'a, [u8]> {
     let remainder = iter.as_slice();
-    assert!(Some(&b'&') == iter.next(), "{}", PEEK_MATCH_ERROR);
-    assert!(Some(&b'#') == iter.next(), "{}", PEEK_MATCH_ERROR);
+    assert_next_eq(iter, Some(b'&'), "match_numeric_entity() expexted '&'");
+    assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expexted '#'");
 
-    let number = match iter.as_slice().first() {
-        c @ (Some(&b'x') | Some(&b'X')) => {
+    let number = match peek(iter) {
+        c @ (Some(b'x') | Some(b'X')) => {
             // Hexadecimal entity
-            assert!(c == iter.next(), "{}", PEEK_MATCH_ERROR);
+            assert_next_eq(iter, c, PEEK_MATCH_ERROR);
 
             let hex = slice_while(iter, u8::is_ascii_hexdigit);
             u32::from_str_radix(&String::from_utf8(hex.to_vec()).unwrap(), 16)
@@ -228,12 +227,12 @@ fn match_numeric_entity(iter: &mut slice::Iter<u8>) -> Vec<u8> {
         }
         None => {
             // Iterator reached end
-            return remainder.to_vec();
+            return remainder.into();
         }
     };
 
-    if let Some(&b';') = iter.as_slice().first() {
-        assert!(Some(&b';') == iter.next(), "{}", PEEK_MATCH_ERROR);
+    if let Some(b';') = peek(iter) {
+        assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
     } else {
         // missing-semicolon-after-character-reference: ignore and continue.
         // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
@@ -241,12 +240,12 @@ fn match_numeric_entity(iter: &mut slice::Iter<u8>) -> Vec<u8> {
 
     match number {
         Ok(number) => {
-            return correct_numeric_entity(number).to_vec();
+            return correct_numeric_entity(number);
         }
         Err(error) => match error.kind() {
             IntErrorKind::PosOverflow => {
                 // Too large a number
-                return REPLACEMENT_CHAR_BYTES.to_vec();
+                return REPLACEMENT_CHAR_BYTES.into();
             }
             IntErrorKind::Empty => {
                 // No number, e.g. &#; or &#x;. Fall through.
@@ -257,7 +256,7 @@ fn match_numeric_entity(iter: &mut slice::Iter<u8>) -> Vec<u8> {
     }
 
     // Get the slice up to the current position of iter.
-    remainder[..remainder.len() - iter.as_slice().len()].to_vec()
+    remainder[..remainder.len() - iter.as_slice().len()].into()
 }
 
 /// Unicode replacement character (U+FFFD “�”, requires `unescape` feature)
@@ -332,26 +331,6 @@ fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
     }
 }
 
-macro_rules! consumer {
-    ($name:ident, $($accept:pat)|+) => {
-        fn $name(iter: &mut slice::Iter<u8>) -> Vec<u8> {
-            let mut buffer: Vec<u8> = Vec::new();
-            while let Some(c) = iter.as_slice().first() {
-                match *c {
-                    $($accept)|+ => {
-                        buffer.push(*iter.next().expect(PEEK_MATCH_ERROR));
-                    },
-                    _ => { return buffer; },
-                }
-            }
-
-            return buffer;
-        }
-    }
-}
-
-consumer!(consume_alphanumeric, b'0'..=b'9' | b'a'..=b'z' | b'A'..=b'Z');
-
 #[inline]
 fn slice_while<'a, P>(
     iter: &mut slice::Iter<'a, u8>,
@@ -374,6 +353,30 @@ where
     } else {
         remainder
     }
+}
+
+/// Move to the next value in `iter` and assert that it equals `expected`.
+#[inline]
+fn assert_next_eq(iter: &mut slice::Iter<u8>, expected: Option<u8>, msg: &str) {
+    assert_eq!(iter.next().copied(), expected, "{}", msg)
+}
+
+/// Peek the next value in `iter` and assert that it equals `expected`.
+#[inline]
+fn assert_peek_eq(iter: &slice::Iter<u8>, expected: Option<u8>, msg: &str) {
+    assert_eq!(peek(iter), expected, "{}", msg)
+}
+
+/// Peek at the next value in `iter` without changing the `iter`.
+#[inline]
+fn peek(iter: &slice::Iter<u8>) -> Option<u8> {
+    peek_n(iter, 0)
+}
+
+/// Peek at a future value in `iter` without changing the `iter`.
+#[inline]
+fn peek_n(iter: &slice::Iter<u8>, n: usize) -> Option<u8> {
+    iter.as_slice().get(n).copied()
 }
 
 /// Like `position()`, but stops _before_ the found value.
@@ -454,6 +457,8 @@ mod tests {
 
     test!(bare_entity_char, unescape("&timesa") == "×a");
     test!(bare_entity_equal, unescape("&times=") == "×=");
+    test!(bare_entity_char_semicolon, unescape("&timesa;") == "×a;");
+    test!(bare_entity_equal_semicolon, unescape("&times=;") == "×=;");
     test!(bare_entity_char_is_prefix, unescape("&timesb") == "×b");
     test!(
         attribute_bare_entity_char,
@@ -472,6 +477,8 @@ mod tests {
     test_both!(no_entities, unescape("none") == "none");
     test_both!(only_ampersand, unescape("&") == "&");
     test_both!(empty_entity, unescape("&;") == "&;");
+    test_both!(invalid_entity, unescape("&time;") == "&time;");
+    test_both!(middle_invalid_entity, unescape(" &time; ") == " &time; ");
     test_both!(middle_entity, unescape(" &amp; ") == " & ");
     test_both!(extra_ampersands, unescape("&&amp;&") == "&&&");
     test_both!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
@@ -496,6 +503,7 @@ mod tests {
     test_both!(bare_hex_end, unescape("&#x7A") == "z");
     test_both!(bare_dec_char, unescape("&#122z") == "zz");
     test_both!(bare_dec_end, unescape("&#122") == "z");
+    test_both!(bare_empty_numeric, unescape("&#") == "&#");
 
     test_both!(hex_instead_of_dec, unescape("&#a0;") == "&#a0;");
     test_both!(invalid_hex_lowerx, unescape("&#xZ;") == "&#xZ;");

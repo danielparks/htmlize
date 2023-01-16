@@ -867,10 +867,10 @@ fn=_dl_relocate_object
 508 6 1 1 2 0 0 0 0 0
 509 2 0 0 0 0 0 2 0 0
 510 4 0 0 2 0 0 2 1 0
-529 20082 0 0 6694 837 837 0 0 0
-530 6694 1 1 0 0 0 6694 1613 1609
-534 13388 0 0 0 0 0 0 0 0
-535 13388 0 0 6694 837 837 0 0 0
+529 20124 0 0 6708 839 839 0 0 0
+530 6708 1 1 0 0 0 6708 1617 1613
+534 13416 0 0 0 0 0 0 0 0
+535 13416 0 0 6708 839 839 0 0 0
 545 206 0 0 103 0 0 0 0 0
 549 126 0 0 0 0 0 0 0 0
 552 189 0 0 63 0 0 0 0 0
@@ -1962,7 +1962,7 @@ fn=_dl_lookup_symbol_x
 1008 366 0 0 183 0 0 0 0 0
 fn=check_match
 70 2457 1 1 378 0 0 945 2 1
-73 1323 3 1 378 124 113 0 0 0
+73 1323 3 1 378 123 113 0 0 0
 78 183 1 1 0 0 0 0 0 0
 86 930 0 0 0 0 0 0 0 0
 89 1086 0 0 238 0 0 119 1 0
@@ -1971,7 +1971,7 @@ fn=check_match
 96 368 1 1 0 0 0 0 0 0
 115 368 0 0 368 77 35 0 0 0
 116 1472 0 0 552 19 0 0 0 0
-117 905 3 2 362 2 0 181 0 0
+117 905 2 2 362 2 0 181 0 0
 118 6 0 0 3 0 0 0 0 0
 119 6 0 0 0 0 0 0 0 0
 144 4 0 0 0 0 0 0 0 0
@@ -1981,7 +1981,7 @@ fn=check_match
 162 1134 0 0 1134 0 0 0 0 0
 fn=do_lookup_x
 171 126 2 2 90 0 0 0 0 0
-363 2509 2 2 386 0 0 1737 7 1
+363 2509 2 2 386 0 0 1737 6 1
 364 193 0 0 193 2 0 0 0 0
 370 193 0 0 193 0 0 0 0 0
 374 1560 1 1 1560 14 0 0 0 0
@@ -2434,12 +2434,12 @@ fn=_dl_relocate_object
 88 16 0 0 0 0 0 0 0 0
 100 24 1 1 0 0 0 0 0 0
 110 12 0 0 0 0 0 0 0 0
-113 20098 0 0 0 0 0 0 0 0
-114 13388 0 0 6694 838 837 0 0 0
+113 20140 0 0 0 0 0 0 0 0
+114 13416 0 0 6708 840 839 0 0 0
 120 32 0 0 8 6 0 8 2 0
 124 24 0 0 12 5 0 6 0 0
 126 609 1 1 205 0 0 0 0 0
-128 995 0 0 597 107 98 0 0 0
+128 995 0 0 597 106 97 0 0 0
 129 796 0 0 199 0 0 199 0 0
 130 597 1 1 398 0 0 199 0 0
 131 796 0 0 199 1 0 0 0 0
@@ -3523,7 +3523,7 @@ fn=_int_realloc
 4883 129 0 0 129 0 0 0 0 0
 4888 258 0 0 0 0 0 0 0 0
 4895 129 0 0 0 0 0 0 0 0
-4896 903 2 1 129 0 0 0 0 0
+4896 903 1 1 129 0 0 0 0 0
 4899 258 0 0 0 0 0 129 0 0
 4900 516 0 0 0 0 0 129 0 0
 4902 129 0 0 0 0 0 0 0 0
@@ -3885,7 +3885,7 @@ fn=pthread_mutex_lock@@GLIBC_2.2.5
 44 2 1 1 2 0 0 0 0 0
 45 16 0 0 4 0 0 0 0 0
 46 2 0 0 0 0 0 2 0 0
-77 6 2 1 0 0 0 2 0 0
+77 6 1 1 0 0 0 2 0 0
 80 6 0 0 2 1 0 0 0 0
 82 2 0 0 0 0 0 0 0 0
 84 4 1 1 0 0 0 0 0 0
@@ -3928,7 +3928,7 @@ fn=__unregister_atfork
 243 3 0 0 3 0 0 0 0 0
 fl=./posix/../sysdeps/posix/sysconf.c
 fn=sysconf
-56 84 2 2 6 2 1 0 0 0
+56 84 3 2 6 2 1 0 0 0
 217 18 2 1 0 0 0 6 0 0
 fl=./posix/../sysdeps/unix/syscall-template.S
 fn=uname
@@ -4913,10 +4913,10 @@ fn=memcpy@@GLIBC_2.14
 29 2 1 1 0 0 0 0 0 0
 fl=./string/../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S
 fn=__memcpy_avx_unaligned_erms
-307 457 1 1 0 0 0 0 0 0
-308 457 0 0 0 0 0 0 0 0
-314 457 0 0 0 0 0 0 0 0
-315 457 0 0 0 0 0 0 0 0
+307 585 1 1 0 0 0 0 0 0
+308 585 0 0 0 0 0 0 0 0
+314 585 0 0 0 0 0 0 0 0
+315 585 0 0 0 0 0 0 0 0
 317 314 0 0 314 1 1 0 0 0
 318 314 0 0 0 0 0 0 0 0
 319 314 0 0 0 0 0 0 0 0
@@ -4924,20 +4924,20 @@ fn=__memcpy_avx_unaligned_erms
 323 19 0 0 0 0 0 19 1 1
 324 19 0 0 0 0 0 19 0 0
 327 38 0 0 19 0 0 0 0 0
-357 143 0 0 0 0 0 0 0 0
-358 143 0 0 0 0 0 0 0 0
-360 11 0 0 0 0 0 0 0 0
-361 11 0 0 0 0 0 0 0 0
-363 8 0 0 0 0 0 0 0 0
-367 8 0 0 0 0 0 0 0 0
-368 5 0 0 0 0 0 0 0 0
-369 5 0 0 0 0 0 0 0 0
+357 271 0 0 0 0 0 0 0 0
+358 271 0 0 0 0 0 0 0 0
+360 139 0 0 0 0 0 0 0 0
+361 139 0 0 0 0 0 0 0 0
+363 136 0 0 0 0 0 0 0 0
+367 136 0 0 0 0 0 0 0 0
+368 133 0 0 0 0 0 0 0 0
+369 133 0 0 0 0 0 0 0 0
 370 5 0 0 5 1 1 0 0 0
 371 5 0 0 0 0 0 0 0 0
 372 2 0 0 2 0 0 0 0 0
 373 2 0 0 0 0 0 2 0 0
 375 5 0 0 0 0 0 5 0 0
-377 5 0 0 5 0 0 0 0 0
+377 133 0 0 133 0 0 0 0 0
 383 3 0 0 3 1 1 0 0 0
 384 3 0 0 3 0 0 0 0 0
 385 3 0 0 0 0 0 3 0 0
@@ -5852,7 +5852,7 @@ fn=strcmp
 1425 1 0 0 0 0 0 0 0 0
 1426 1 0 0 0 0 0 0 0 0
 1427 1 0 0 0 0 0 0 0 0
-1443 6 1 1 0 0 0 0 0 0
+1443 6 2 1 0 0 0 0 0 0
 1444 6 0 0 6 0 0 0 0 0
 1445 6 0 0 6 3 0 0 0 0
 1446 6 0 0 0 0 0 0 0 0
@@ -6378,7 +6378,7 @@ fn=std::rt::lang_start_internal
 fn=std::sys::unix::stack_overflow::imp::make_handler
 627 5 1 1 0 0 0 2 0 0
 fn=std::sys_common::once::futex::Once::call
-489 6 1 1 0 0 0 5 1 1
+489 6 0 0 0 0 0 5 1 1
 627 2 0 0 2 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/mem/mod.rs
 fn=std::sys_common::once::futex::Once::call
@@ -6500,7 +6500,7 @@ fn=core::str::converts::from_utf8
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/str/validations.rs
 fn=core::str::converts::from_utf8
 0 32 0 0 0 0 0 0 0 0
-120 2118 0 0 2118 129 0 0 0 0
+120 2118 0 0 2118 118 0 0 0 0
 133 12 1 1 0 0 0 0 0 0
 136 10 0 0 0 0 0 0 0 0
 155 4 0 0 4 1 0 0 0 0
@@ -6547,7 +6547,7 @@ fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
 806 12 1 1 6 0 0 0 0 0
 fn=std::env::args
 756 4 1 1 0 0 0 1 0 0
-757 5 0 0 3 1 0 3 0 0
+757 5 0 0 3 0 0 3 0 0
 758 4 0 0 2 0 0 0 0 0
 fn=std::env::args_os
 791 8 1 1 0 0 0 6 0 0
@@ -6582,7 +6582,7 @@ fn=std::sync::once_lock::OnceLock<T>::initialize
 287 1 1 1 0 0 0 0 0 0
 311 2 0 0 1 0 0 0 0 0
 fn=std::sys_common::once::futex::Once::call
-0 1 0 0 0 0 0 0 0 0
+0 1 1 1 0 0 0 0 0 0
 214 1 0 0 0 0 0 0 0 0
 217 1 0 0 0 0 0 1 1 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/alloc.rs
@@ -6616,7 +6616,7 @@ fn=std::rt::lang_start_internal
 fn=std::sys::unix::stack_overflow::imp::make_handler
 579 6 1 1 3 1 0 3 0 0
 fn=std::sys_common::once::futex::Once::call
-579 5 1 1 1 1 0 2 0 0
+579 5 0 0 1 1 0 2 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/os_str.rs
 fn=std::sys::unix::os_str::Buf::into_string
 163 15 1 1 0 0 0 6 0 0
@@ -6646,14 +6646,14 @@ fn=std::sys::unix::stack_overflow::imp::make_handler
 167 4 0 0 2 0 0 0 0 0
 fn=std::sys_common::once::futex::Once::call
 170 1 0 0 0 0 0 0 0 0
-171 4 0 0 0 0 0 3 0 0
+171 4 1 1 0 0 0 3 0 0
 180 2 0 0 1 0 0 1 0 0
 183 3 0 0 1 0 0 1 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/thread.rs
 fn=std::rt::lang_start_internal
 0 1 0 0 0 0 0 0 0 0
 719 5 0 0 2 1 0 2 0 0
-720 2 0 0 0 0 0 0 0 0
+720 2 1 0 0 0 0 0 0 0
 722 4 0 0 0 0 0 1 0 0
 723 5 0 0 1 0 0 2 0 0
 724 2 0 0 1 0 0 0 0 0
@@ -6673,7 +6673,7 @@ fn=std::rt::lang_start_internal
 fn=std::sync::once_lock::OnceLock<T>::initialize
 78 1 0 0 0 0 0 0 0 0
 fn=std::sys_common::once::futex::Once::call
-0 8 1 1 2 2 2 0 0 0
+0 8 1 1 2 1 1 0 0 0
 58 6 0 0 1 0 0 0 0 0
 78 1 0 0 0 0 0 0 0 0
 86 16 2 2 0 0 0 14 2 0
@@ -6681,7 +6681,7 @@ fn=std::sys_common::once::futex::Once::call
 96 4 0 0 0 0 0 0 0 0
 105 6 2 2 2 0 0 4 1 0
 113 2 1 1 2 0 0 0 0 0
-114 3 0 0 0 0 0 2 0 0
+114 3 2 2 0 0 0 2 0 0
 133 16 2 2 14 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys_common/thread_info.rs
 fn=std::sys_common::thread_info::set
@@ -6706,19 +6706,21 @@ fn=std::rt::lang_start_internal
 1216 1 0 0 0 0 0 1 0 0
 fl=???
 fn=(below main)
-0 12 1 1 2 1 0 3 0 0
+0 12 2 2 2 1 0 3 0 0
 fn=<&str as phf_shared::PhfBorrow<str>>::borrow
-0 11817 1 1 11817 47 0 0 0 0
+0 11817 1 1 11817 30 0 0 0 0
 fn=<alloc::string::String as core::iter::traits::collect::Extend<char>>::extend
-0 84 5 5 29 0 0 12 0 0
+0 84 5 4 29 0 0 12 0 0
 fn=???
-0 1370 81 70 458 14 0 48 1 1
-fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h77cd9bbd9ca7d877E.llvm.13163717987671236105
-0 6 1 1 3 0 0 2 0 0
-fn=_ZN5alloc7raw_vec11finish_grow17ha62c25fccde54b1bE.llvm.1452325004264855747
-0 22936 3 3 5988 0 0 6244 0 0
-fn=_ZN7htmlize8unescape11unescape_in17h1c291e16032bb2a0E.llvm.14091310696929503815
-0 5461 13 13 1430 2 0 663 1 0
+0 1370 82 70 458 14 0 48 1 1
+fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h77cd9bbd9ca7d877E.llvm.5544710789395966349
+0 6 0 0 3 0 0 2 0 0
+fn=_ZN5alloc7raw_vec11finish_grow17ha62c25fccde54b1bE.llvm.17268038800585793329
+0 26 2 2 7 0 0 7 0 0
+fn=_ZN5alloc7raw_vec11finish_grow17hd1c6a63f78b9122eE.llvm.4447870894823681721
+0 22910 2 2 5981 0 0 6237 0 0
+fn=_ZN7htmlize8unescape11unescape_in17h1c291e16032bb2a0E.llvm.5128491237319476488
+0 9412 15 15 1936 3 0 918 1 0
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
 fn=__rust_alloc
@@ -6726,25 +6728,25 @@ fn=__rust_alloc
 fn=__rust_dealloc
 0 265 0 0 0 0 0 0 0 0
 fn=__rust_realloc
-0 764 1 1 0 0 0 0 0 0
+0 764 0 0 0 0 0 0 0 0
 fn=alloc::raw_vec::RawVec<T,A>::reserve::do_reserve_and_handle
-0 4644 4 4 903 0 0 1032 0 0
+0 4644 8 8 903 0 0 1032 0 0
 fn=alloc::raw_vec::RawVec<T,A>::reserve_for_push
-0 26956 2 2 5213 0 0 5848 0 0
+0 26956 4 4 5213 0 0 5848 0 0
 fn=htmlize::unescape::match_entity
-0 576815 17 17 95424 128 0 107741 0 0
+0 393138 14 14 79039 124 0 57438 0 0
 fn=iai::runner
-0 106 11 11 40 7 0 21 0 0
+0 106 10 10 40 7 0 21 0 0
 fn=main
-0 11 1 1 3 1 0 3 0 0
+0 11 2 2 3 1 0 3 0 0
 fn=phf::map::Map<K,V>::get
-0 869682 14 13 68484 26 23 23888 0 0
+0 869682 13 13 68484 28 25 23888 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
-0 4 0 0 2 0 0 2 0 0
+0 4 1 1 2 0 0 2 0 0
 fn=unescape_iai::iai_unescape_sample_128_invalid
-0 40 3 3 13 1 0 10 0 0
+0 40 4 4 13 1 0 10 0 0
 fn=unescape_iai::iai_wrappers::iai_unescape_sample_128_invalid
 0 13 2 2 4 0 0 1 0 0
 fn=unescape_iai::main
-0 3 1 1 1 0 0 0 0 0
-summary: 2186651 1866 1802 353916 4960 3885 228518 2722 2633
+0 3 1 0 1 0 0 0 0 0
+summary: 2008771 1875 1809 338207 4933 3891 178484 2725 2637
