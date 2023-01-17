@@ -93,32 +93,40 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
     let mut remainder = escaped.as_bytes();
     let mut iter = remainder.iter();
 
-    if let Some(i) = position_peek(&mut iter, |&c| c == b'&') {
-        // All but two entities are as long or longer than their expansion, so
-        // allocating the output buffer to be the same size as the input will
-        // usually prevent multiple allocations and generally won’t
-        // over-allocate by very much.
-        //
-        // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both five
-        // byte entities with six byte expansions.
-        let mut buffer = Vec::with_capacity(escaped.len());
+    while advance_until(&mut iter, |&c| c == b'&') {
+        let i = remainder.len() - iter.as_slice().len();
 
-        buffer.extend_from_slice(&remainder[0..i]);
-        buffer.extend_from_slice(&match_entity(&mut iter, context));
-        remainder = iter.as_slice();
+        if let Some(expansion) = match_entity(&mut iter, context) {
+            // All but two entities are as long or longer than their expansion,
+            // so allocating the output buffer to be the same size as the input
+            // will usually prevent multiple allocations and generally won’t
+            // over-allocate by very much.
+            //
+            // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both
+            // five byte entities with six byte expansions.
+            let mut buffer = Vec::with_capacity(escaped.len());
 
-        while let Some(i) = position_peek(&mut iter, |&c| c == b'&') {
-            buffer.extend_from_slice(&remainder[0..i]);
-            buffer.extend_from_slice(&match_entity(&mut iter, context));
+            buffer.extend_from_slice(&remainder[..i]);
+            buffer.extend_from_slice(&expansion);
             remainder = iter.as_slice();
+
+            while advance_until(&mut iter, |&c| c == b'&') {
+                let i = remainder.len() - iter.as_slice().len();
+
+                if let Some(expansion) = match_entity(&mut iter, context) {
+                    buffer.extend_from_slice(&remainder[..i]);
+                    buffer.extend_from_slice(&expansion);
+                    remainder = iter.as_slice();
+                }
+            }
+
+            buffer.extend_from_slice(remainder);
+
+            return String::from_utf8(buffer).unwrap().into();
         }
-
-        buffer.extend_from_slice(remainder);
-
-        String::from_utf8(buffer).unwrap().into()
-    } else {
-        escaped
     }
+
+    escaped
 }
 
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
@@ -126,7 +134,7 @@ const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 fn match_entity<'a>(
     iter: &'a mut slice::Iter<u8>,
     context: Context,
-) -> Cow<'a, [u8]> {
+) -> Option<Cow<'a, [u8]>> {
     assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
     if Some(b'#') == peek_n(iter, 1) {
@@ -176,10 +184,8 @@ fn match_entity<'a>(
             // semicolon, which by definition will be longer.)
             //
             // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            let raw = &iter.as_slice();
-            let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
             *iter = candidate_iter;
-            return candidate.into();
+            return None;
         }
         _ => {
             // missing-semicolon-after-character-reference: ignore and continue.
@@ -190,9 +196,9 @@ fn match_entity<'a>(
     let raw = &iter.as_slice();
     let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
     if candidate.len() < ENTITY_MIN_LENGTH {
-        // Couldn’t possibly match.
+        // Couldn’t possibly match. Don’t expand.
         *iter = candidate_iter;
-        return candidate.into();
+        return None;
     }
 
     if context == Context::Attribute {
@@ -205,7 +211,7 @@ fn match_entity<'a>(
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
         if let Some(&expansion) = ENTITIES.get(candidate) {
             *iter = candidate_iter;
-            return expansion.into();
+            return Some(expansion.into());
         }
     } else {
         // Find longest matching entity.
@@ -214,19 +220,20 @@ fn match_entity<'a>(
             if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
                 // Found a match.
                 iter.nth(check_len - 1); // Update iter. nth(0) == next().
-                return expansion.into();
+                return Some(expansion.into());
             }
         }
     }
 
     // Did not find a match.
     *iter = candidate_iter;
-    candidate.into()
+    None
 }
 
 #[allow(clippy::from_str_radix_10)]
-fn match_numeric_entity<'a>(iter: &'a mut slice::Iter<u8>) -> Cow<'a, [u8]> {
-    let remainder = iter.as_slice();
+fn match_numeric_entity<'a>(
+    iter: &'a mut slice::Iter<u8>,
+) -> Option<Cow<'static, [u8]>> {
     assert_next_eq(iter, Some(b'&'), "match_numeric_entity() expexted '&'");
     assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expexted '#'");
 
@@ -244,8 +251,8 @@ fn match_numeric_entity<'a>(iter: &'a mut slice::Iter<u8>) -> Cow<'a, [u8]> {
             u32::from_str_radix(&String::from_utf8(dec.to_vec()).unwrap(), 10)
         }
         None => {
-            // Iterator reached end
-            return remainder.into();
+            // Iterator reached end; do not expand.
+            return None;
         }
     };
 
@@ -258,12 +265,12 @@ fn match_numeric_entity<'a>(iter: &'a mut slice::Iter<u8>) -> Cow<'a, [u8]> {
 
     match number {
         Ok(number) => {
-            return correct_numeric_entity(number);
+            return Some(correct_numeric_entity(number));
         }
         Err(error) => match error.kind() {
             IntErrorKind::PosOverflow => {
                 // Too large a number
-                return REPLACEMENT_CHAR_BYTES.into();
+                return Some(REPLACEMENT_CHAR_BYTES.into());
             }
             IntErrorKind::Empty => {
                 // No number, e.g. &#; or &#x;. Fall through.
@@ -273,8 +280,8 @@ fn match_numeric_entity<'a>(iter: &'a mut slice::Iter<u8>) -> Cow<'a, [u8]> {
         },
     }
 
-    // Get the slice up to the current position of iter.
-    remainder[..remainder.len() - iter.as_slice().len()].into()
+    // Do not expand.
+    None
 }
 
 /// Unicode replacement character (U+FFFD “�”, requires `unescape` feature)
@@ -347,6 +354,28 @@ fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
             // Should never fall back since we handle all the cases above.
             .unwrap_or_else(|| REPLACEMENT_CHAR_BYTES.into()),
     }
+}
+
+/// Advance `iter` until `predicate` returns `true`.
+///
+/// This leaves `iter` pointing to the entry _before_ the one `predicate` found.
+/// In other words, `iter.next()` will return the one `predicate` found next.
+///
+/// Returns `true` if there is more `iter` to consume and `false` if `iter` is
+/// used up.
+#[inline]
+fn advance_until<P>(iter: &mut slice::Iter<u8>, mut predicate: P) -> bool
+where
+    P: FnMut(&u8) -> bool,
+{
+    for c in iter.as_slice() {
+        if predicate(c) {
+            return true;
+        }
+        iter.next();
+    }
+
+    false
 }
 
 #[inline]
@@ -497,6 +526,11 @@ mod tests {
     test_both!(empty_entity, unescape("&;") == "&;");
     test_both!(invalid_entity, unescape("&time;") == "&time;");
     test_both!(middle_invalid_entity, unescape(" &time; ") == " &time; ");
+    test_both!(
+        mixed_valid_invalid_entities,
+        unescape("&time; &amp; &time; &amp; &time;")
+            == "&time; & &time; & &time;"
+    );
     test_both!(middle_entity, unescape(" &amp; ") == " & ");
     test_both!(extra_ampersands, unescape("&&amp;&") == "&&&");
     test_both!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
