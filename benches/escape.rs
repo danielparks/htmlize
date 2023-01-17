@@ -7,18 +7,6 @@ use std::time::Duration;
 
 mod util;
 
-macro_rules! bench {
-    ( $group:expr, $function:ident, $size_name:expr, $input:expr ) => {{
-        let input = $input;
-        $group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
-        $group.bench_with_input(
-            BenchmarkId::new(stringify!($function), $size_name),
-            input,
-            |b, input| b.iter(|| $function(&*input)),
-        );
-    }};
-}
-
 fn benchmarks(c: &mut Criterion) {
     let groups = [
         (
@@ -49,8 +37,8 @@ fn benchmarks(c: &mut Criterion) {
             .measurement_time(Duration::from_secs(5));
 
         for (size_name, input) in inputs {
-            bench!(group, escape_text, size_name, input);
-            bench!(group, escape_all_quotes, size_name, input);
+            util::benchmark!(group, escape_text, size_name, input);
+            util::benchmark!(group, escape_all_quotes, size_name, input);
         }
 
         group.finish();

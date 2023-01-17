@@ -31,7 +31,7 @@ fn=(below main)
 51 2 0 0 1 1 0 1 0 0
 52 2 0 0 1 1 0 1 0 0
 55 2 0 0 0 0 0 1 0 0
-58 7 2 1 5 0 0 1 0 0
+58 7 1 1 5 0 0 1 0 0
 74 1 0 0 0 0 0 1 0 0
 fl=./csu/./csu/init-first.c
 fn=_init_first
@@ -1935,7 +1935,7 @@ fn=_dl_lookup_symbol_x
 204 1158 0 0 386 0 0 386 0 0
 580 386 0 0 0 0 0 0 0 0
 581 11108 0 0 2777 119 113 0 0 0
-582 10336 1 1 0 0 0 0 0 0
+582 10336 2 1 0 0 0 0 0 0
 583 193 0 0 0 0 0 0 0 0
 840 2702 3 2 0 0 0 1930 6 0
 842 386 0 0 0 0 0 193 2 0
@@ -3496,7 +3496,7 @@ fn=calloc
 3748 2 1 1 0 0 0 0 0 0
 3762 11 1 1 9 0 0 0 0 0
 fn=free
-3352 1600 1 1 0 0 0 800 2 0
+3352 1600 1 1 0 0 0 800 1 0
 3356 800 0 0 0 0 0 0 0 0
 3364 800 0 0 800 0 0 0 0 0
 3366 400 0 0 0 0 0 0 0 0
@@ -3654,7 +3654,7 @@ fn=brk
 fl=./misc/../sysdeps/unix/sysv/linux/getpagesize.c
 fn=getpagesize
 27 7 2 1 0 0 0 0 0 0
-28 28 1 1 14 2 0 0 0 0
+28 28 2 1 14 2 0 0 0 0
 30 7 0 0 7 0 0 0 0 0
 fl=./misc/../sysdeps/unix/sysv/linux/mmap64.c
 fn=mmap
@@ -3824,7 +3824,7 @@ fn=pthread_mutex_lock@@GLIBC_2.2.5
 112 2 0 0 2 1 0 0 0 0
 115 4 0 0 2 0 0 0 0 0
 130 6 0 0 2 0 0 0 0 0
-131 4 1 1 0 0 0 2 0 0
+131 4 2 1 0 0 0 2 0 0
 167 2 1 1 2 0 0 0 0 0
 170 2 0 0 0 0 0 2 0 0
 172 2 0 0 2 0 0 0 0 0
@@ -3857,7 +3857,7 @@ fn=__unregister_atfork
 243 3 0 0 3 0 0 0 0 0
 fl=./posix/../sysdeps/posix/sysconf.c
 fn=sysconf
-56 84 2 2 6 2 1 0 0 0
+56 84 4 2 6 2 1 0 0 0
 217 18 2 1 0 0 0 6 0 0
 fl=./posix/../sysdeps/unix/syscall-template.S
 fn=uname
@@ -3939,7 +3939,7 @@ fn=signal
 35 3 0 0 0 0 0 0 0 0
 fl=./signal/../sysdeps/unix/syscall-template.S
 fn=sigaltstack
-120 15 2 1 0 0 0 0 0 0
+120 15 1 1 0 0 0 0 0 0
 122 3 0 0 3 0 0 0 0 0
 fl=./signal/../sysdeps/unix/sysv/linux/internal-signals.h
 fn=sigaction
@@ -6140,24 +6140,24 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/alloc.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
 99 3 0 0 1 1 0 1 0 0
 fn=alloc::str::<impl str>::repeat
-99 8 1 1 2 0 0 2 0 0
+99 8 0 0 2 0 0 2 0 0
 fn=alloc::sync::Arc<T>::drop_slow
-117 7 1 1 3 0 0 1 0 0
+117 7 0 0 3 0 0 1 0 0
 251 2 0 0 0 0 0 0 0 0
 fn=std::env::args_os
-99 17 2 2 4 0 0 4 0 0
+99 17 0 0 4 0 0 4 0 0
 177 2 0 0 0 0 0 0 0 0
 fn=std::rt::lang_start_internal
 99 3 0 0 1 0 0 1 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/ffi/c_str.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
-292 2 1 1 0 0 0 0 0 0
+292 2 0 0 0 0 0 0 0 0
 294 9 1 1 3 1 0 6 0 0
 305 7 1 1 0 0 0 6 0 0
 307 9 0 0 7 0 0 0 0 0
 fn=alloc::ffi::c_str::CString::_from_vec_unchecked
 345 5 1 1 0 0 0 3 0 0
-348 6 1 1 2 0 0 3 0 0
+348 6 0 0 2 0 0 3 0 0
 349 5 0 0 4 0 0 0 0 0
 fn=alloc::sync::Arc<T>::drop_slow
 703 1 0 0 0 0 0 1 0 0
@@ -6168,7 +6168,7 @@ fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
 0 4 0 0 0 0 0 0 0 0
 176 1 0 0 0 0 0 0 0 0
 188 2 0 0 0 0 0 0 0 0
-288 2 1 1 0 0 0 0 0 0
+288 2 0 0 0 0 0 0 0 0
 fn=alloc::ffi::c_str::CString::_from_vec_unchecked
 224 1 0 0 1 0 0 0 0 0
 338 2 0 0 1 0 0 0 0 0
@@ -6176,14 +6176,14 @@ fn=alloc::ffi::c_str::CString::_from_vec_unchecked
 fn=alloc::str::<impl str>::repeat
 0 2 0 0 0 0 0 0 0 0
 171 6 0 0 0 0 0 2 0 0
-176 2 0 0 0 0 0 0 0 0
+176 2 1 1 0 0 0 0 0 0
 188 4 0 0 0 0 0 0 0 0
 288 2 0 0 0 0 0 0 0 0
 361 2 0 0 2 0 0 0 0 0
 fn=alloc::vec::Vec<T,A>::into_boxed_slice
 232 1 0 0 1 0 0 0 0 0
 fn=std::env::args_os
-0 5 0 0 0 0 0 0 0 0
+0 5 1 1 0 0 0 0 0 0
 171 8 0 0 0 0 0 0 0 0
 176 4 0 0 0 0 0 0 0 0
 188 8 0 0 0 0 0 0 0 0
@@ -6192,22 +6192,22 @@ fn=alloc::sync::Arc<T>::drop_slow
 2190 1 0 0 0 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/slice.rs
 fn=alloc::str::<impl str>::repeat
-0 30 1 1 4 0 0 2 0 0
+0 30 0 0 4 0 0 2 0 0
 488 4 0 0 0 0 0 0 0 0
 506 46 0 0 0 0 0 0 0 0
-516 14 0 0 0 0 0 0 0 0
+516 14 1 1 0 0 0 0 0 0
 526 4 0 0 0 0 0 0 0 0
-539 6 0 0 4 0 0 2 0 0
+539 6 1 1 4 0 0 2 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/str.rs
 fn=alloc::str::<impl str>::repeat
-531 16 2 2 0 0 0 12 0 0
+531 16 1 1 0 0 0 12 0 0
 533 18 0 0 14 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/string.rs
 fn=alloc::str::<impl str>::repeat
-846 6 1 1 2 0 0 4 0 0
+846 6 0 0 2 0 0 4 0 0
 fn=std::sys::unix::os_str::Buf::into_string
 573 15 0 0 9 0 0 3 0 0
-574 12 2 2 6 0 0 6 0 0
+574 12 1 1 6 0 0 6 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/sync.rs
 fn=alloc::sync::Arc<T>::drop_slow
 1111 2 1 1 0 0 0 1 0 0
@@ -6221,42 +6221,42 @@ fn=std::sys_common::thread_info::THREAD_INFO::__getit::destroy
 1711 3 0 0 2 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/vec/into_iter.rs
 fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
-155 9 1 1 6 0 0 0 0 0
+155 9 0 0 6 0 0 0 0 0
 167 3 0 0 0 0 0 3 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/alloc/src/vec/mod.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
-673 3 0 0 0 0 0 3 0 0
+673 3 1 1 0 0 0 3 0 0
 1949 1 0 0 0 0 0 1 0 0
 fn=alloc::ffi::c_str::CString::_from_vec_unchecked
 937 1 0 0 1 0 0 0 0 0
 1833 2 1 1 0 0 0 0 0 0
-1839 2 0 0 0 0 0 1 0 0
+1839 2 1 1 0 0 0 1 0 0
 fn=alloc::str::<impl str>::repeat
-0 4 0 0 0 0 0 2 0 0
+0 4 1 1 0 0 0 2 0 0
 673 8 1 1 0 0 0 8 0 0
 1949 2 0 0 0 0 0 0 0 0
 fn=alloc::vec::Vec<T,A>::into_boxed_slice
 1040 3 0 0 1 0 0 0 0 0
 1097 4 1 1 0 0 0 3 0 0
 1100 2 1 1 1 0 0 0 0 0
-1105 6 0 0 4 0 0 0 0 0
+1105 6 1 1 4 0 0 0 0 0
 fn=std::env::args_os
 673 3 1 1 0 0 0 3 0 0
-2785 3 0 0 3 0 0 0 0 0
+2785 3 1 1 3 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/alloc/layout.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
-438 1 1 1 0 0 0 0 0 0
+438 1 0 0 0 0 0 0 0 0
 fn=alloc::str::<impl str>::repeat
 438 2 0 0 0 0 0 0 0 0
 fn=std::env::args_os
 438 3 0 0 0 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/cell.rs
 fn=std::sys_common::thread_info::set
-452 1 1 1 0 0 0 0 0 0
+452 1 0 0 0 0 0 0 0 0
 1682 2 0 0 1 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/char/methods.rs
 fn=core::num::from_str_radix
-348 1 1 1 0 0 0 0 0 0
+348 1 0 0 0 0 0 0 0 0
 357 2 0 0 0 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/cmp.rs
 fn=std::env::args_os
@@ -6265,12 +6265,12 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/ffi/c_str.rs
 fn=core::ffi::c_str::CStr::from_ptr::strlen_rt
 283 3 1 1 3 1 0 0 0 0
 fn=std::env::args_os
-286 6 0 0 3 0 0 3 0 0
+286 6 1 1 3 0 0 3 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/intrinsics.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
 2363 4 1 1 1 1 0 1 0 0
 fn=alloc::str::<impl str>::repeat
-2363 46 1 1 2 0 0 16 0 0
+2363 46 0 0 2 0 0 16 0 0
 fn=std::env::args_os
 2363 12 0 0 3 0 0 3 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/iter/range.rs
@@ -6281,7 +6281,7 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/mem/maybe_un
 fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
 627 3 0 0 3 0 0 0 0 0
 fn=std::rt::lang_start_internal
-627 17 2 2 0 0 0 14 0 0
+627 17 1 1 0 0 0 14 0 0
 fn=std::sys::unix::stack_overflow::imp::make_handler
 627 5 0 0 0 0 0 2 0 0
 fn=std::sys_common::once::futex::Once::call
@@ -6296,20 +6296,20 @@ fn=core::num::<impl core::str::traits::FromStr for i64>::from_str
 1073 2 0 0 0 0 0 1 0 0
 1074 3 0 0 2 0 0 0 0 0
 fn=core::num::from_str_radix
-0 3 1 1 0 0 0 1 0 0
-1084 2 1 1 0 0 0 0 0 0
+0 3 0 0 0 0 0 1 0 0
+1084 2 0 0 0 0 0 0 0 0
 1109 1 0 0 0 0 0 0 0 0
 1112 4 1 1 0 0 0 3 0 0
-1116 1 1 1 0 0 0 0 0 0
+1116 1 0 0 0 0 0 0 0 0
 1122 2 0 0 0 0 0 0 0 0
 1134 5 0 0 1 0 0 0 0 0
-1145 3 0 0 0 0 0 0 0 0
-1164 4 0 0 2 0 0 0 0 0
+1145 3 1 1 0 0 0 0 0 0
+1164 4 1 1 2 0 0 0 0 0
 1195 3 1 1 0 0 0 1 0 0
 1196 4 0 0 3 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/num/uint_macros.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
-1468 3 0 0 0 0 0 0 0 0
+1468 3 1 1 0 0 0 0 0 0
 fn=alloc::str::<impl str>::repeat
 1666 4 0 0 0 0 0 0 0 0
 fn=core::num::from_str_radix
@@ -6354,7 +6354,7 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/ptr/mod.rs
 fn=alloc::ffi::c_str::CString::_from_vec_unchecked
 1336 1 0 0 0 0 0 1 0 0
 fn=alloc::sync::Arc<T>::drop_slow
-490 5 0 0 3 0 0 0 0 0
+490 5 1 1 3 0 0 0 0 0
 fn=std::env::args_os
 1336 9 0 0 0 0 0 9 0 0
 fn=std::rt::lang_start_internal
@@ -6379,8 +6379,8 @@ fn=std::sys_common::thread_info::THREAD_INFO::__getit::destroy
 385 1 0 0 1 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/result.rs
 fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
-859 6 0 0 3 0 0 0 0 0
-860 12 1 1 6 0 0 6 0 0
+859 6 1 1 3 0 0 0 0 0
+860 12 0 0 6 0 0 6 0 0
 1112 6 0 0 0 0 0 6 0 0
 fn=std::rt::lang_start_internal
 1479 1 0 0 0 0 0 0 0 0
@@ -6393,7 +6393,7 @@ fn=core::num::from_str_radix
 146 7 0 0 0 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/slice/memchr.rs
 fn=<&str as alloc::ffi::c_str::CString::new::SpecNewImpl>::spec_new_impl
-0 5 0 0 0 0 0 0 0 0
+0 5 1 1 0 0 0 0 0 0
 40 2 0 0 0 0 0 0 0 0
 52 10 0 0 0 0 0 0 0 0
 53 8 0 0 4 0 0 0 0 0
@@ -6406,13 +6406,13 @@ fn=core::str::converts::from_utf8
 96 16 0 0 16 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/core/src/str/validations.rs
 fn=core::str::converts::from_utf8
-0 32 1 1 0 0 0 0 0 0
+0 32 0 0 0 0 0 0 0 0
 120 2070 0 0 2070 42 0 0 0 0
-133 12 0 0 0 0 0 0 0 0
+133 12 1 1 0 0 0 0 0 0
 136 10 0 0 0 0 0 0 0 0
 155 4 0 0 4 1 0 0 0 0
-156 8 0 0 0 0 0 0 0 0
-213 24 1 1 0 0 0 0 0 0
+156 8 1 1 0 0 0 0 0 0
+213 24 0 0 0 0 0 0 0 0
 215 2078 0 0 0 0 0 0 0 0
 225 2070 0 0 0 0 0 0 0 0
 229 1035 0 0 0 0 0 0 0 0
@@ -6425,7 +6425,7 @@ fn=std::env::args_os
 2987 3 0 0 2 0 0 1 0 0
 fn=std::rt::lang_start_internal
 0 1 0 0 0 0 0 0 0 0
-2972 4 0 0 0 0 0 4 1 1
+2972 4 1 1 0 0 0 4 1 1
 2987 3 0 0 2 0 0 0 0 0
 2988 1 0 0 1 1 0 0 0 0
 3094 1 0 0 1 0 0 0 0 0
@@ -6447,18 +6447,18 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/alloc.rs
 fn=__rdl_alloc
 376 786 1 1 0 0 0 393 0 0
 fn=__rdl_realloc
-393 1032 1 1 0 0 0 645 0 0
+393 1032 0 0 0 0 0 645 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/env.rs
 fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
 804 9 1 1 0 0 0 3 0 0
 806 12 0 0 6 0 0 0 0 0
 fn=std::env::args
 756 4 1 1 0 0 0 1 0 0
-757 5 1 1 3 0 0 3 0 0
+757 5 0 0 3 0 0 3 0 0
 758 4 0 0 2 0 0 0 0 0
 fn=std::env::args_os
-791 8 0 0 0 0 0 6 0 0
-792 4 1 1 0 0 0 4 0 0
+791 8 1 1 0 0 0 6 0 0
+792 4 0 0 0 0 0 4 0 0
 793 9 0 0 7 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/ffi/os_str.rs
 fn=<std::env::Args as core::iter::traits::iterator::Iterator>::next
@@ -6473,13 +6473,13 @@ fn=std::rt::lang_start_internal
 0 2 0 0 2 0 0 0 0 0
 104 6 1 1 3 0 0 2 0 0
 105 5 1 1 1 0 0 4 0 0
-125 10 1 1 0 0 0 8 0 0
+125 10 2 2 0 0 0 8 0 0
 155 9 0 0 7 2 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sync/once.rs
 fn=std::rt::lang_start_internal
 138 1 0 0 0 0 0 0 0 0
-142 2 0 0 0 0 0 1 1 0
-143 3 1 1 0 0 0 2 1 0
+142 2 1 1 0 0 0 1 1 0
+143 3 0 0 0 0 0 2 1 0
 fn=std::sync::once_lock::OnceLock<T>::initialize
 197 1 0 0 0 0 0 0 0 0
 201 6 1 1 0 0 0 3 0 0
@@ -6495,62 +6495,62 @@ fn=std::sys_common::once::futex::Once::call
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/alloc.rs
 fn=__rdl_alloc
 13 1572 0 0 0 0 0 0 0 0
-14 1179 0 0 786 0 0 0 0 0
+14 1179 1 1 786 0 0 0 0 0
 fn=__rdl_dealloc
 42 393 1 1 393 0 0 0 0 0
 fn=__rdl_realloc
 47 516 0 0 0 0 0 0 0 0
-48 1032 0 0 645 1 0 0 0 0
+48 1032 1 1 645 1 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/args.rs
 fn=std::env::args_os
 0 3 0 0 0 0 0 0 0 0
-143 1 1 1 0 0 0 0 0 0
+143 1 0 0 0 0 0 0 0 0
 146 3 0 0 3 1 0 0 0 0
 fn=std::sys::unix::args::imp::ARGV_INIT_ARRAY::init_wrapper
 122 1 1 1 0 0 0 0 0 0
 124 1 0 0 1 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/mod.rs
 fn=std::rt::lang_start_internal
-0 6 1 1 1 1 1 0 0 0
-98 7 1 1 3 2 1 2 1 0
-104 6 0 0 0 0 0 1 0 0
-116 6 3 3 3 0 0 0 0 0
-172 2 0 0 0 0 0 0 0 0
-188 4 0 0 1 1 0 1 0 0
+0 6 0 0 1 1 1 0 0 0
+98 7 0 0 3 2 1 2 1 0
+104 6 1 1 0 0 0 1 0 0
+116 6 2 2 3 0 0 0 0 0
+172 2 1 1 0 0 0 0 0 0
+188 4 1 1 1 1 0 1 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/os.rs
 fn=std::rt::lang_start_internal
 579 2 0 0 1 0 0 1 0 0
 fn=std::sys::unix::stack_overflow::imp::make_handler
-579 6 0 0 3 1 0 3 0 0
+579 6 1 1 3 1 0 3 0 0
 fn=std::sys_common::once::futex::Once::call
 579 5 1 1 1 1 0 2 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/os_str.rs
 fn=std::sys::unix::os_str::Buf::into_string
 163 15 1 1 0 0 0 6 0 0
-164 12 1 1 6 0 0 6 0 0
+164 12 0 0 6 0 0 6 0 0
 165 15 0 0 9 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/stack_overflow.rs
 fn=std::rt::lang_start_internal
 110 6 0 0 2 1 0 2 0 0
 112 4 0 0 2 0 0 0 0 0
-113 2 0 0 0 0 0 2 0 0
+113 2 1 1 0 0 0 2 0 0
 114 6 1 1 0 0 0 2 0 0
-115 6 1 1 2 0 0 2 0 0
+115 6 0 0 2 0 0 2 0 0
 120 1 0 0 0 0 0 1 0 0
 fn=std::sys::unix::stack_overflow::imp::make_handler
 0 1 0 0 0 0 0 0 0 0
-138 7 1 1 1 1 0 1 0 0
+138 7 0 0 1 1 0 1 0 0
 139 2 0 0 0 0 0 0 0 0
-142 4 0 0 1 1 0 1 0 0
-143 2 1 1 0 0 0 0 0 0
+142 4 1 1 1 1 0 1 0 0
+143 2 0 0 0 0 0 0 0 0
 153 2 1 1 0 0 0 1 0 0
-154 1 1 1 0 0 0 0 0 0
+154 1 0 0 0 0 0 0 0 0
 158 2 0 0 1 0 0 1 0 0
 160 2 0 0 1 0 0 0 0 0
 161 4 0 0 0 0 0 3 0 0
-162 2 0 0 1 0 0 1 0 0
+162 2 1 1 1 0 0 1 0 0
 163 1 0 0 1 0 0 0 0 0
-167 4 1 1 2 0 0 0 0 0
+167 4 0 0 2 0 0 0 0 0
 fn=std::sys_common::once::futex::Once::call
 170 1 0 0 0 0 0 0 0 0
 171 4 0 0 0 0 0 3 0 0
@@ -6560,20 +6560,20 @@ fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/thre
 fn=std::rt::lang_start_internal
 0 1 0 0 0 0 0 0 0 0
 719 5 1 1 2 1 0 2 0 0
-720 2 0 0 0 0 0 0 0 0
+720 2 1 0 0 0 0 0 0 0
 722 4 0 0 0 0 0 1 0 0
 723 5 1 1 1 1 0 2 0 0
 724 2 0 0 1 0 0 0 0 0
 727 4 0 0 1 1 0 2 0 0
-735 2 1 1 0 0 0 0 0 0
-745 8 0 0 0 0 0 0 0 0
-746 4 1 1 0 0 0 0 0 0
+735 2 0 0 0 0 0 0 0 0
+745 8 1 1 0 0 0 0 0 0
+746 4 0 0 0 0 0 0 0 0
 770 3 0 0 0 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys/unix/thread_local_dtor.rs
 fn=std::sys::unix::thread_local_dtor::register_dtor
 21 5 1 1 0 0 0 3 0 0
 31 2 0 0 1 1 0 0 0 0
-37 7 1 1 4 0 0 0 0 0
+37 7 2 2 4 0 0 0 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/sys_common/once/futex.rs
 fn=std::rt::lang_start_internal
 78 1 0 0 0 0 0 0 0 0
@@ -6599,12 +6599,12 @@ fn=std::sys_common::thread_info::set
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/thread/local.rs
 fn=std::sys_common::thread_info::THREAD_INFO::__getit::destroy
 226 2 1 1 0 0 0 1 0 0
-231 2 1 1 1 0 0 1 1 0
+231 2 0 0 1 0 0 1 1 0
 fn=std::sys_common::thread_info::set
 237 7 1 1 2 0 0 0 0 0
 245 2 0 0 0 0 0 1 0 0
 422 5 0 0 2 0 0 3 0 0
-446 5 0 0 2 0 0 3 0 0
+446 5 1 1 2 0 0 3 0 0
 956 3 0 0 1 1 0 1 0 0
 fl=/rustc/90743e7298aca107ddaa0c202a4d3604e29bfeb6/library/std/src/thread/mod.rs
 fn=std::rt::lang_start_internal
@@ -6619,13 +6619,15 @@ fn=<&str as phf_shared::PhfBorrow<str>>::borrow
 fn=<alloc::string::String as core::iter::traits::collect::Extend<char>>::extend
 0 84 5 5 29 0 0 12 0 0
 fn=???
-0 1108 80 70 327 14 0 48 1 1
-fn=_ZN12unescape_iai11make_sample17h43926db7776efa8eE.llvm.4939123219126810658
+0 1108 81 70 327 14 0 48 1 1
+fn=_ZN12unescape_iai11make_sample17h43926db7776efa8eE.llvm.9104888172660878612
 0 39 2 2 13 0 0 9 0 0
 fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h77cd9bbd9ca7d877E.llvm.2702349608963308106
 0 6 1 1 3 0 0 2 0 0
 fn=_ZN5alloc7raw_vec11finish_grow17ha62c25fccde54b1bE.llvm.1452325004264855747
 0 6426 3 3 1543 0 0 1799 0 0
+fn=_ZN7htmlize8unescape11unescape_in17h8de827aa6c437583E.llvm.12492205919864250902
+0 299971 9 9 100244 57 0 49812 257 256
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
 fn=__rust_alloc
@@ -6639,19 +6641,17 @@ fn=alloc::raw_vec::RawVec<T,A>::reserve::do_reserve_and_handle
 fn=alloc::raw_vec::RawVec<T,A>::reserve_for_push
 0 4096 2 2 768 0 0 768 0 0
 fn=htmlize::unescape::match_entity
-0 30336 20 20 7296 2 0 6016 0 0
-fn=htmlize::unescape::unescape
-0 299841 9 9 100116 57 0 49811 257 256
+0 31744 22 22 7424 2 0 6528 0 0
 fn=iai::runner
-0 106 11 11 40 8 0 21 0 0
+0 106 10 10 40 8 0 21 0 0
 fn=main
-0 11 3 2 3 1 0 3 0 0
+0 11 1 1 3 1 0 3 0 0
 fn=phf::map::Map<K,V>::get
-0 23936 14 14 2048 3 1 896 0 0
+0 23936 13 13 2048 3 1 896 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
 0 4 1 1 2 0 0 2 0 0
 fn=unescape_iai::iai_wrappers::iai_unescape_sample_128
-0 23 2 2 7 0 0 5 0 0
+0 24 2 2 7 0 0 5 0 0
 fn=unescape_iai::main
-0 3 1 0 1 0 0 0 0 0
-summary: 889059 1844 1782 247638 4754 3878 123116 2679 2592
+0 3 2 1 1 0 0 0 0 0
+summary: 890598 1842 1776 247894 4754 3878 123629 2678 2592
