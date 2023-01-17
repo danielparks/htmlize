@@ -134,13 +134,22 @@ fn match_entity<'a>(
         return match_numeric_entity(iter);
     }
 
-    // Clone iter because we need to look ahead to find the longest possible
-    // entity to match.
+    // Create a second iter because we need to look ahead to find the longest
+    // matching entity. We’ll update the original iter before we return.
     let mut candidate_iter = iter.clone();
     assert_next_eq(&mut candidate_iter, Some(b'&'), PEEK_MATCH_ERROR);
 
-    // Determine longest possible candidate.
-    slice_while(&mut candidate_iter, u8::is_ascii_alphanumeric);
+    // Determine longest possible candidate. (Start at 1 since we got the '&'.)
+    for _ in 1..ENTITY_MAX_LENGTH {
+        if let Some(c) = peek(&candidate_iter) {
+            if c.is_ascii_alphanumeric() {
+                candidate_iter.next();
+                continue;
+            }
+        }
+
+        break;
+    }
 
     match peek(&candidate_iter) {
         Some(b';') => {
@@ -148,16 +157,26 @@ fn match_entity<'a>(
             assert_next_eq(&mut candidate_iter, Some(b';'), PEEK_MATCH_ERROR);
         }
         Some(b'=') if context == Context::Attribute => {
-            // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            // In an attribute, entities ending with an alphanumeric character
-            // or '=' instead of ';' are passed through without expansion. This
-            // match statement will never find an alphanumeric character because
-            // we consume them all above.
+            // In an attribute entities ending with an alphanumeric character or
+            // '=' instead of ';' are passed through without expansion.
             //
-            // Note that the longest entity will always end with a ';' since any
-            // bare entity should always have a closed version with a trailing
-            // semicolon, which by definition will be longer.
-            let raw = iter.as_slice();
+            // See `unescape_in()` documentation for examples.
+            //
+            // Alphanumeric characters don’t matter here because either:
+            //
+            //   * The loop above consumed ENTITY_MAX_LENGTH-1 alphanumeric
+            //     characters, so it can’t match an entity because it didn’t
+            //     find a ';' (the longest entity ends with a ';').
+            //   * The loop above consumer fewer than ENTITY_MAX_LENGTH-1
+            //     alphanumeric characters, so the next character cannot be
+            //     alphanumeric.
+            //
+            // (The longest entity will always end with a ';' since any bare
+            // entity will always have a closed version with a trailing
+            // semicolon, which by definition will be longer.)
+            //
+            // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+            let raw = &iter.as_slice();
             let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
             *iter = candidate_iter;
             return candidate.into();
@@ -168,7 +187,7 @@ fn match_entity<'a>(
         }
     }
 
-    let raw = iter.as_slice();
+    let raw = &iter.as_slice();
     let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
     if candidate.len() < ENTITY_MIN_LENGTH {
         // Couldn’t possibly match.
@@ -178,13 +197,12 @@ fn match_entity<'a>(
 
     if context == Context::Attribute {
         // If candidate does not exactly match an entity, then don't expand it.
-        // This is because of the special case described in the spec (see
-        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state)
-        // Essentially it says that *in attributes* entities must be terminated
-        // with a semicolon, EOF, or some character *other* than [a-zA-Z0-9=].
+        // The spec says that entities  *in attributes* must be terminated with
+        // a semicolon, EOF, or some character *other* than [a-zA-Z0-9=].
         //
-        // In other words, “&timesa” expands to “&timesa” in an attribute rather
-        // than “×a”.
+        // See `unescape_in()` documentation for examples.
+        //
+        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
         if let Some(&expansion) = ENTITIES.get(candidate) {
             *iter = candidate_iter;
             return expansion.into();
