@@ -11,7 +11,7 @@ macro_rules! iai_benchmarks {
                 }
 
                 fn [<iai_unescape_attribute_ $name>]() -> String {
-                    unescape(black_box($input))
+                    unescape_attribute(black_box($input))
                 }
             )+
 
