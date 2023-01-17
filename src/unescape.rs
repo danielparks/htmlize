@@ -126,8 +126,14 @@ where
         }
         Some(b'=') if context == Context::Attribute => {
             // Special case, see https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            // This character cannot be alphanumeric, since all alphanumeric
-            // characters were consumed above.
+            // In an attribute, entities ending with an alphanumeric character
+            // or '=' instead of ';' are passed through without expansion. This
+            // match statement will never find an alphanumeric character because
+            // we consume them all above.
+            //
+            // Note that the longest entity will always end with a ';' since any
+            // bare entity should always have a closed version with a trailing
+            // semicolon, which by definition will be longer.
             return candidate;
         }
         _ => {
