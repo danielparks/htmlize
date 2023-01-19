@@ -81,6 +81,8 @@ cat "$changelog"
 echo
 confirm 'Release notes displayed above. Continue?'
 
+cargo publish
+
 git tag --sign --file "$changelog" --cleanup=verbatim "v${version}"
 git push --tags origin main
 
