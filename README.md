@@ -46,7 +46,9 @@ characters. In general you should not need to use this.
 
 ## Unescaping entities into text
 
-This requires the `unescape` feature. To configure it:
+This requires the `unescape` or `unescape_fast` feature. (`unescape` builds
+much faster, so unless you really need the very fastest unescape, use it.) To
+configure it:
 
 ```sh
 cargo add htmlize --features unescape
@@ -84,10 +86,24 @@ strings. (Note that both functions actually take and return [`Cow`]s.)
 
 ## Features
 
-  * `unescape`: build `ENTITIES` map and provide `unescape()` function. Enabling
-    this will add a dependency on [phf] and may slow builds by a few seconds.
-  * `iai`: enable [iai] benchmarks. This should only be used when running
-    benchmarks. See the [Benchmarks](#benchmarks) section below.
+The `escape` functions are all available with no features enabled.
+
+  * `unescape_fast`: provide fast version of [`unescape()`]. This does _not_
+    enable the `entities` feature automatically.
+
+    This takes perhaps 30 seconds longer to build than `unescape`, but the
+    performance is significantly better in the worst cases. That said, the
+    performance of of the `unescape` version is already pretty good, so I don’t
+    recommend enabling this unless you really need it.
+
+  * `unescape`: provide normal version of `unescape()`. This will
+    automatically enable the `entities` feature.
+
+  * `entities`: build `ENTITIES` map. Enabling this will add a dependency
+    on [phf] and may slow builds by a few seconds.
+
+All other features are internal and should not be used when specifying a
+dependency. See the [reference documentation][features].
 
 ## Benchmarks
 
@@ -95,9 +111,19 @@ This has two suites of benchmarks. One is a typical multi-run benchmark using
 [criterion]. These can be run with `cargo bench` or [`cargo criterion`] if you
 have it installed.
 
+To run benchmarks on the unescape functions, enable features `bench` and
+`unescape` or `unescape_fast` (or both).
+
+**Note:** The internal `bench` feature is required to expose internal functions
+like `unescape_fast()` and `unescape_slow()` to the benchmarks. You must not
+enable this feature when specifying a dependency, since its behavior is not
+guaranteed to stay the same from point release to point release.
+
+### iai benchmarks
+
 The other suite of benchmarks uses [iai] to count instructions, cache accesses,
-and to estimate cycles. It requires the `iai` feature to be enabled, and only
-really works well on Linux.
+and to estimate cycles. It requires the internal `iai` feature to be enabled,
+and only really works well on Linux.
 
 To run iai benchmarks locally:
 
@@ -105,8 +131,9 @@ To run iai benchmarks locally:
 cargo bench --features iai iai
 ```
 
-You may want to use `--all-features` or `--features iai,unescape` to enable
-benchmarks of the `unescape()` function.
+You may want to use `--all-features` or `--features iai,bench,unescape` or
+`--features iai,bench,unescape_fast` to enable benchmarks of the `unescape()`
+functions.
 
 To run in a Docker container, use the `docker.sh` script. It will build an image
 if necessary, then use that image for all future runs:
@@ -149,6 +176,7 @@ additional terms or conditions.
 [`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
+[features]: https://docs.rs/htmlize/0.5.1/htmlize/index.html#features
 [iai]: https://crates.io/crates/iai
 [criterion]: https://crates.io/crates/criterion
 [`cargo criterion`]: https://crates.io/crates/cargo-criterion

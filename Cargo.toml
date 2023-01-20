@@ -14,10 +14,18 @@ rust-version = "1.60"
 
 [features]
 default = []
-unescape = ["dep:serde_json", "dep:phf", "dep:phf_codegen"]
+unescape = ["entities", "_unescape_either"]
+unescape_fast = ["_unescape_either", "dep:matchgen", "dep:serde_json"]
+entities = ["dep:phf", "dep:phf_codegen", "dep:serde_json"]
+# Enable iai benchmarks
 iai = []
+# Make internal functions like unescape_fast public for benchmarks.
+bench = []
+# Kludge to support `or` in required-features below
+_unescape_either = []
 
 [build-dependencies]
+matchgen = { version = "0.1.0", optional = true }
 phf = { version = "0.11.1", default-features = false, optional = true }
 phf_codegen = { version = "0.11.1", optional = true }
 serde_json = { version = "1.0", optional = true }
@@ -47,9 +55,9 @@ harness = false
 [[bench]]
 name = "unescape_iai"
 harness = false
-required-features = ["unescape", "iai"]
+required-features = ["bench", "iai", "_unescape_either"]
 
 [[bench]]
 name = "unescape"
 harness = false
-required-features = ["unescape"]
+required-features = ["bench", "_unescape_either"]
