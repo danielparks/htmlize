@@ -1,4 +1,4 @@
-// Generates code from entities.json when feature “unescape“ is enabled.
+// Generates code from entities.json depending on enabled features.
 //
 // The canonical source is https://html.spec.whatwg.org/entities.json (see
 // https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
@@ -9,26 +9,27 @@
 //         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
 //         . . .
 //     }
-#[cfg(feature = "unescape")]
-use std::{
-    cmp::{max, min},
-    env, fs,
-    fs::File,
-    io::{BufWriter, Write},
-    path::Path,
-};
 
 fn main() {
-    #[cfg(feature = "unescape")]
-    generate_entities_rs();
-}
-
-#[cfg(feature = "unescape")]
-fn generate_entities_rs() {
+    #[cfg(any(feature = "unescape_fast", feature = "entities"))]
     let entities = load_entities("entities.json");
 
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let out_path = Path::new(&out_dir).join("entities.rs");
+    #[cfg(feature = "unescape_fast")]
+    generate_matcher_rs(&entities);
+
+    #[cfg(feature = "entities")]
+    generate_entities_rs(&entities);
+}
+
+#[cfg(feature = "entities")]
+fn generate_entities_rs(entities: &[(String, String)]) {
+    use std::cmp::{max, min};
+    use std::env;
+    use std::fs::File;
+    use std::io::{BufWriter, Write};
+    use std::path::Path;
+
+    let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("entities.rs");
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
     macro_rules! w {
@@ -37,7 +38,7 @@ fn generate_entities_rs() {
         }
     }
 
-    w!("/// A map of all valid HTML entities to their expansions (requires `unescape`");
+    w!("/// A map of all valid HTML entities to their expansions (requires `entities`");
     w!("/// feature).");
     w!("///");
     w!("/// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the");
@@ -56,7 +57,7 @@ fn generate_entities_rs() {
     let mut map_builder = phf_codegen::Map::<&[u8]>::new();
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::max_value();
-    for (name, glyph) in &entities {
+    for (name, glyph) in entities {
         map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
@@ -85,19 +86,44 @@ fn generate_entities_rs() {
     );
 
     w!("");
-    w!("/// Length of longest entity including & and possibly ; (requires `unescape`");
-    w!("/// feature)");
+    w!("/// Length of longest entity including ‘&’ and possibly ‘;’ (requires");
+    w!("/// `entities` feature)");
     w!("pub const ENTITY_MAX_LENGTH: usize = {};", max_len);
 
     w!("");
-    w!("/// Length of shortest entity including & and possibly ; (requires `unescape`");
-    w!("/// feature)");
+    w!("/// Length of shortest entity including ‘&’ and possibly ‘;’ (requires");
+    w!("/// `entities` feature)");
     w!("pub const ENTITY_MIN_LENGTH: usize = {};", min_len);
 }
 
-#[cfg(feature = "unescape")]
-fn load_entities<P: AsRef<Path>>(path: P) -> Vec<(String, String)> {
-    let input = fs::read(path.as_ref()).unwrap();
+#[cfg(feature = "unescape_fast")]
+fn generate_matcher_rs(entities: &[(String, String)]) {
+    use iter_matcher::IterMatcher;
+    use std::env;
+    use std::fs::File;
+    use std::io::{BufWriter, Write};
+    use std::path::Path;
+
+    let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("matcher.rs");
+    let mut out = BufWriter::new(File::create(out_path).unwrap());
+
+    writeln!(out, "/// Used in `match_entity()`.").unwrap();
+    let mut matcher =
+        IterMatcher::new("fn entity_matcher", "(bool, &'static [u8])");
+    entities.iter().for_each(|(name, glyph)| {
+        matcher.add(
+            name.as_bytes(),
+            format!("({:?}, &{:?})", name.ends_with(';'), glyph.as_bytes()),
+        );
+    });
+    matcher.disable_clippy(true);
+    matcher.render(&mut out).unwrap();
+    writeln!(out).unwrap();
+}
+
+#[cfg(any(feature = "unescape_fast", feature = "entities"))]
+fn load_entities<P: AsRef<std::path::Path>>(path: P) -> Vec<(String, String)> {
+    let input = std::fs::read(path.as_ref()).unwrap();
     let input: serde_json::Map<String, serde_json::Value> =
         serde_json::from_slice(&input).unwrap();
 

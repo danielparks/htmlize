@@ -9,19 +9,50 @@ macro_rules! iai_benchmarks {
     ( $( ($name:ident, $input:expr), )+ ) => {
         paste! {
             $(
-                fn [<iai_unescape_ $name>]() -> Cow<'static, str> {
-                    unescape(black_box($input))
+                #[cfg(feature = "unescape")]
+                fn [<iai_slow_unescape_ $name>]() -> Cow<'static, str> {
+                    unescape_slow(black_box($input))
                 }
 
-                fn [<iai_unescape_attribute_ $name>]() -> Cow<'static, str> {
-                    unescape_attribute(black_box($input))
+                #[cfg(feature = "unescape")]
+                fn [<iai_slow_unescape_attribute_ $name>]() -> Cow<'static, str> {
+                    unescape_attribute_slow(black_box($input))
+                }
+
+                #[cfg(feature = "unescape_fast")]
+                fn [<iai_fast_unescape_ $name>]() -> Cow<'static, str> {
+                    unescape_fast(black_box($input))
+                }
+
+                #[cfg(feature = "unescape_fast")]
+                fn [<iai_fast_unescape_attribute_ $name>]() -> Cow<'static, str> {
+                    unescape_attribute_fast(black_box($input))
                 }
             )+
 
+            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             iai::main!(
                 $(
-                    [<iai_unescape_ $name>],
-                    [<iai_unescape_attribute_ $name>],
+                    [<iai_slow_unescape_ $name>],
+                    [<iai_slow_unescape_attribute_ $name>],
+                )+
+            );
+
+            #[cfg(all(feature = "unescape", feature = "unescape_fast"))]
+            iai::main!(
+                $(
+                    [<iai_slow_unescape_ $name>],
+                    [<iai_slow_unescape_attribute_ $name>],
+                    [<iai_fast_unescape_ $name>],
+                    [<iai_fast_unescape_attribute_ $name>],
+                )+
+            );
+
+            #[cfg(all(not(feature = "unescape"), feature = "unescape_fast"))]
+            iai::main!(
+                $(
+                    [<iai_fast_unescape_ $name>],
+                    [<iai_fast_unescape_attribute_ $name>],
                 )+
             );
         }
