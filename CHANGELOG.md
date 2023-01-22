@@ -9,27 +9,27 @@ All notable changes to this project will be documented in this file.
 * Hid `unescape()` behind `unescape` feature. This allows users to avoid the
   dependency on [phf][] and the build dependency on [serde_json][], which cuts
   build times on my machine by more than 90% (from 6.2 seconds to 0.5 seconds).
-* Switched escape functions to use `Cow<'a, str>` for input and output. This
-  allows for significant performance improvements when the input has no special
-  characters (see performance improvements below for more).
+* Switched both escape and unescape functions to use `Cow<'a, str>` for input
+  and output. This allows for significant performance improvements when the
+  input can be returned unchanged (see performance improvements below for more).
 
 ### Improvements
 
-* Significantly optimized the escape functions. Many of the improvements are
-  similar to the ones outlined in Lise Henry’s [excellent blog post on
-  optimizing HTML entity escaping][optimize-blog] (see also: [its Reddit
-  discussion][optimize-reddit]), though most notably I’m using [memchr][]
-  directly rather than [regex][].
+* Significantly optimized both escape and unescape functions. Many of the
+  improvements to the escape functions are similar to the ones outlined in Lise
+  Henry’s [excellent blog post on optimizing HTML entity
+  escaping][optimize-blog] (see also: [its Reddit discussion][optimize-reddit]),
+  though most notably I’m using [memchr][] directly rather than [regex][].
+* Added `unescape_attribute()` to handle the special rules for dealing with
+  entities in the value of an HTML attribute. Also adds `unescape_in()`, which
+  takes a context parameter that can either be `Context::Attribute` or
+  `Context::General` (for everything else).
 * Switched to the [phf_codegen][] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
 * Pre-allocated the output buffer for `unescape()`, which generally improves
   performance slightly.
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
   a collection of tuples.
-* Added `unescape_attribute()` to handle the special rules for dealing with
-  entities in the value of an HTML attribute. Also adds `unescape_in()`, which
-  takes a context parameter that can either be `Context::Attribute` or
-  `Context::General` (for everything else).
 
 ### Bug fixes
 
