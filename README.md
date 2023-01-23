@@ -2,6 +2,7 @@
 
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
+![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
 
 If you only need to escape text for embedding into HTML then installing is as
 simple as running:

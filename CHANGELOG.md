@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 * Switched both escape and unescape functions to use `Cow<'a, str>` for input
   and output. This allows for significant performance improvements when the
   input can be returned unchanged (see performance improvements below for more).
+* Updated minimum supported Rust version (MSRV) to 1.60.
 
 ### Improvements
 
