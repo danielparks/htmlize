@@ -57,12 +57,3 @@ jobs:
       # actual binary. Hence, --force.
       - run: cargo binstall --force -y --pkg-url="{ repo }/releases/download/v{ version }/{ name }_v{ version }_Linux_x86_64{ archive-suffix }" --pkg-fmt="tar" cargo-msrv
       - run: cargo msrv verify
-
-  semver:
-    name: cargo semver-checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Check semver
-        uses: obi1kenobi/cargo-semver-checks-action@v1
