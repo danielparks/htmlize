@@ -108,6 +108,7 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
     writeln!(out, "/// Used in `match_entity()`.").unwrap();
+    writeln!(out, "#[allow(clippy::all)]").unwrap();
     let mut matcher =
         IterMatcher::new("fn entity_matcher", "(bool, &'static [u8])");
     entities.iter().for_each(|(name, glyph)| {
@@ -116,7 +117,7 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
             format!("({:?}, &{:?})", name.ends_with(';'), glyph.as_bytes()),
         );
     });
-    matcher.disable_clippy(true);
+    matcher.disable_clippy(false);
     matcher.render(&mut out).unwrap();
     writeln!(out).unwrap();
 }
