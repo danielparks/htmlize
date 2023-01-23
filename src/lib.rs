@@ -31,6 +31,11 @@
 //!
 //! The `escape` functions are all available with no features enabled.
 //!
+//! # Minimum supported Rust version
+//!
+//! Currently the minimum supported Rust version (MSRV) is **1.60**. Future
+//! increases in the MSRV will require a major version bump.
+//!
 //! [phf]: https://crates.io/crates/phf
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks

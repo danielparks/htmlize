@@ -9,11 +9,12 @@ readme = "README.md"
 keywords = ["html", "entities", "escape", "unescape", "encode", "decode"]
 categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
-edition = "2018"
+edition = "2021"
+rust-version = "1.60"
 
 [features]
 default = []
-unescape = ["serde_json", "phf", "phf_codegen"]
+unescape = ["dep:serde_json", "dep:phf", "dep:phf_codegen"]
 iai = []
 
 [build-dependencies]
