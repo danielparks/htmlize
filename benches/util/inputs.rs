@@ -11,6 +11,6 @@ pub const DIRTY_BIG: &str = include_str!("../../tests/corpus/html-raw.txt");
 
 pub fn make_sample(count: usize, entity: &str, padding: &str) -> String {
     let mut s = padding.repeat(count);
-    s.extend(entity.chars());
+    s.push_str(entity);
     s.repeat(count)
 }
