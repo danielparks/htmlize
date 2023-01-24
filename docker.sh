@@ -5,13 +5,21 @@
 
 set -eo pipefail
 
+# cd to script directory
+cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")"
+
+image=dp-$(basename $(pwd)):0.1
+
+if [[ $1 == "--rebuild" ]] ; then
+  shift
+  docker image rm -f "$image"
+fi
+
 if [[ $# == 0 ]] ; then
   command=(bash)
 else
   command=("$@")
 fi
-
-image=dp-rust:0.3
 
 if ! docker inspect "$image" >/dev/null ; then
   docker build -t "$image" .
