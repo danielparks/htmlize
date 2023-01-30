@@ -67,7 +67,7 @@ fn generate_entities_rs() {
             .collect();
 
         // `{:28}` would pad the output inside the backticks.
-        let name = format!("`{}`", name);
+        let name = format!("`{name}`");
 
         // Suppress a few inconvenient glyphs. Newline adds an extra line, and
         // tab causes a clippy warning.
@@ -76,7 +76,7 @@ fn generate_entities_rs() {
             v => v,
         };
 
-        w!("/// {:30} | {:18} | {}", name, codepoints.join(", "), glyph);
+        w!("/// {name:30} | {:18} | {glyph}", codepoints.join(", "));
     }
 
     w!(
