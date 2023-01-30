@@ -231,8 +231,8 @@ fn match_entity<'a>(
 }
 
 #[allow(clippy::from_str_radix_10)]
-fn match_numeric_entity<'a>(
-    iter: &'a mut slice::Iter<u8>,
+fn match_numeric_entity(
+    iter: &mut slice::Iter<u8>,
 ) -> Option<Cow<'static, [u8]>> {
     assert_next_eq(iter, Some(b'&'), "match_numeric_entity() expexted '&'");
     assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expexted '#'");
@@ -276,7 +276,7 @@ fn match_numeric_entity<'a>(
                 // No number, e.g. &#; or &#x;. Fall through.
             }
             // Pretty sure this is impossible.
-            _ => panic!("error parsing number in numeric entity: {:?}", error),
+            _ => panic!("error parsing number in numeric entity: {error:?}"),
         },
     }
 
@@ -405,13 +405,13 @@ where
 /// Move to the next value in `iter` and assert that it equals `expected`.
 #[inline]
 fn assert_next_eq(iter: &mut slice::Iter<u8>, expected: Option<u8>, msg: &str) {
-    assert_eq!(iter.next().copied(), expected, "{}", msg)
+    assert_eq!(iter.next().copied(), expected, "{msg}")
 }
 
 /// Peek the next value in `iter` and assert that it equals `expected`.
 #[inline]
 fn assert_peek_eq(iter: &slice::Iter<u8>, expected: Option<u8>, msg: &str) {
-    assert_eq!(peek(iter), expected, "{}", msg)
+    assert_eq!(peek(iter), expected, "{msg}")
 }
 
 /// Peek at the next value in `iter` without changing the `iter`.
