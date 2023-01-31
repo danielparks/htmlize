@@ -20,4 +20,5 @@ RUN curl -sSfL https://github.com/cargo-bins/cargo-binstall/releases/latest/down
 
 COPY . /work
 WORKDIR /work
+RUN rustup update
 RUN cargo build --benches --profile bench --all-features
