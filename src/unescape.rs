@@ -477,21 +477,24 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert2::assert;
     use paste::paste;
+
+    macro_rules! test {
+        ($name:ident, $($test:tt)+) => {
+            #[test]
+            fn $name() {
+                assert!($($test)+);
+            }
+        };
+    }
 
     // Test both unescape and unescape_attribute
     macro_rules! test_both {
         ($name:ident, unescape $($test:tt)+) => {
-            #[test]
-            fn $name() {
-                ::assert2::assert!(unescape$($test)+);
-            }
-
             paste! {
-                #[test]
-                fn [<attribute_ $name>]() {
-                    ::assert2::assert!(unescape_attribute$($test)+);
-                }
+                test!($name, unescape$($test)+);
+                test!([<attribute_ $name>], unescape_attribute$($test)+);
             }
         };
     }
