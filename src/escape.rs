@@ -129,23 +129,46 @@ escape_fn! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert2::assert;
+    use paste::paste;
 
-    const BASIC_CORPUS: [(&str, &str); 7] = [
-        ("", ""),
-        ("clean", "clean"),
-        ("< >", "&lt; &gt;"),
-        ("&amp;", "&amp;amp;"),
-        ("prefix&", "prefix&amp;"),
-        ("☺️&☺️", "☺️&amp;☺️"),
-        (
-            "Björk and Борис OBrien ❤️, “love beats hate”",
-            "Björk and Борис OBrien ❤️, “love beats hate”",
-        ),
-    ];
+    macro_rules! test {
+        ($name:ident, $($test:tt)+) => {
+            #[test]
+            fn $name() {
+                assert!($($test)+);
+            }
+        };
+    }
 
-    test_multiple!(escape_text_basic, escape_text, BASIC_CORPUS);
-    test_multiple!(escape_attribute_basic, escape_attribute, BASIC_CORPUS);
-    test_multiple!(escape_all_quotes_basic, escape_all_quotes, BASIC_CORPUS);
+    // Test all escape functions
+    macro_rules! test_all {
+        ($name:ident, $in:expr, $out:expr) => {
+            paste! {
+                test!([<escape_text_ $name>], escape_text($in) == $out);
+                test!(
+                    [<escape_attribute_ $name>],
+                    escape_attribute($in) == $out
+                );
+                test!(
+                    [<escape_all_quotes_ $name>],
+                    escape_all_quotes($in) == $out
+                );
+            }
+        };
+    }
+
+    test_all!(none, "", "");
+    test_all!(clean, "clean", "clean");
+    test_all!(lt_gt, "< >", "&lt; &gt;");
+    test_all!(amp, "&amp;", "&amp;amp;");
+    test_all!(prefix_amp, "prefix&", "prefix&amp;");
+    test_all!(emoji_amp, "☺️&☺️", "☺️&amp;☺️");
+    test_all!(
+        special_clean,
+        "Björk and Борис OBrien ❤️, “love beats hate”",
+        "Björk and Борис OBrien ❤️, “love beats hate”"
+    );
 
     test!(
         escape_text_quotes,
