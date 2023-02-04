@@ -1,7 +1,7 @@
 desc: I1 cache:         32768 B, 64 B, 8-way associative
 desc: D1 cache:         32768 B, 64 B, 8-way associative
 desc: LL cache:         8388608 B, 64 B, 16-way associative
-cmd: /work/target/release/deps/escape_iai-8442dc9a143b48b1 --iai-run 6
+cmd: /work/target/release/deps/escape_iai-de731fbc0a454e49 --iai-run 6
 events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
 fl=./csu/../csu/libc-start.c
 fn=__libc_start_main@@GLIBC_2.34
@@ -3776,7 +3776,7 @@ fn=__unregister_atfork
 243 3 0 0 3 0 0 0 0 0
 fl=./posix/../sysdeps/posix/sysconf.c
 fn=sysconf
-56 84 3 2 6 1 1 0 0 0
+56 84 2 2 6 1 1 0 0 0
 217 18 2 1 0 0 0 6 0 0
 fl=./posix/../sysdeps/unix/syscall-template.S
 fn=uname
@@ -6371,7 +6371,7 @@ fn=(below main)
 0 12 2 2 2 1 0 3 0 0
 fn=???
 0 1114 79 72 330 12 0 48 1 1
-fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17hee4e5928622c1c42E.llvm.7042194784291581305
+fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h7c90fad1d184c700E.llvm.9018720331870717436
 0 6 1 1 3 0 0 2 0 0
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
@@ -6380,15 +6380,15 @@ fn=__rust_alloc
 fn=__rust_dealloc
 0 6 0 0 0 0 0 0 0 0
 fn=escape_iai::iai_wrappers::iai_escape_all_quotes_clean_small
-0 15 3 3 6 0 0 3 0 0
+0 15 2 2 6 0 0 3 0 0
 fn=escape_iai::main
-0 3 0 0 1 0 0 0 0 0
+0 3 1 0 1 0 0 0 0 0
 fn=htmlize::escape::escape_all_quotes
-0 450 4 4 131 1 1 18 0 0
+0 450 4 4 131 2 2 18 0 0
 fn=iai::runner
 0 106 11 11 40 4 0 21 0 0
 fn=main
-0 11 2 2 3 1 0 3 0 0
+0 11 1 1 3 1 0 3 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
-0 4 0 0 2 0 0 2 0 0
-summary: 362885 1755 1694 89282 2874 2187 38192 1007 935
+0 4 1 1 2 0 0 2 0 0
+summary: 362885 1754 1693 89282 2875 2188 38192 1007 935
