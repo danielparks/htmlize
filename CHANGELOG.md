@@ -18,9 +18,9 @@ All notable changes to this project will be documented in this file.
 
 * Significantly optimized both escape and unescape functions. Many of the
   improvements to the escape functions are similar to the ones outlined in Lise
-  Henry’s [excellent blog post on optimizing HTML entity
-  escaping][optimize-blog] (see also: [its Reddit discussion][optimize-reddit]),
-  though most notably I’m using [memchr][] directly rather than [regex][].
+  Henry’s [excellent post on optimizing HTML entity escaping][optimize-post]
+  (see also: [its Reddit discussion][optimize-reddit]), though most notably I’m
+  using [memchr][] directly rather than [regex][].
 * Added `unescape_attribute()` to handle the special rules for dealing with
   entities in the value of an HTML attribute. Also adds `unescape_in()`, which
   takes a context parameter that can either be `Context::Attribute` or
@@ -55,7 +55,7 @@ All notable changes to this project will be documented in this file.
 [phf]: https://crates.io/crates/phf
 [phf_codegen]: https://crates.io/crates/phf_codegen
 [serde_json]: https://crates.io/crates/serde_json
-[optimize-blog]: https://lise-henry.github.io/articles/optimising_strings.html
+[optimize-post]: https://lise-henry.github.io/articles/optimising_strings.html
 [optimize-reddit]: https://www.reddit.com/r/rust/comments/55wpxh/optimising_string_processing_in_rust/
 [memchr]: https://docs.rs/memchr
 [regex]: https://docs.rs/regex
