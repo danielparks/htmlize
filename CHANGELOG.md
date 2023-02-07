@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
   entities in the value of an HTML attribute. Also adds `unescape_in()`, which
   takes a context parameter that can either be `Context::Attribute` or
   `Context::General` (for everything else).
+* Added `unescape_bytes_in()` to work on `[u8]` rather than `str`.
 * Added `escape_..._bytes()` functions to work on `[u8]` rather than `str`.
 * Switched to the [phf_codegen][] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
