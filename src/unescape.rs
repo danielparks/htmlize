@@ -88,9 +88,58 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
     context: Context,
 ) -> Cow<'a, str> {
     let escaped = escaped.into();
+    match unescape_in_internal(escaped.as_bytes(), context) {
+        Some(buffer) => String::from_utf8(buffer).unwrap().into(),
+        None => escaped,
+    }
+}
 
-    // Use .as_bytes().iter() since .bytes() doesn’t provide .as_slice().
-    let mut remainder = escaped.as_bytes();
+/// Expand all valid entities in a given context (requires `unescape` feature).
+///
+/// `context` may be:
+///
+///   * `Context::General`: use the rules for text outside of an attribute.
+///      This is usually what you want.
+///   * `Context::Attribute`: use the rules for attribute values.
+///
+/// This uses the [algorithm described] in the WHATWG spec. In attributes,
+/// [named entities] without trailing semicolons are treated differently. They
+/// not expanded if they are followed by an alphanumeric character or or `=`.
+///
+/// For example:
+///
+/// ```rust
+/// use htmlize::*;
+/// use assert2::check;
+///
+/// check!(unescape_bytes_in(&b"&times"[..],   Context::General)   == "×".as_bytes());
+/// check!(unescape_bytes_in(&b"&times"[..],   Context::Attribute) == "×".as_bytes());
+/// check!(unescape_bytes_in(&b"&times;X"[..], Context::General)   == "×X".as_bytes());
+/// check!(unescape_bytes_in(&b"&times;X"[..], Context::Attribute) == "×X".as_bytes());
+/// check!(unescape_bytes_in(&b"&timesX"[..],  Context::General)   == "×X".as_bytes());
+/// check!(unescape_bytes_in(&b"&timesX"[..],  Context::Attribute) == "&timesX".as_bytes());
+/// check!(unescape_bytes_in(&b"&times="[..],  Context::General)   == "×=".as_bytes());
+/// check!(unescape_bytes_in(&b"&times="[..],  Context::Attribute) == "&times=".as_bytes());
+/// check!(unescape_bytes_in(&b"&times#"[..],  Context::General)   == "×#".as_bytes());
+/// check!(unescape_bytes_in(&b"&times#"[..],  Context::Attribute) == "×#".as_bytes());
+/// ```
+///
+/// [algorithm described]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+/// [named entities]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+pub fn unescape_bytes_in<'a, S: Into<Cow<'a, [u8]>>>(
+    escaped: S,
+    context: Context,
+) -> Cow<'a, [u8]> {
+    let escaped = escaped.into();
+    match unescape_in_internal(&escaped, context) {
+        Some(buffer) => buffer.into(),
+        None => escaped,
+    }
+}
+
+#[inline(always)]
+fn unescape_in_internal(escaped: &[u8], context: Context) -> Option<Vec<u8>> {
+    let mut remainder = escaped;
     let mut iter = remainder.iter();
 
     while advance_until(&mut iter, |&c| c == b'&') {
@@ -122,11 +171,11 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 
             buffer.extend_from_slice(remainder);
 
-            return String::from_utf8(buffer).unwrap().into();
+            return Some(buffer);
         }
     }
 
-    escaped
+    None
 }
 
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";

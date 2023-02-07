@@ -77,6 +77,11 @@ This follows the [official WHATWG algorithm] for expanding entities based on
 the context where they are found. See the [reference
 documentation][`unescape_in()`] for more information.
 
+### `unescape_bytes_in([u8], Htmlize::Context) -> [u8]` ([reference][`unescape_bytes_in()`])
+
+This is the same as [`unescape_in()`], except that it works on bytes rather than
+strings. (Note that both functions actually take and return [`Cow`]s.)
+
 ## Features
 
   * `unescape`: build `ENTITIES` map and provide `unescape()` function. Enabling
@@ -140,6 +145,8 @@ additional terms or conditions.
 [`unescape()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html
 [`unescape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_attribute.html
 [`unescape_in()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_in.html
+[`unescape_bytes_in()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_bytes_in.html
+[`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
 [iai]: https://crates.io/crates/iai

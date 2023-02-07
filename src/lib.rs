@@ -21,6 +21,9 @@
 //! parameter. See its documentation for a discussion of the differences between
 //! expanding attribute values and general text.
 //!
+//! [`unescape_bytes_in()`] is just like [`unescape_in()`] except that it works
+//! on `[u8]` rather than strings.
+//!
 //! # Features
 //!
 //!   * `unescape`: build [`ENTITIES`] map and provide [`unescape()`]. Enabling
