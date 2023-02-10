@@ -43,6 +43,8 @@
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
+#![forbid(unsafe_code)]
+
 mod escape;
 pub use escape::*;
 
