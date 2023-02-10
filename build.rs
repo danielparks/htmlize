@@ -1,14 +1,14 @@
-/// Generates code from entities.json when feature “unescape“ is enabled.
-///
-/// The canonical source is https://html.spec.whatwg.org/entities.json (see
-/// https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
-///
-/// The entities.json file looks like:
-///
-///     {
-///         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
-///         . . .
-///     }
+// Generates code from entities.json when feature “unescape“ is enabled.
+//
+// The canonical source is https://html.spec.whatwg.org/entities.json (see
+// https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
+//
+// The entities.json file looks like:
+//
+//     {
+//         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
+//         . . .
+//     }
 #[cfg(feature = "unescape")]
 use std::{
     cmp::{max, min},

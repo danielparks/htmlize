@@ -287,7 +287,7 @@ fn match_numeric_entity(
     assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expexted '#'");
 
     let number = match peek(iter) {
-        c @ (Some(b'x') | Some(b'X')) => {
+        c @ Some(b'x' | b'X') => {
             // Hexadecimal entity
             assert_next_eq(iter, c, PEEK_MATCH_ERROR);
 
@@ -454,13 +454,13 @@ where
 /// Move to the next value in `iter` and assert that it equals `expected`.
 #[inline]
 fn assert_next_eq(iter: &mut slice::Iter<u8>, expected: Option<u8>, msg: &str) {
-    assert_eq!(iter.next().copied(), expected, "{msg}")
+    assert_eq!(iter.next().copied(), expected, "{msg}");
 }
 
 /// Peek the next value in `iter` and assert that it equals `expected`.
 #[inline]
 fn assert_peek_eq(iter: &slice::Iter<u8>, expected: Option<u8>, msg: &str) {
-    assert_eq!(peek(iter), expected, "{msg}")
+    assert_eq!(peek(iter), expected, "{msg}");
 }
 
 /// Peek at the next value in `iter` without changing the `iter`.
@@ -498,7 +498,7 @@ where
     .err()
 }
 
-/// Like try_fold(), but stops _before_ the found value.
+/// Like `try_fold()`, but stops _before_ the found value.
 ///
 /// The passed function should return `Ok(_)` to continue to next value, or
 /// `Err(_)` to stop with the iterator pointing at the previous value — i.e. the
