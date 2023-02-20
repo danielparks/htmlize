@@ -7,30 +7,28 @@ All notable changes to this project will be documented in this file.
 ### Breaking changes
 
 * Hid `unescape()` behind `unescape` feature. This allows users to avoid the
-  dependency on [phf][] and the build dependency on [serde_json][], which cuts
-  build times on my machine by more than 90% (from 6.2 seconds to 0.5 seconds).
+  dependency on [phf] and the build dependency on [serde_json], which cuts build
+  times on my machine by more than 90% (from 6.2 seconds to 0.5 seconds).
 * Switched both escape and unescape functions to use `Cow<'a, str>` for input
   and output. This allows for significant performance improvements when the
-  input can be returned unchanged (see performance improvements below for more).
+  input can be returned unchanged.
 * Updated minimum supported Rust version (MSRV) to 1.60.
 
 ### Improvements
 
-* Significantly optimized both escape and unescape functions. Many of the
-  improvements to the escape functions are similar to the ones outlined in Lise
-  Henry’s [excellent post on optimizing HTML entity escaping][optimize-post]
-  (see also: [its Reddit discussion][optimize-reddit]), though most notably I’m
-  using [memchr][] directly rather than [regex][].
 * Added `unescape_attribute()` to handle the special rules for dealing with
   entities in the value of an HTML attribute. Also adds `unescape_in()`, which
   takes a context parameter that can either be `Context::Attribute` or
   `Context::General` (for everything else).
 * Added `unescape_bytes_in()` to work on `[u8]` rather than `str`.
 * Added `escape_..._bytes()` functions to work on `[u8]` rather than `str`.
-* Switched to the [phf_codegen][] crate instead of using the `phf_map!` macro.
+* Significantly optimized both escape and unescape functions. Many of the
+  improvements to the escape functions are similar to the ones outlined in Lise
+  Henry’s [excellent post on optimizing HTML entity escaping][optimize-post]
+  (see also: [its Reddit discussion][optimize-reddit]), though most notably I’m
+  using [memchr] directly rather than [regex].
+* Switched to the [phf_codegen] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
-* Pre-allocated the output buffer for `unescape()`, which generally improves
-  performance slightly.
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
   a collection of tuples.
 
@@ -68,7 +66,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug fixes
 
-* Switched from [assertify][] (deprecated) to [assert2][] for testing.
+* Switched from [assertify] (deprecated) to [assert2] for testing.
 * Fixed typo of in docs: “entries.json” should have been “entities.json”.
 * Fixed formatting and lints.
 * Added this change log.
