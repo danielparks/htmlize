@@ -1,7 +1,7 @@
 desc: I1 cache:         32768 B, 64 B, 8-way associative
 desc: D1 cache:         32768 B, 64 B, 8-way associative
 desc: LL cache:         8388608 B, 64 B, 16-way associative
-cmd: /work/target/release/deps/escape_iai-05b18b2331528420 --iai-run 0
+cmd: /work/target/release/deps/escape_iai-50b7c25f935b0bb7 --iai-run 0
 events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
 fl=./csu/../csu/libc-start.c
 fn=__libc_start_main@@GLIBC_2.34
@@ -1343,7 +1343,7 @@ fn=_dl_fini
 117 15 0 0 5 0 0 0 0 0
 120 10 0 0 0 0 0 5 0 0
 123 15 1 1 5 2 0 0 0 0
-124 9 0 0 3 1 0 0 0 0
+124 9 0 0 3 0 0 0 0 0
 127 6 0 0 3 0 0 0 0 0
 138 8 0 0 4 1 0 2 0 0
 139 2 0 0 2 0 0 0 0 0
@@ -3776,7 +3776,7 @@ fn=__unregister_atfork
 243 3 0 0 3 0 0 0 0 0
 fl=./posix/../sysdeps/posix/sysconf.c
 fn=sysconf
-56 84 2 2 6 1 1 0 0 0
+56 84 3 2 6 1 1 0 0 0
 217 18 2 1 0 0 0 6 0 0
 fl=./posix/../sysdeps/unix/syscall-template.S
 fn=uname
@@ -6409,8 +6409,8 @@ fn=(below main)
 0 12 2 2 2 1 0 3 0 0
 fn=???
 0 1114 81 72 330 11 0 48 1 1
-fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h2992965850b0ed86E.llvm.12081915308301084116
-0 6 1 1 3 0 0 2 0 0
+fn=_ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h0db84c375351c351E.llvm.13282119961814828284
+0 6 1 0 3 0 0 2 0 0
 fn=__cpu_indicator_init
 0 128 11 11 13 3 2 17 0 0
 fn=__rust_alloc
@@ -6432,5 +6432,5 @@ fn=memchr::memchr::x86::avx::memchr3
 fn=memchr::memchr::x86::memchr3::detect
 0 33 2 2 7 1 1 7 0 0
 fn=std::sys_common::backtrace::__rust_begin_short_backtrace
-0 4 0 0 2 0 0 2 0 0
-summary: 363271 1774 1717 89294 2887 2202 38244 1013 941
+0 4 1 1 2 0 0 2 0 0
+summary: 363271 1776 1717 89294 2886 2202 38244 1013 941

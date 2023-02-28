@@ -28,8 +28,16 @@ fn benchmarks(c: &mut Criterion) {
     for (name, entity) in test_inputs {
         let name = format!("sample_128_{name}");
         let input = util::inputs::make_sample(128, entity, "a");
-        util::benchmark!(group, unescape, &name, &input);
-        util::benchmark!(group, unescape_attribute, &name, &input);
+
+        #[cfg(feature = "unescape")]
+        util::benchmark!(group, unescape_slow, &name, &input);
+        #[cfg(feature = "unescape")]
+        util::benchmark!(group, unescape_attribute_slow, &name, &input);
+
+        #[cfg(feature = "unescape_fast")]
+        util::benchmark!(group, unescape_fast, &name, &input);
+        #[cfg(feature = "unescape_fast")]
+        util::benchmark!(group, unescape_attribute_fast, &name, &input);
     }
 
     group.finish();

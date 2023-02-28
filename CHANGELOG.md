@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 * Hid `unescape()` behind `unescape` feature. This allows users to avoid the
   dependency on [phf] and the build dependency on [serde_json], which cuts build
   times on my machine by more than 90% (from 6.2 seconds to 0.5 seconds).
+* Hid `ENTITIES` behind `entities` features for the same reason I added the
+  `unescape` feature. Note that the `unescape` feature automatically enables
+  the `entities` feature, but `unescape_faster` does not.
 * Switched both escape and unescape functions to use `Cow<'a, str>` for input
   and output. This allows for significant performance improvements when the
   input can be returned unchanged.
@@ -16,17 +19,19 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 
+* Significantly optimized both escape and unescape functions. Many of the
+  improvements to the escape functions are similar to the ones outlined in Lise
+  Henry’s [excellent post on optimizing HTML entity escaping][optimize-post]
+  (see also: [its Reddit discussion][optimize-reddit]), though most notably I’m
+  using [memchr] directly rather than [regex].
+* Added `unescape_faster` feature for even faster unescaping at the cost of
+  longer build times (about 30 seconds longer on my machine).
 * Added `unescape_attribute()` to handle the special rules for dealing with
   entities in the value of an HTML attribute. Also adds `unescape_in()`, which
   takes a context parameter that can either be `Context::Attribute` or
   `Context::General` (for everything else).
 * Added `unescape_bytes_in()` to work on `[u8]` rather than `str`.
 * Added `escape_..._bytes()` functions to work on `[u8]` rather than `str`.
-* Significantly optimized both escape and unescape functions. Many of the
-  improvements to the escape functions are similar to the ones outlined in Lise
-  Henry’s [excellent post on optimizing HTML entity escaping][optimize-post]
-  (see also: [its Reddit discussion][optimize-reddit]), though most notably I’m
-  using [memchr] directly rather than [regex].
 * Switched to the [phf_codegen] crate instead of using the `phf_map!` macro.
   On my machine, this cuts build time by about 25% (~2 seconds).
 * Clarified documentation of `ENTITIES` to indicate that it’s a `Map`, not just
