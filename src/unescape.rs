@@ -25,13 +25,13 @@ use std::slice;
 /// The context for an input string (requires `unescape` or `unescape_fast`
 /// feature).
 ///
-/// Either `Attribute` for strings from an attribute value, or `General` for
-/// everything else.
-///
 /// See [`unescape_in()`] for usage.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Context {
+    /// Anywhere outside of an HTML attribute, e.g. regular text. This is
+    /// generally what you want.
     General,
+    /// From an HTML attribute.
     Attribute,
 }
 
