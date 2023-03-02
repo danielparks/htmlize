@@ -1,7 +1,9 @@
 //! # Which `escape` function to use
 //!
 //! Generally, if the text goes in an attribute, use [`escape_attribute()`],
-//! otherwise, use [`escape_text()`].
+//! otherwise, use [`escape_text()`]. If you need bytes (`[u8]`) instead of a
+//! `String`, use the `_bytes` version of the functions:
+//! [`escape_attribute_bytes()`] and [`escape_text_bytes()`].
 //!
 //! |                         | `&` | `<` | `>` | `"` | `'` |
 //! |-------------------------|:---:|:---:|:---:|:---:|:---:|
@@ -9,7 +11,7 @@
 //! | [`escape_attribute()`]  |  ✓  |  ✓  |  ✓  |  ✓  |     |
 //! | [`escape_all_quotes()`] |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
 //!
-//! You should almost never need [`escape_all_quotes()`], but is included
+//! You should almost never need [`escape_all_quotes()`], but it’s included
 //! because sometimes it’s convenient to wrap attribute values in single quotes.
 //!
 //! # Which `unescape` function to use
