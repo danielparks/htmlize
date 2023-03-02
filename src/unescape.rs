@@ -53,6 +53,8 @@ macro_rules! call_unescape {
 ///
 /// This is appropriate to use on any text outside of an attribute. See
 /// [`unescape_in()`] for more information.
+///
+/// To work with bytes (`[u8]`) instead of strings, see [`unescape_bytes_in()`].
 pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
     call_unescape!(unescape_in(escaped, Context::General));
 }
@@ -63,7 +65,7 @@ pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
 /// This is only appropriate for the value of an attribute. See
 /// [`unescape_in()`] for more information.
 ///
-/// [specifies]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+/// To work with bytes (`[u8]`) instead of strings, see [`unescape_bytes_in()`].
 pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
     escaped: S,
 ) -> Cow<'a, str> {
@@ -100,6 +102,8 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 /// check!(unescape_in("&times#",  Context::General)   == "×#");
 /// check!(unescape_in("&times#",  Context::Attribute) == "×#");
 /// ```
+///
+/// To work with bytes (`[u8]`) instead of strings, see [`unescape_bytes_in()`].
 ///
 /// [algorithm described]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 /// [named entities]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
@@ -139,6 +143,8 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 /// check!(unescape_bytes_in(&b"&times#"[..],  Context::General)   == "×#".as_bytes());
 /// check!(unescape_bytes_in(&b"&times#"[..],  Context::Attribute) == "×#".as_bytes());
 /// ```
+///
+/// To work with `String` instead of bytes, see [`unescape_in()`].
 ///
 /// [algorithm described]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 /// [named entities]: https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
