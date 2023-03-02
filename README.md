@@ -29,20 +29,26 @@ string in HTML. Generally, if the text goes in an attribute, use
 You should almost never need [`escape_all_quotes()`], but it is included because
 sometimes it’s convenient to wrap attribute values in single quotes.
 
-### `escape_text(string) -> string` ([reference][`escape_text()`])
+### `escape_text(string) -> string`
 
 Escape a string so that it can be embedded in the main text. This does not
 escape quotes at all.
 
-### `escape_attribute(string) -> string` ([reference][`escape_attribute()`])
+[Reference][`escape_text()`]. See also [`escape_text_bytes()`].
+
+### `escape_attribute(string) -> string`
 
 Escape a string so that it can be embedded in an attribute. Always use double
 quotes around attributes.
 
-### `escape_all_quotes(string) -> string` ([reference][`escape_all_quotes()`])
+[Reference][`escape_attribute()`]. See also [`escape_attribute_bytes()`].
+
+### `escape_all_quotes(string) -> string`
 
 Escape both single and double quotes in a string along with other standard
 characters. In general you should not need to use this.
+
+[Reference][`escape_all_quotes()`]. See also [`escape_all_quotes_bytes()`].
 
 ## Unescaping entities into text
 
@@ -54,7 +60,7 @@ configure it:
 cargo add htmlize --features unescape
 ```
 
-### `unescape(string) -> string` ([reference][`unescape()`])
+### `unescape(string) -> string`
 
 This follows the [official WHATWG algorithm] for expanding entities in general.
 
@@ -64,7 +70,9 @@ string came from the value of an attribute, use [`unescape_attribute()`]
 instead. See the [`unescape_in()` reference documentation][`unescape_in()`] for
 more information.
 
-### `unescape_attribute(string) -> string` ([reference][`unescape_attribute()`])
+[Reference][`unescape()`].
+
+### `unescape_attribute(string) -> string`
 
 This follows the [official WHATWG algorithm] for expanding entities found in the
 value of an attribute.
@@ -73,16 +81,22 @@ The only difference is in how this handles named entities without a trailing
 semicolon. See the [`unescape_in()` reference documentation][`unescape_in()`]
 for more information.
 
-### `unescape_in(string, Htmlize::Context) -> string` ([reference][`unescape_in()`])
+[Reference][`unescape_attribute()`].
+
+### `unescape_in(string, Htmlize::Context) -> string`
 
 This follows the [official WHATWG algorithm] for expanding entities based on
 the context where they are found. See the [reference
 documentation][`unescape_in()`] for more information.
 
-### `unescape_bytes_in([u8], Htmlize::Context) -> [u8]` ([reference][`unescape_bytes_in()`])
+[Reference][`unescape_in()`].
+
+### `unescape_bytes_in([u8], Htmlize::Context) -> [u8]`
 
 This is the same as [`unescape_in()`], except that it works on bytes rather than
 strings. (Note that both functions actually take and return [`Cow`]s.)
+
+[Reference][`unescape_bytes_in()`].
 
 ## Features
 
@@ -167,8 +181,11 @@ additional terms or conditions.
 [docs.rs]: https://docs.rs/htmlize/latest/htmlize/
 [crates.io]: https://crates.io/crates/htmlize
 [`escape_text()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text.html
+[`escape_text_bytes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_text_bytes.html
 [`escape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute.html
+[`escape_attribute_bytes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_attribute_bytes.html
 [`escape_all_quotes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes.html
+[`escape_all_quotes_bytes()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.escape_all_quotes_bytes.html
 [`unescape()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape.html
 [`unescape_attribute()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_attribute.html
 [`unescape_in()`]: https://docs.rs/htmlize/0.5.1/htmlize/fn.unescape_in.html

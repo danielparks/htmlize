@@ -102,6 +102,9 @@ escape_fn! {
     ///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
     /// );
     /// ```
+    ///
+    /// To work with bytes (`[u8]`) instead of strings, see
+    /// [`escape_text_bytes()`].
     pub fn escape_text;
 
     /// Escape a byte string used in a text node, i.e. regular text.
@@ -116,6 +119,8 @@ escape_fn! {
     ///     b"test: &amp;&lt;&gt;\"'".as_slice()
     /// );
     /// ```
+    ///
+    /// To work with `String` instead of bytes, see [`escape_text()`].
     pub fn escape_text_bytes;
 
     {
@@ -136,6 +141,9 @@ escape_fn! {
     ///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
     /// );
     /// ```
+    ///
+    /// To work with bytes (`[u8]`) instead of strings, see
+    /// [`escape_attribute_bytes()`].
     pub fn escape_attribute;
 
     /// Escape a byte string to be used in a quoted attribute.
@@ -148,6 +156,8 @@ escape_fn! {
     ///     b"test: &amp;&lt;&gt;&quot;'".as_slice()
     /// );
     /// ```
+    ///
+    /// To work with `String` instead of bytes, see [`escape_attribute()`].
     pub fn escape_attribute_bytes;
 
     {
@@ -172,6 +182,9 @@ escape_fn! {
     ///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
     /// );
     /// ```
+    ///
+    /// To work with bytes (`[u8]`) instead of strings, see
+    /// [`escape_all_quotes_bytes()`].
     pub fn escape_all_quotes;
 
     /// Escape a byte string including both single and double quotes.
@@ -187,6 +200,8 @@ escape_fn! {
     ///     b"test: &amp;&lt;&gt;&quot;&apos;".as_slice()
     /// );
     /// ```
+    ///
+    /// To work with `String` instead of bytes, see [`escape_all_quotes()`].
     pub fn escape_all_quotes_bytes;
 
     {
