@@ -1,4 +1,4 @@
-# Encode and decode HTML entities
+# Encode and decode HTML entities according to the standard
 
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
