@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.1 (2023-03-04)
+
+* Fix [docs.rs] build to enable the `unescape` and `entities` features.
+
+[docs.rs]: https://docs.rs/htmlize
 
 ## Release 1.0.0 (2023-03-03)
 
