@@ -277,6 +277,7 @@ unescape_fns!(_slow);
 // fn entity_matcher<'a, I>(iter: &mut I) -> Option<(bool, &'static [u8])>
 // where
 //     I: Iterator<Item = &'a u8> + Clone,
+#[cfg(feature = "unescape_fast")]
 include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
 
 /// Match an entity at the beginning of `iter`. Either:
