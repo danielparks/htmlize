@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.0 (2023-03-03)
 
 ### Breaking changes
 
