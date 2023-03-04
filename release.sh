@@ -39,9 +39,7 @@ awk-in-place Cargo.toml '
   { print }'
 
 awk-in-place README.md '{
-    sub(
-      /https:\/\/docs\.rs\/htmlize\/[0-9]+.[0-9]+.[0-9]+\//,
-      "https://docs.rs/htmlize/'$version'/")
+    sub(/https:\/\/docs\.rs\/htmlize\/[0-9]+.[0-9]+.[0-9]+\//, "https://docs.rs/htmlize/'$version'/")
     print
   }'
 
