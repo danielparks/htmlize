@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.2 (2023-03-04)
 
 * Fix building with `unescape` feature but not `unescape_fast`. Added tests for
   a few common feature flags — in addition to `--all-features` — to the CI check
