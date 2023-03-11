@@ -9,6 +9,9 @@ RUN apt-get update \
 	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
 
+# Remove after Rust 1.70 when this becomes default
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
   | sh -s -- -y --default-toolchain stable
 
