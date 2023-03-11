@@ -12,14 +12,13 @@ ENV LANG en_US.utf8
 # Remove after Rust 1.70 when this becomes default
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 
+# Install rustup, rust, and cargo-binstall
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-  | sh -s -- -y --default-toolchain stable
+  | sh -s -- -y --default-toolchain stable \
+  && curl -sSfL https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz \
+  | tar -C /root/.cargo/bin/ -xzf -
 
 ENV PATH=/root/.cargo/bin:$PATH
-
-# Install cargo-binstall
-RUN curl -sSfL https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz \
-  | tar -C /root/.cargo/bin/ -xzf -
 
 COPY . /work
 WORKDIR /work
