@@ -22,5 +22,4 @@ ENV PATH=/root/.cargo/bin:$PATH
 
 COPY . /work
 WORKDIR /work
-RUN rustup update
 RUN cargo build --benches --profile bench --all-features

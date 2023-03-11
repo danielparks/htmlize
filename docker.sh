@@ -22,7 +22,7 @@ else
 fi
 
 if ! docker inspect "$image" >/dev/null ; then
-  docker build -t "$image" .
+  docker build --no-cache -t "$image" .
 fi
 
 docker run -ti --rm --privileged -v $(pwd):/work -w /work "$image" "$@"
