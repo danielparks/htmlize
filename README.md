@@ -164,6 +164,11 @@ root@d0a0db46770d:/work# cargo bench --features iai iai
    Compiling htmlize [...]
 ```
 
+## Development status
+
+This is stable. I have no features planned for the future, though I’m open to
+[suggestions][issues].
+
 ## License
 
 This project dual-licensed under the Apache 2 and MIT licenses. You may choose
@@ -197,3 +202,4 @@ additional terms or conditions.
 [iai]: https://crates.io/crates/iai
 [criterion]: https://crates.io/crates/criterion
 [`cargo criterion`]: https://crates.io/crates/cargo-criterion
+[issues]: https://github.com/danielparks/htmlize/issues
