@@ -68,6 +68,13 @@
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
 #![forbid(unsafe_code)]
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::let_underscore_untyped,
+    clippy::map_unwrap_or,
+    clippy::module_name_repetitions
+)]
+#![warn(missing_docs)]
 
 mod escape;
 pub use escape::*;
