@@ -518,13 +518,14 @@ fn match_numeric_entity(
 pub const REPLACEMENT_CHAR_BYTES: &[u8] = "\u{fffd}".as_bytes();
 
 // https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
+#[allow(clippy::match_same_arms)]
 fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
     match number {
         // null-character-reference parse error:
         0x00 => REPLACEMENT_CHAR_BYTES.into(),
 
         // character-reference-outside-unicode-range parse error:
-        0x110000.. => REPLACEMENT_CHAR_BYTES.into(),
+        0x11_0000.. => REPLACEMENT_CHAR_BYTES.into(),
 
         // https://infra.spec.whatwg.org/#surrogate
         // surrogate-character-reference parse error:

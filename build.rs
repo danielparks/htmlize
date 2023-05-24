@@ -10,6 +10,14 @@
 //         . . .
 //     }
 
+#![forbid(unsafe_code)]
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::let_underscore_untyped,
+    clippy::map_unwrap_or,
+    clippy::module_name_repetitions
+)]
+
 fn main() {
     #[cfg(any(feature = "unescape_fast", feature = "entities"))]
     let entities = load_entities("entities.json");
@@ -32,27 +40,23 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("entities.rs");
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
-    macro_rules! w {
-        ($msg:literal $(, $args:expr)*) => {
-            writeln!(out, $msg $(, $args)*).unwrap();
-        }
-    }
-
-    w!("/// A map of all valid HTML entities to their expansions (requires `entities`");
-    w!("/// feature).");
-    w!("///");
-    w!("/// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the");
-    w!("/// values are their expansions, e.g. `b\"©\"`.");
-    w!("///");
-    w!("/// See the [WHATWG HTML spec][spec] for the canonical list of entities with");
-    w!("/// their codepoints and glyphs. The [entities.json][] file linked there is");
-    w!("/// used to generate this constant.");
-    w!("///");
-    w!("/// [spec]: https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references");
-    w!("/// [entities.json]: https://html.spec.whatwg.org/entities.json");
-    w!("///");
-    w!("/// Entity                         | Codepoints         | Glyph");
-    w!("/// -------------------------------|--------------------|------");
+    writeln!(out, "\
+        #[allow(clippy::doc_markdown)] // Doesn’t work correctly here.\n\
+        /// A map of all valid HTML entities to their expansions (requires `entities`\n\
+        /// feature).\n\
+        ///\n\
+        /// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the\n\
+        /// values are their expansions, e.g. `b\"©\"`.\n\
+        ///\n\
+        /// See the [WHATWG HTML spec][spec] for the canonical list of entities with\n\
+        /// their codepoints and glyphs. The [entities.json][] file linked there is\n\
+        /// used to generate this constant.\n\
+        ///\n\
+        /// [spec]: https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references\n\
+        /// [entities.json]: https://html.spec.whatwg.org/entities.json\n\
+        ///\n\
+        /// Entity                         | Codepoints         | Glyph\n\
+        /// -------------------------------|--------------------|------").unwrap();
 
     let mut map_builder = phf_codegen::Map::<&[u8]>::new();
     let mut max_len: usize = 0;
@@ -62,38 +66,39 @@ fn generate_entities_rs(entities: &[(String, String)]) {
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
 
-        let codepoints: Vec<String> = glyph
-            .chars()
-            .map(|c| format!("U+{:06X}", u32::from(c)))
-            .collect();
-
         // `{:28}` would pad the output inside the backticks.
         let name = format!("`{name}`");
 
+        let codepoints = glyph
+            .chars()
+            .map(|c| format!("U+{:06X}", u32::from(c)))
+            .collect::<Vec<_>>()
+            .join(", ");
+
         // Suppress a few inconvenient glyphs. Newline adds an extra line, and
-        // tab causes a clippy warning.
+        // tab causes a clippy warning. Backticks are actually fine, but it’s
+        // correct to escape them.
         let glyph = match glyph.as_str() {
             "\n" | "\t" => "",
+            "`" => "\\`",
             v => v,
         };
 
-        w!("/// {name:30} | {:18} | {glyph}", codepoints.join(", "));
+        writeln!(out, "/// {name:30} | {codepoints:18} | {glyph}",).unwrap();
     }
 
-    w!(
-        "pub static ENTITIES: phf::Map<&[u8], &[u8]> = {};",
-        map_builder.build()
-    );
-
-    w!("");
-    w!("/// Length of longest entity including ‘&’ and possibly ‘;’ (requires");
-    w!("/// `entities` feature)");
-    w!("pub const ENTITY_MAX_LENGTH: usize = {};", max_len);
-
-    w!("");
-    w!("/// Length of shortest entity including ‘&’ and possibly ‘;’ (requires");
-    w!("/// `entities` feature)");
-    w!("pub const ENTITY_MIN_LENGTH: usize = {};", min_len);
+    let map = map_builder.build();
+    writeln!(out, "\
+        #[allow(clippy::unreadable_literal)]\n\
+        pub static ENTITIES: phf::Map<&[u8], &[u8]> = {map};\n\
+        \n\
+        /// Length of longest entity including ‘&’ and possibly ‘;’ (requires\n\
+        /// `entities` feature)\n\
+        pub const ENTITY_MAX_LENGTH: usize = {max_len};\n\
+        \n\
+        /// Length of shortest entity including ‘&’ and possibly ‘;’ (requires\n\
+        /// `entities` feature)\n\
+        pub const ENTITY_MIN_LENGTH: usize = {min_len};").unwrap();
 }
 
 #[cfg(feature = "unescape_fast")]
@@ -110,12 +115,12 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     writeln!(out, "/// Used in `match_entity()`.").unwrap();
     let mut matcher =
         TreeMatcher::new("fn entity_matcher", "(bool, &'static [u8])");
-    entities.iter().for_each(|(name, glyph)| {
+    for (name, glyph) in entities {
         matcher.add(
             name.as_bytes(),
             format!("({:?}, &{:?})", name.ends_with(';'), glyph.as_bytes()),
         );
-    });
+    }
     matcher.disable_clippy(true);
     matcher.set_input_type(Input::Iterator);
     matcher.render(&mut out).unwrap();
@@ -132,7 +137,7 @@ fn load_entities<P: AsRef<std::path::Path>>(path: P) -> Vec<(String, String)> {
         .iter()
         .map(|(name, info)| {
             (
-                name.to_owned(),
+                name.clone(),
                 info["characters"].as_str().unwrap().to_owned(),
             )
         })
