@@ -103,7 +103,6 @@ fn generate_entities_rs(entities: &[(String, String)]) {
 
 #[cfg(feature = "unescape_fast")]
 fn generate_matcher_rs(entities: &[(String, String)]) {
-    use matchgen::{Input, TreeMatcher};
     use std::env;
     use std::fs::File;
     use std::io::{BufWriter, Write};
@@ -112,18 +111,22 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("matcher.rs");
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
-    writeln!(out, "/// Used in `match_entity()`.").unwrap();
-    let mut matcher =
-        TreeMatcher::new("fn entity_matcher", "(bool, &'static [u8])");
+    let mut matcher = matchgen::TreeMatcher::new(
+        "fn entity_matcher",
+        "(bool, &'static [u8])",
+    );
     for (name, glyph) in entities {
         matcher.add(
             name.as_bytes(),
             format!("({:?}, &{:?})", name.ends_with(';'), glyph.as_bytes()),
         );
     }
-    matcher.disable_clippy(true);
-    matcher.set_input_type(Input::Iterator);
-    matcher.render(&mut out).unwrap();
+    matcher
+        .doc("Used in `match_entity()`.")
+        .disable_clippy(true)
+        .input_type(matchgen::Input::Iterator)
+        .render(&mut out)
+        .unwrap();
     writeln!(out).unwrap();
 }
 
