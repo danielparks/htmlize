@@ -860,6 +860,15 @@ mod tests {
         include_str!("../tests/corpus/all-entities-expanded.txt");
     test_both!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 
+    test!(
+        invalid_utf8,
+        unescape_bytes_in(&b"\xa1"[..], Context::General) == &b"\xa1"[..]
+    );
+    test!(
+        attribute_invalid_utf8,
+        unescape_bytes_in(&b"\xa1"[..], Context::Attribute) == &b"\xa1"[..]
+    );
+
     #[test]
     fn correct_numeric_entity_euro() {
         match correct_numeric_entity(0x80) {

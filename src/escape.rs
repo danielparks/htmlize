@@ -327,4 +327,17 @@ mod tests {
         escape_text_bytes_clean_html,
         escape_text_bytes(HTML_CLEAN.as_bytes()) == HTML_CLEAN.as_bytes()
     );
+
+    test!(
+        escape_text_bytes_invalid_utf8,
+        escape_text_bytes(&b"\xa1"[..]) == &b"\xa1"[..]
+    );
+    test!(
+        escape_attribute_bytes_invalid_utf8,
+        escape_attribute_bytes(&b"\xa1"[..]) == &b"\xa1"[..]
+    );
+    test!(
+        escape_all_quotes_bytes_invalid_utf8,
+        escape_all_quotes_bytes(&b"\xa1"[..]) == &b"\xa1"[..]
+    );
 }
