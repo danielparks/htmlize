@@ -1,6 +1,8 @@
 use paste::paste;
 use std::borrow::Cow;
 
+/// Find a `u8` in a slice. You may specify as many bytes to search for as you
+/// want. If you are searching for 3 or fewer bytes, this will use [`memchr`].
 macro_rules! find_u8_body {
     ($slice:expr, $ch1:literal $(,)?) => {
         memchr::memchr($ch1, $slice)
@@ -16,6 +18,7 @@ macro_rules! find_u8_body {
     };
 }
 
+/// Generate string and byte string versions of an escape function.
 macro_rules! escape_fn {
     (
         $(#[$meta:meta])*

@@ -68,17 +68,18 @@
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
 #![forbid(unsafe_code)]
-#![warn(clippy::pedantic)]
+#![warn(clippy::pedantic, missing_docs, clippy::missing_docs_in_private_items)]
 #![allow(
     clippy::let_underscore_untyped,
     clippy::map_unwrap_or,
     clippy::module_name_repetitions
 )]
-#![warn(missing_docs)]
 
+/// Functions to escape raw text into HTML.
 mod escape;
 pub use escape::*;
 
+/// Functions to unescape HTML into raw text.
 #[cfg(any(feature = "unescape", feature = "unescape_fast"))]
 mod unescape;
 #[cfg(any(feature = "unescape", feature = "unescape_fast"))]
