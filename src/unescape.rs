@@ -35,8 +35,8 @@ pub enum Context {
     Attribute,
 }
 
-// Call the correct internal version of the unescape function (_fast or _slow).
-// See “_fast and _slow” heading in the comment at the top of this file.
+/// Call the correct internal version of the unescape function (_fast or _slow).
+/// See “_fast and _slow” heading in the comment at the top of this file.
 macro_rules! call_unescape {
     ($function:ident($($args:expr),+)) => {
         paste! {
@@ -155,12 +155,12 @@ pub fn unescape_bytes_in<'a, S: Into<Cow<'a, [u8]>>>(
     call_unescape!(unescape_bytes_in(escaped, context));
 }
 
-// Generate the _fast and _slow version of the unescape functions.
-//
-// See “_fast and _slow” heading in the comment at the top of this file.
-//
-// #[allow(dead_code)] is required to avoid false positive lints. Every
-// function is used in tests.
+/// Generate the _fast and _slow version of the unescape functions.
+///
+/// See “_fast and _slow” heading in the comment at the top of this file.
+///
+/// `#[allow(dead_code)]` is required to avoid false positive lints. Every
+/// function is used in tests.
 macro_rules! unescape_fns {
     ($vis:vis $suffix:ident) => {
         paste! {
@@ -336,6 +336,7 @@ fn match_entity_fast<'a>(
     }
 }
 
+/// A panic message we use repeatedly.
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 
 /// Match an entity at the beginning of `iter`. Either:
@@ -452,6 +453,7 @@ fn match_entity_slow<'a>(
     None
 }
 
+/// Match a numeric entity like `&#x20;` or `&#32;`.
 #[allow(clippy::from_str_radix_10)]
 fn match_numeric_entity(
     iter: &mut slice::Iter<u8>,
@@ -517,7 +519,9 @@ fn match_numeric_entity(
 /// the Specials block is [available as a PDF](https://www.unicode.org/charts/PDF/UFFF0.pdf).
 pub const REPLACEMENT_CHAR_BYTES: &[u8] = "\u{fffd}".as_bytes();
 
-// https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
+/// Calculate the expansion for a numeric entity (after parsing it).
+///
+/// See <https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state>
 #[allow(clippy::match_same_arms)]
 fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
     match number {
@@ -602,6 +606,8 @@ where
     false
 }
 
+/// Advance iterator while `predicate` matches (`next()` will return the first
+/// byte that doesn’t match) and return a slice of the bytes that didn’t match.
 #[inline]
 fn slice_while<'a, P>(
     iter: &mut slice::Iter<'a, u8>,
@@ -613,6 +619,8 @@ where
     slice_until(iter, move |c| !predicate(c))
 }
 
+/// Advance iterator until the byte _before_ `predicate` matches and return a
+/// slice of the bytes matched.
 #[inline]
 fn slice_until<'a, P>(iter: &mut slice::Iter<'a, u8>, predicate: P) -> &'a [u8]
 where

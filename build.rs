@@ -1,17 +1,17 @@
-// Generates code from entities.json depending on enabled features.
-//
-// The canonical source is https://html.spec.whatwg.org/entities.json (see
-// https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references).
-//
-// The entities.json file looks like:
-//
-//     {
-//         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
-//         . . .
-//     }
+//! Generates code from entities.json depending on enabled features.
+//!
+//! The canonical source is <https://html.spec.whatwg.org/entities.json> (see
+//! <https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references>).
+//!
+//! The entities.json file looks like:
+//!
+//!     {
+//!         "&AElig": { "codepoints": [198], "characters": "\u00C6" },
+//!         . . .
+//!     }
 
 #![forbid(unsafe_code)]
-#![warn(clippy::pedantic)]
+#![warn(clippy::pedantic, missing_docs, clippy::missing_docs_in_private_items)]
 #![allow(
     clippy::let_underscore_untyped,
     clippy::map_unwrap_or,
@@ -29,6 +29,9 @@ fn main() {
     generate_entities_rs(&entities);
 }
 
+/// Generate entities.rs file containing all valid HTML entities in a
+/// [`phf::Map`] along with a few useful constants. It also generates
+/// documentation with all entities in a table.
 #[cfg(feature = "entities")]
 fn generate_entities_rs(entities: &[(String, String)]) {
     use std::cmp::{max, min};
@@ -101,6 +104,9 @@ fn generate_entities_rs(entities: &[(String, String)]) {
         pub const ENTITY_MIN_LENGTH: usize = {min_len};").unwrap();
 }
 
+/// Generated matcher.rs file containing a function `entity_matcher()` that is
+/// basically just a giant nested tree of `match` expressions to check if the
+/// next bytes in an iterator are an HTML entity.
 #[cfg(feature = "unescape_fast")]
 fn generate_matcher_rs(entities: &[(String, String)]) {
     use std::env;
@@ -130,6 +136,7 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     writeln!(out).unwrap();
 }
 
+/// Load HTML entities as `vec![...("&gt;", ">")...]`.
 #[cfg(any(feature = "unescape_fast", feature = "entities"))]
 fn load_entities<P: AsRef<std::path::Path>>(path: P) -> Vec<(String, String)> {
     let input = std::fs::read(path.as_ref()).unwrap();
