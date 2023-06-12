@@ -70,15 +70,24 @@ macro_rules! escape_fn {
                 }
 
                 if let Some(i) = find_u8(raw) {
-                    let mut output: Vec<u8> = Vec::with_capacity(raw.len() * 2);
+                    let mut output: Vec<u8> = Vec::with_capacity(raw.len().saturating_mul(2));
                     output.extend_from_slice(&raw[..i]);
                     output.extend_from_slice(map_u8(raw[i]));
+
+                    // i is a valid index, so it can't be usize::MAX.
+                    debug_assert!(i < usize::MAX);
+                    #[allow(clippy::arithmetic_side_effects)]
                     let mut remainder = &raw[i+1..];
 
                     while let Some(i) = find_u8(remainder) {
                         output.extend_from_slice(&remainder[..i]);
                         output.extend_from_slice(map_u8(remainder[i]));
-                        remainder = &remainder[i+1..];
+
+                        // i is a valid index, so it can't be usize::MAX.
+                        debug_assert!(i < usize::MAX);
+                        #[allow(clippy::arithmetic_side_effects)]
+                        let n = i + 1; // Work around https://github.com/rust-lang/rust/issues/15701
+                        remainder = &remainder[n..];
                     }
 
                     output.extend_from_slice(&remainder);

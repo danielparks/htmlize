@@ -11,7 +11,12 @@
 //!     }
 
 #![forbid(unsafe_code)]
-#![warn(clippy::pedantic, missing_docs, clippy::missing_docs_in_private_items)]
+#![warn(
+    clippy::pedantic,
+    clippy::arithmetic_side_effects,
+    missing_docs,
+    clippy::missing_docs_in_private_items
+)]
 #![allow(
     clippy::let_underscore_untyped,
     clippy::map_unwrap_or,
