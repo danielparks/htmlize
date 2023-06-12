@@ -218,6 +218,11 @@ macro_rules! unescape_fns {
                 let mut iter = remainder.iter();
 
                 while advance_until(&mut iter, |&c| c == b'&') {
+                    // `iter` was generated from `remainder`, so
+                    // `iter.as_slice().len()` will always be less than or equal
+                    // to `remainder.len()`.
+                    debug_assert!(remainder.len() >= iter.as_slice().len());
+                    #[allow(clippy::arithmetic_side_effects)]
                     let i = remainder.len() - iter.as_slice().len();
 
                     if let Some(expansion) = [<match_entity $suffix>](&mut iter, context) {
@@ -237,6 +242,11 @@ macro_rules! unescape_fns {
                         remainder = iter.as_slice();
 
                         while advance_until(&mut iter, |&c| c == b'&') {
+                            // `remainder` was generated from `iter` before
+                            // `iter` was advanced, so `iter.as_slice()` will
+                            // always be shorter than or equal to `remainder`.
+                            debug_assert!(remainder.len() >= iter.as_slice().len());
+                            #[allow(clippy::arithmetic_side_effects)]
                             let i = remainder.len() - iter.as_slice().len();
 
                             if let Some(expansion) = [<match_entity $suffix>](&mut iter, context) {
@@ -417,7 +427,14 @@ fn match_entity_slow<'a>(
     }
 
     let raw = &iter.as_slice();
+
+    // Both `raw` and `candidate_iter` were generated from `iter`, then
+    // `candidate_iter` was advanced, so `candidate_iter.as_slice().len()` will
+    // always be less than `raw.len()`.
+    debug_assert!(raw.len() >= candidate_iter.as_slice().len());
+    #[allow(clippy::arithmetic_side_effects)]
     let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
+
     if candidate.len() < ENTITY_MIN_LENGTH {
         // Couldn’t possibly match. Don’t expand.
         *iter = candidate_iter;
@@ -441,7 +458,10 @@ fn match_entity_slow<'a>(
         let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
         for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
             if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
-                // Found a match.
+                // Found a match. check_len starts at ENTITY_MIN_LENGTH, which
+                // must always be greater than 0, so `check_len - 1` is safe.
+                debug_assert!(check_len >= 1);
+                #[allow(clippy::arithmetic_side_effects)]
                 iter.nth(check_len - 1); // Update iter. nth(0) == next().
                 return Some(expansion.into());
             }
@@ -667,17 +687,18 @@ fn position_peek<P>(
 where
     P: FnMut(&u8) -> bool,
 {
-    try_fold_peek(
-        iter,
-        0,
-        move |i, x| {
-            if predicate(x) {
-                Err(i)
-            } else {
-                Ok(i + 1)
-            }
-        },
-    )
+    try_fold_peek(iter, 0, move |i, x| {
+        if predicate(x) {
+            Err(i)
+        } else {
+            // `i` counts items in a slice, so it can never be `usize::MAX`. If
+            // there were `usize::MAX` items, then the last item would be
+            // `usize::MAX - 1`, and this would return `Ok(usize::MAX)`.
+            debug_assert!(i < usize::MAX);
+            #[allow(clippy::arithmetic_side_effects)]
+            Ok(i + 1)
+        }
+    })
     .err()
 }
 
