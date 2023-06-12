@@ -1,3 +1,16 @@
+//! Benchmark `unescape` functions with [`iai`].
+
+#![forbid(unsafe_code)]
+#![warn(clippy::nursery, clippy::pedantic)]
+#![allow(
+    clippy::let_underscore_untyped,
+    clippy::map_unwrap_or,
+    clippy::module_name_repetitions
+)]
+// Other restriction lints
+#![warn(clippy::arithmetic_side_effects)]
+
+#[allow(clippy::wildcard_imports)]
 use htmlize::*;
 use iai::black_box;
 use paste::paste;

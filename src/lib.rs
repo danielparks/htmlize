@@ -68,17 +68,16 @@
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
 #![forbid(unsafe_code)]
-#![warn(
-    clippy::pedantic,
-    clippy::arithmetic_side_effects,
-    missing_docs,
-    clippy::missing_docs_in_private_items
-)]
+#![warn(clippy::nursery, clippy::pedantic)]
 #![allow(
     clippy::let_underscore_untyped,
     clippy::map_unwrap_or,
     clippy::module_name_repetitions
 )]
+// Require docs on everything
+#![warn(missing_docs, clippy::missing_docs_in_private_items)]
+// Other restriction lints
+#![warn(clippy::arithmetic_side_effects)]
 
 /// Functions to escape raw text into HTML.
 mod escape;
