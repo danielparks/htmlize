@@ -60,7 +60,7 @@ macro_rules! escape_fn {
                 }
 
                 #[inline]
-                fn map_u8(c: u8) -> &'static [u8] {
+                const fn map_u8(c: u8) -> &'static [u8] {
                     match c {
                         $( $ch => $entity, )+
                         // This should never happen, but using unreachable!()
@@ -235,6 +235,7 @@ mod tests {
         ($name:ident, $($test:tt)+) => {
             #[test]
             fn $name() {
+                #![allow(clippy::string_lit_as_bytes)]
                 assert!($($test)+);
             }
         };

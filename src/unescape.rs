@@ -26,7 +26,7 @@ use std::slice;
 /// feature).
 ///
 /// See [`unescape_in()`] for usage.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Context {
     /// Anywhere outside of an HTML attribute, e.g. regular text. This is
     /// generally what you want.
@@ -500,7 +500,7 @@ fn match_numeric_entity(
         }
     };
 
-    if let Some(b';') = peek(iter) {
+    if Some(b';') == peek(iter) {
         assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
     } else {
         // missing-semicolon-after-character-reference: ignore and continue.
@@ -647,11 +647,9 @@ where
     P: FnMut(&u8) -> bool,
 {
     let remainder = iter.as_slice();
-    if let Some(i) = position_peek(iter, predicate) {
-        &remainder[..i]
-    } else {
-        remainder
-    }
+    position_peek(iter, predicate)
+        .map(|i| &remainder[..i])
+        .unwrap_or(remainder)
 }
 
 /// Move to the next value in `iter` and assert that it equals `expected`.
