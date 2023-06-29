@@ -10,18 +10,6 @@
 //!         . . .
 //!     }
 
-#![forbid(unsafe_code)]
-#![warn(clippy::nursery, clippy::pedantic)]
-#![allow(
-    clippy::let_underscore_untyped,
-    clippy::map_unwrap_or,
-    clippy::module_name_repetitions
-)]
-// Require docs on everything
-#![warn(missing_docs, clippy::missing_docs_in_private_items)]
-// Other restriction lints
-#![warn(clippy::arithmetic_side_effects)]
-
 fn main() {
     #[cfg(any(feature = "unescape_fast", feature = "entities"))]
     let entities = load_entities("entities.json");

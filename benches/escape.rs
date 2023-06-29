@@ -1,14 +1,6 @@
 //! Benchmark `escape` functions with [`criterion`].
 
-#![forbid(unsafe_code)]
-#![warn(clippy::nursery, clippy::pedantic)]
-#![allow(
-    clippy::let_underscore_untyped,
-    clippy::map_unwrap_or,
-    clippy::module_name_repetitions
-)]
-// Other restriction lints
-#![warn(clippy::arithmetic_side_effects)]
+#![allow(clippy::missing_docs_in_private_items, missing_docs)]
 
 use criterion::{
     criterion_group, criterion_main, BenchmarkId, Criterion, Throughput,
