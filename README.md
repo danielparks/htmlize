@@ -177,6 +177,10 @@ to use either.
   * [Apache License, Version 2.0](LICENSE-APACHE)
   * [MIT license](LICENSE-MIT)
 
+The entities.json file is copyright WHATWG, and is copied from
+<https://html.spec.whatwg.org/entities.json>. It is licensed under the [BSD
+3-Clause License](entities.json-LICENSE).
+
 ### Contributions
 
 Unless you explicitly state otherwise, any contribution you submit as defined
