@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.3 (2023-07-09)
 
-* Enabled feature marks on <docs.rs> to make it clearer what features are
+* Enabled feature marks on [docs.rs] to make it clearer what features are
   required by what functions.
 * Clarified ownership and licensing of entities.json data file.
+
+[docs.rs]: https://docs.rs/htmlize
 
 ## Release 1.0.2 (2023-03-04)
 
