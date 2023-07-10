@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## main branch
+
 ## Release 1.0.3 (2023-07-09)
 
 * Enabled feature marks on [docs.rs] to make it clearer what features are
