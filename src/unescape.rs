@@ -1,19 +1,21 @@
-// See the normative reference for HTML5 entities:
-// <https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references>
-//
-// Entities do not always require a trailing semicolon, though the exact rules
-// depend on whether the entity appears in an attribute value or somewhere else.
-// See [`unescape_in()`] for more information.
-//
-// Some entities are prefixes for multiple other entities. For example:
-//   &times &times; &timesb; &timesbar; &timesd;
-//
-// ### _fast and _slow
-//
-// This builds _fast and _slow versions of all functions depending on the
-// enabled features. When all features are enabled, it uses the _fast versions
-// in the public API, but it still builds the slow versions so that all
-// functions can be tested.
+//! # Functions to unescape HTML into raw text
+//!
+//! See the normative reference for HTML5 entities:
+//! <https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references>
+//!
+//! Entities do not always require a trailing semicolon, though the exact rules
+//! depend on whether the entity appears in an attribute value or somewhere else.
+//! See [`unescape_in()`] for more information.
+//!
+//! Some entities are prefixes for multiple other entities. For example:
+//!   &times &times; &timesb; &timesbar; &timesd;
+//!
+//! ### _fast and _slow
+//!
+//! This builds _fast and _slow versions of all functions depending on the
+//! enabled features. When all features are enabled, it uses the _fast versions
+//! in the public API, but it still builds the slow versions so that all
+//! functions can be tested.
 
 use paste::paste;
 use std::borrow::Cow;
@@ -22,8 +24,7 @@ use std::num::IntErrorKind;
 use std::result::Result;
 use std::slice;
 
-/// The context for an input string (requires `unescape` or `unescape_fast`
-/// feature).
+/// The context for an input string.
 ///
 /// See [`unescape_in()`] for usage.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -49,7 +50,7 @@ macro_rules! call_unescape {
     }
 }
 
-/// Expand all valid entities (requires `unescape` or `unescape_fast` feature).
+/// Expand all valid entities.
 ///
 /// This is appropriate to use on any text outside of an attribute. See
 /// [`unescape_in()`] for more information.
@@ -59,8 +60,7 @@ pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
     call_unescape!(unescape_in(escaped, Context::General));
 }
 
-/// Expand all valid entities in an attribute (requires `unescape` or
-/// `unescape_fast` feature).
+/// Expand all valid entities in an attribute.
 ///
 /// This is only appropriate for the value of an attribute. See
 /// [`unescape_in()`] for more information.
@@ -72,8 +72,7 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
     call_unescape!(unescape_in(escaped, Context::Attribute));
 }
 
-/// Expand all valid entities in a given context (requires `unescape` or
-/// `unescape_fast` feature).
+/// Expand all valid entities in a given context.
 ///
 /// `context` may be:
 ///
@@ -114,7 +113,7 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
     call_unescape!(unescape_in(escaped, context));
 }
 
-/// Expand all valid entities in a given context (requires `unescape` feature).
+/// Expand all valid entities in a given context.
 ///
 /// `context` may be:
 ///
@@ -528,8 +527,7 @@ fn match_numeric_entity(
     None
 }
 
-/// Unicode replacement character (U+FFFD “�”, requires `unescape` or
-/// `unescape_fast` feature)
+/// Unicode replacement character (U+FFFD, “�”).
 ///
 /// According to the WHATWG HTML spec, this is used as an expansion for certain
 /// invalid numeric entities.

@@ -37,8 +37,7 @@ fn generate_entities_rs(entities: &[(String, String)]) {
 
     writeln!(out, "\
         #[allow(clippy::doc_markdown)] // Doesn’t work correctly here.\n\
-        /// A map of all valid HTML entities to their expansions (requires `entities`\n\
-        /// feature).\n\
+        /// A map of all valid HTML entities to their expansions.\n\
         ///\n\
         /// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the\n\
         /// values are their expansions, e.g. `b\"©\"`.\n\
@@ -83,17 +82,19 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     }
 
     let map = map_builder.build();
-    writeln!(out, "\
+    writeln!(
+        out,
+        "\
         #[allow(clippy::unreadable_literal)]\n\
         pub static ENTITIES: phf::Map<&[u8], &[u8]> = {map};\n\
         \n\
-        /// Length of longest entity including ‘&’ and possibly ‘;’ (requires\n\
-        /// `entities` feature)\n\
+        /// Length of longest entity including ‘&’ and possibly ‘;’.\n\
         pub const ENTITY_MAX_LENGTH: usize = {max_len};\n\
         \n\
-        /// Length of shortest entity including ‘&’ and possibly ‘;’ (requires\n\
-        /// `entities` feature)\n\
-        pub const ENTITY_MIN_LENGTH: usize = {min_len};").unwrap();
+        /// Length of shortest entity including ‘&’ and possibly ‘;’.\n\
+        pub const ENTITY_MIN_LENGTH: usize = {min_len};"
+    )
+    .unwrap();
 }
 
 /// Generated matcher.rs file containing a function `entity_matcher()` that is
