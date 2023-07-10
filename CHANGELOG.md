@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Enabled feature marks on <docs.rs> to make it clearer what features are
+  required by what functions.
 * Clarified ownership and licensing of entities.json data file.
 
 ## Release 1.0.2 (2023-03-04)

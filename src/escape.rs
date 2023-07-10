@@ -1,3 +1,5 @@
+//! # Functions to escape raw text into HTML
+
 use paste::paste;
 use std::borrow::Cow;
 
