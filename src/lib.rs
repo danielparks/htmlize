@@ -100,7 +100,7 @@ feature! {
 }
 
 feature! {
-    #![any(feature = "entities")]
+    #![feature = "entities"]
 
     mod entities;
     pub use entities::*;
