@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Hide usage of [assert2] in doc examples to make them slightly clearer for
+  users not familiar with it.
+
+[assert2]: https://crates.io/crates/assert2
+
 ## Release 1.0.3 (2023-07-09)
 
 * Enabled feature marks on [docs.rs] to make it clearer what features are
