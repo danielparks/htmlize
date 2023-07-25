@@ -88,18 +88,18 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 ///
 /// ```rust
 /// use htmlize::*;
-/// use assert2::check;
+/// # use assert2::check as assert;
 ///
-/// check!(unescape_in("&times",   Context::General)   == "×");
-/// check!(unescape_in("&times",   Context::Attribute) == "×");
-/// check!(unescape_in("&times;X", Context::General)   == "×X");
-/// check!(unescape_in("&times;X", Context::Attribute) == "×X");
-/// check!(unescape_in("&timesX",  Context::General)   == "×X");
-/// check!(unescape_in("&timesX",  Context::Attribute) == "&timesX");
-/// check!(unescape_in("&times=",  Context::General)   == "×=");
-/// check!(unescape_in("&times=",  Context::Attribute) == "&times=");
-/// check!(unescape_in("&times#",  Context::General)   == "×#");
-/// check!(unescape_in("&times#",  Context::Attribute) == "×#");
+/// assert!(unescape_in("&times",   Context::General)   == "×");
+/// assert!(unescape_in("&times",   Context::Attribute) == "×");
+/// assert!(unescape_in("&times;X", Context::General)   == "×X");
+/// assert!(unescape_in("&times;X", Context::Attribute) == "×X");
+/// assert!(unescape_in("&timesX",  Context::General)   == "×X");
+/// assert!(unescape_in("&timesX",  Context::Attribute) == "&timesX");
+/// assert!(unescape_in("&times=",  Context::General)   == "×=");
+/// assert!(unescape_in("&times=",  Context::Attribute) == "&times=");
+/// assert!(unescape_in("&times#",  Context::General)   == "×#");
+/// assert!(unescape_in("&times#",  Context::Attribute) == "×#");
 /// ```
 ///
 /// To work with bytes (`[u8]`) instead of strings, see [`unescape_bytes_in()`].
@@ -129,18 +129,18 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 ///
 /// ```rust
 /// use htmlize::*;
-/// use assert2::check;
+/// # use assert2::check as assert;
 ///
-/// check!(unescape_bytes_in(&b"&times"[..],   Context::General)   == "×".as_bytes());
-/// check!(unescape_bytes_in(&b"&times"[..],   Context::Attribute) == "×".as_bytes());
-/// check!(unescape_bytes_in(&b"&times;X"[..], Context::General)   == "×X".as_bytes());
-/// check!(unescape_bytes_in(&b"&times;X"[..], Context::Attribute) == "×X".as_bytes());
-/// check!(unescape_bytes_in(&b"&timesX"[..],  Context::General)   == "×X".as_bytes());
-/// check!(unescape_bytes_in(&b"&timesX"[..],  Context::Attribute) == "&timesX".as_bytes());
-/// check!(unescape_bytes_in(&b"&times="[..],  Context::General)   == "×=".as_bytes());
-/// check!(unescape_bytes_in(&b"&times="[..],  Context::Attribute) == "&times=".as_bytes());
-/// check!(unescape_bytes_in(&b"&times#"[..],  Context::General)   == "×#".as_bytes());
-/// check!(unescape_bytes_in(&b"&times#"[..],  Context::Attribute) == "×#".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times"[..],   Context::General)   == "×".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times"[..],   Context::Attribute) == "×".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times;X"[..], Context::General)   == "×X".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times;X"[..], Context::Attribute) == "×X".as_bytes());
+/// assert!(unescape_bytes_in(&b"&timesX"[..],  Context::General)   == "×X".as_bytes());
+/// assert!(unescape_bytes_in(&b"&timesX"[..],  Context::Attribute) == "&timesX".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times="[..],  Context::General)   == "×=".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times="[..],  Context::Attribute) == "&times=".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times#"[..],  Context::General)   == "×#".as_bytes());
+/// assert!(unescape_bytes_in(&b"&times#"[..],  Context::Attribute) == "×#".as_bytes());
 /// ```
 ///
 /// To work with `String` instead of bytes, see [`unescape_in()`].
