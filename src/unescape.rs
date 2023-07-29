@@ -359,6 +359,8 @@ const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 ///
 /// This version uses the [`ENTITIES`] map instead of matchgen. It is slower at
 /// runtime but faster to build.
+///
+/// [`ENTITIES`]: crate::ENTITIES
 #[cfg(feature = "unescape")]
 fn match_entity_slow<'a>(
     iter: &'a mut slice::Iter<u8>,
