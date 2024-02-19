@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.4 (2024-02-18)
 
 * Hide usage of [assert2] in doc examples to make them slightly clearer for
   users not familiar with it.
