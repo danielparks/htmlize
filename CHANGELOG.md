@@ -7,7 +7,15 @@ All notable changes to this project will be documented in this file.
 * Hide usage of [assert2] in doc examples to make them slightly clearer for
   users not familiar with it.
 
+### Security fixes
+
+* Upgrade indirect dependency [rustix] to fix a [security
+  vulnerability][GHSA-c827-hfw6-qwvm] in directory iterators. This does not
+  affect htmlize, since rustix is only used by development dependencies.
+
 [assert2]: https://crates.io/crates/assert2
+[rustix]: https://crates.io/crates/rustix
+[GHSA-c827-hfw6-qwvm]: https://github.com/advisories/GHSA-c827-hfw6-qwvm
 
 ## Release 1.0.3 (2023-07-09)
 
