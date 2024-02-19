@@ -41,10 +41,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: clippy
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-lints
-      - run: cargo lints clippy --all-features --all-targets
+      - run: cargo clippy --all-features --all-targets
       - name: check doc lints
         env:
           RUSTDOCFLAGS: --document-private-items -Dwarnings

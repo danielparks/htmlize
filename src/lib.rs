@@ -67,8 +67,7 @@
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
 
-// Most lint configuration is in lints.toml, but that isn’t supported by
-// cargo-geiger, and it only supports deny, not forbid.
+// Lint configuration in Cargo.toml isn’t supported by cargo-geiger.
 #![forbid(unsafe_code)]
 // Enable doc_cfg on docsrs so that we get feature markers.
 #![cfg_attr(docsrs, feature(doc_cfg))]
