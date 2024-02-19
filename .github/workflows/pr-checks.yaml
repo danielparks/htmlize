@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - $default-branch
+      - main
   pull_request:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - run: cargo build --tests
+      - run: cargo build --tests --all-features
       - run: cargo test --all-features
       - run: cargo test --features unescape
       - run: cargo test --features entities
@@ -64,7 +64,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-msrv
