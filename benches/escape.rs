@@ -7,7 +7,6 @@ use criterion::{
 };
 #[allow(clippy::wildcard_imports)]
 use htmlize::*;
-use std::convert::TryInto;
 use std::time::Duration;
 
 mod util;
