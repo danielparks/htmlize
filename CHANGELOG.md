@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Exclude more files from final package to significantly reduce package size.
+
 ## Release 1.0.4 (2024-02-18)
 
 * Hide usage of [assert2] in doc examples to make them slightly clearer for
