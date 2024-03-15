@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.0.5 (2024-03-14)
 
 * Exclude more files from final package to significantly reduce package size.
 
