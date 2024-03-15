@@ -6,6 +6,7 @@ description = "Encode and decode HTML entities in UTF-8 according to the standar
 homepage = "https://github.com/danielparks/htmlize"
 repository = "https://github.com/danielparks/htmlize"
 readme = "README.md"
+exclude = [".*", "/*.sh", "/target", "/Dockerfile"]
 keywords = ["html", "entities", "escape", "unescape", "decode"]
 categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
