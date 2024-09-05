@@ -1,3 +1,6 @@
+[graph]
+all-features = true
+
 [bans]
 multiple-versions = "allow"
 
@@ -12,5 +15,4 @@ allow = [
   "Unlicense",
   "Zlib",
 ]
-default = "deny"
 unused-allowed-license = "allow"
