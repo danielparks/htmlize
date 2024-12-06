@@ -488,12 +488,12 @@ fn match_numeric_entity(
             assert_next_eq(iter, c, PEEK_MATCH_ERROR);
 
             let hex = slice_while(iter, u8::is_ascii_hexdigit);
-            u32::from_str_radix(&String::from_utf8(hex.to_vec()).unwrap(), 16)
+            u32::from_str_radix(core::str::from_utf8(hex).unwrap(), 16)
         }
         Some(_) => {
             // Presumably a decimal entity
             let dec = slice_while(iter, u8::is_ascii_digit);
-            u32::from_str_radix(&String::from_utf8(dec.to_vec()).unwrap(), 10)
+            u32::from_str_radix(core::str::from_utf8(dec).unwrap(), 10)
         }
         None => {
             // Iterator reached end; do not expand.
