@@ -108,9 +108,6 @@ pub trait Matcher {
     ///     point to the next character than could plausibly start an entity
     ///     (not necessarily b'&', though; the only guarantee is that we didn’t
     ///     skip a potential entity).
-    ///
-    /// This version uses matchgen instead of the `ENTITIES` map. It is faster
-    /// at runtime but slower to build.
     fn match_entity<'a>(iter: &'a mut slice::Iter<u8>)
         -> Option<Cow<'a, [u8]>>;
 }
@@ -123,6 +120,10 @@ pub trait Matcher {
 //     I: Iterator<Item = &'a u8> + Clone,
 #[cfg(feature = "unescape_fast")]
 include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
+
+// Include function to expand candidate entity byte strings.
+#[cfg(feature = "unescape")]
+include!(concat!(env!("OUT_DIR"), "/expand_entity.rs"));
 
 #[cfg(feature = "unescape_fast")]
 impl Matcher for (Matchgen, ContextAttribute) {
@@ -213,7 +214,7 @@ impl Matcher for (Phf, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{get_entity, ENTITY_MIN_LENGTH};
+        use crate::ENTITY_MIN_LENGTH;
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -276,7 +277,7 @@ impl Matcher for (Phf, ContextAttribute) {
         // See `unescape_in()` documentation for examples.
         //
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-        get_entity(candidate).map(|expansion| expansion.into())
+        expand_entity(candidate).map(Into::into)
     }
 }
 
@@ -285,7 +286,7 @@ impl Matcher for (Phf, ContextGeneral) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{get_entity, BARE_ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
+        use crate::{BARE_ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
         use std::cmp::min;
 
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
@@ -324,7 +325,7 @@ impl Matcher for (Phf, ContextGeneral) {
 
         if has_semicolon {
             #[allow(clippy::len_zero, reason = "clarity")]
-            if let Some(expansion) = get_entity(candidate) {
+            if let Some(expansion) = expand_entity(candidate) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(candidate.len() >= 1);
@@ -345,7 +346,7 @@ impl Matcher for (Phf, ContextGeneral) {
         for check_len in
             ENTITY_MIN_LENGTH..=min(candidate.len(), BARE_ENTITY_MAX_LENGTH)
         {
-            if let Some(expansion) = get_entity(&candidate[..check_len]) {
+            if let Some(expansion) = expand_entity(&candidate[..check_len]) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(check_len >= 1);

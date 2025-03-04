@@ -11,22 +11,31 @@
 //!     }
 
 fn main() {
-    #[cfg(any(feature = "unescape_fast", feature = "entities"))]
+    #[cfg(any(
+        feature = "unescape_fast",
+        feature = "unescape",
+        feature = "entities"
+    ))]
     let entities = load_entities("entities.json");
 
     #[cfg(feature = "unescape_fast")]
     generate_matcher_rs(&entities);
+
+    #[cfg(feature = "unescape")]
+    generate_unescape_entity_rs(&entities);
+
+    #[cfg(any(feature = "unescape", feature = "entities"))]
+    generate_entities_length_rs(&entities);
 
     #[cfg(feature = "entities")]
     generate_entities_rs(&entities);
 }
 
 /// Generate entities.rs file containing all valid HTML entities in a
-/// [`phf::Map`] along with a few useful constants. It also generates
-/// documentation with all entities in a table.
+/// [`phf::Map`]. It also generates documentation with a table of all the
+/// entities and their expansions.
 #[cfg(feature = "entities")]
 fn generate_entities_rs(entities: &[(String, String)]) {
-    use std::cmp::{max, min};
     use std::env;
     use std::fs::File;
     use std::io::{BufWriter, Write};
@@ -51,28 +60,9 @@ fn generate_entities_rs(entities: &[(String, String)]) {
         /// Entity                         | Codepoints         | Glyph\n\
         /// -------------------------------|--------------------|------").unwrap();
 
-    let mut hashify = String::new();
-
     let mut map_builder = phf_codegen::Map::<&[u8]>::new();
-    let mut max_len: usize = 0;
-    let mut min_len: usize = usize::MAX;
-    let mut bare_max_len: usize = 0;
     for (name, glyph) in entities {
         map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
-        max_len = max(max_len, name.len());
-        min_len = min(min_len, name.len());
-        if !name.ends_with(';') {
-            bare_max_len = max(bare_max_len, name.len());
-        }
-
-        {
-            use std::fmt::Write;
-            write!(&mut hashify, "\n        b\"{name}\" => &[").unwrap();
-            for &byte in glyph.as_bytes() {
-                write!(&mut hashify, "{byte},").unwrap();
-            }
-            write!(&mut hashify, "],").unwrap();
-        }
 
         // `{:28}` would pad the output inside the backticks.
         let name = format!("`{name}`");
@@ -95,29 +85,98 @@ fn generate_entities_rs(entities: &[(String, String)]) {
         writeln!(out, "/// {name:30} | {codepoints:18} | {glyph}",).unwrap();
     }
 
-    let map = map_builder.build();
+    writeln!(out, "#[allow(clippy::unreadable_literal)]").unwrap();
     writeln!(
         out,
-        r#"#[allow(clippy::unreadable_literal)]
-pub static ENTITIES: phf::Map<&[u8], &[u8]> = {map};
+        "pub static ENTITIES: phf::Map<&[u8], &[u8]> = {};",
+        map_builder.build()
+    )
+    .unwrap();
+}
 
-/// Length of longest entity including ‘&’ and possibly ‘;’.
-pub const ENTITY_MAX_LENGTH: usize = {max_len};
+/// Generate `entities_length.rs` file containing constants with the minimum
+/// and maximum entity lengths.
+#[cfg(any(feature = "unescape", feature = "entities"))]
+fn generate_entities_length_rs(entities: &[(String, String)]) {
+    use std::cmp::{max, min};
+    use std::env;
+    use std::fs::File;
+    use std::io::{BufWriter, Write};
+    use std::path::Path;
 
-/// Length of shortest entity including ‘&’ and possibly ‘;’.
-pub const ENTITY_MIN_LENGTH: usize = {min_len};
+    let out_path =
+        Path::new(&env::var("OUT_DIR").unwrap()).join("entities_length.rs");
+    let mut out = BufWriter::new(File::create(out_path).unwrap());
 
-/// Length of longest semicolon-less entity including ‘&’.
-pub const BARE_ENTITY_MAX_LENGTH: usize = {bare_max_len};
+    let mut max_len: usize = 0;
+    let mut min_len: usize = usize::MAX;
+    let mut bare_max_len: usize = 0;
+    for (name, _) in entities {
+        max_len = max(max_len, name.len());
+        min_len = min(min_len, name.len());
+        if !name.ends_with(';') {
+            bare_max_len = max(bare_max_len, name.len());
+        }
+    }
+    writeln!(
+        out,
+        "\
+        /// Length of longest entity including ‘&’ and possibly ‘;’.\n\
+        pub const ENTITY_MAX_LENGTH: usize = {max_len};\n\
+        \n\
+        /// Length of shortest entity including ‘&’ and possibly ‘;’.\n\
+        pub const ENTITY_MIN_LENGTH: usize = {min_len};\n\
+        \n\
+        /// Length of longest semicolon-less entity including ‘&’.\n\
+        pub const BARE_ENTITY_MAX_LENGTH: usize = {bare_max_len};"
+    )
+    .unwrap();
+}
 
-/// Get an unescaped character by its HTML entity
-pub(crate) fn get_entity(candidate: &[u8]) -> Option<&[u8]> {{
-    hashify::map! {{
-        candidate,
-        &[u8],{hashify}
-    }}
-}}
-"#
+/// Generate `expand_entity.rs` file containing a function that maps entity byte
+/// strings to their expansions.
+#[cfg(feature = "unescape")]
+fn generate_unescape_entity_rs(entities: &[(String, String)]) {
+    use std::env;
+    use std::fs::File;
+    use std::io::{BufWriter, Write};
+    use std::path::Path;
+
+    let out_path =
+        Path::new(&env::var("OUT_DIR").unwrap()).join("expand_entity.rs");
+    let mut out = BufWriter::new(File::create(out_path).unwrap());
+
+    writeln!(
+        out,
+        "\
+        /// Get expansion or `None` for a candidate HTML entity byte string.\n\
+        #[must_use]\n\
+        #[allow(clippy::too_many_lines)]\n\
+        fn expand_entity(candidate: &[u8]) -> Option<&[u8]> {{\n\
+            hashify::map! {{\n\
+                candidate,\n\
+                &[u8],"
+    )
+    .unwrap();
+
+    for (name, glyph) in entities {
+        write!(
+            out,
+            "\n\
+                b\"{name}\" => &["
+        )
+        .unwrap();
+        for &byte in glyph.as_bytes() {
+            write!(out, "{byte},").unwrap();
+        }
+        write!(out, "],").unwrap();
+    }
+
+    writeln!(
+        out,
+        "\n\
+            }}\n\
+        }}"
     )
     .unwrap();
 }
@@ -146,7 +205,11 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
 }
 
 /// Load HTML entities as `vec![...("&gt;", ">")...]`.
-#[cfg(any(feature = "unescape_fast", feature = "entities"))]
+#[cfg(any(
+    feature = "unescape_fast",
+    feature = "unescape",
+    feature = "entities"
+))]
 fn load_entities<P: AsRef<std::path::Path>>(path: P) -> Vec<(String, String)> {
     let input = std::fs::read(path.as_ref()).unwrap();
     let input: serde_json::Map<String, serde_json::Value> =
