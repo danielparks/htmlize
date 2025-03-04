@@ -82,9 +82,9 @@ fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
     None
 }
 
-/// A Phf-based matcher.
+/// A map-based matcher.
 #[cfg(feature = "unescape")]
-pub struct Phf;
+pub struct Map;
 
 /// A matchgen-based matcher.
 #[cfg(feature = "unescape_fast")]
@@ -108,9 +108,6 @@ pub trait Matcher {
     ///     point to the next character than could plausibly start an entity
     ///     (not necessarily b'&', though; the only guarantee is that we didn’t
     ///     skip a potential entity).
-    ///
-    /// This version uses matchgen instead of the `ENTITIES` map. It is faster
-    /// at runtime but slower to build.
     fn match_entity<'a>(iter: &'a mut slice::Iter<u8>)
         -> Option<Cow<'a, [u8]>>;
 }
@@ -123,6 +120,10 @@ pub trait Matcher {
 //     I: Iterator<Item = &'a u8> + Clone,
 #[cfg(feature = "unescape_fast")]
 include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
+
+// Include function to expand candidate entity byte strings.
+#[cfg(feature = "unescape")]
+include!(concat!(env!("OUT_DIR"), "/expand_entity.rs"));
 
 #[cfg(feature = "unescape_fast")]
 impl Matcher for (Matchgen, ContextAttribute) {
@@ -209,11 +210,11 @@ impl Matcher for (Matchgen, ContextGeneral) {
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 
 #[cfg(feature = "unescape")]
-impl Matcher for (Phf, ContextAttribute) {
+impl Matcher for (Map, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{get_entity, ENTITY_MIN_LENGTH};
+        use crate::ENTITY_MIN_LENGTH;
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -276,16 +277,16 @@ impl Matcher for (Phf, ContextAttribute) {
         // See `unescape_in()` documentation for examples.
         //
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-        get_entity(candidate).map(|expansion| expansion.into())
+        expand_entity(candidate).map(Into::into)
     }
 }
 
 #[cfg(feature = "unescape")]
-impl Matcher for (Phf, ContextGeneral) {
+impl Matcher for (Map, ContextGeneral) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{get_entity, BARE_ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
+        use crate::{BARE_ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
         use std::cmp::min;
 
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
@@ -324,7 +325,7 @@ impl Matcher for (Phf, ContextGeneral) {
 
         if has_semicolon {
             #[allow(clippy::len_zero, reason = "clarity")]
-            if let Some(expansion) = get_entity(candidate) {
+            if let Some(expansion) = expand_entity(candidate) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(candidate.len() >= 1);
@@ -345,7 +346,7 @@ impl Matcher for (Phf, ContextGeneral) {
         for check_len in
             ENTITY_MIN_LENGTH..=min(candidate.len(), BARE_ENTITY_MAX_LENGTH)
         {
-            if let Some(expansion) = get_entity(&candidate[..check_len]) {
+            if let Some(expansion) = expand_entity(&candidate[..check_len]) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(check_len >= 1);
@@ -606,41 +607,32 @@ mod tests {
     use assert2::{assert, check};
     use pastey::paste;
 
-    // Test fast and slow versions of a function.
+    // Test matchgen and map versions of an unescape function.
     macro_rules! test {
         ($name:ident, unescape ($($input:tt)+) == $expected:expr) => {
-            paste! {
-                #[cfg(feature = "unescape_fast")]
-                #[test]
-                fn [<fast_ $name>]() {
-                    assert!(unescape_in((Matchgen, ContextGeneral), $($input)+) == $expected);
-                }
-
-                #[cfg(feature = "unescape")]
-                #[test]
-                fn [<slow_ $name>]() {
-                    assert!(unescape_in((Phf, ContextGeneral), $($input)+) == $expected);
-                }
-            }
+            test!($name, unescape_in(ContextGeneral, $($input)+) == $expected);
         };
         ($name:ident, unescape_attribute ($($input:tt)+) == $expected:expr) => {
+            test!($name, unescape_in(ContextAttribute, $($input)+) == $expected);
+        };
+        ($name:ident, $func:ident ($context:expr, $($input:tt)+) == $expected:expr) => {
             paste! {
                 #[cfg(feature = "unescape_fast")]
                 #[test]
-                fn [<fast_ $name>]() {
-                    assert!(unescape_in((Matchgen, ContextAttribute), $($input)+) == $expected);
+                fn [<matchgen_ $name>]() {
+                    assert!($func((Matchgen, $context), $($input)+) == $expected);
                 }
 
                 #[cfg(feature = "unescape")]
                 #[test]
-                fn [<slow_ $name>]() {
-                    assert!(unescape_in((Phf, ContextAttribute), $($input)+) == $expected);
+                fn [<map_ $name>]() {
+                    assert!($func((Map, $context), $($input)+) == $expected);
                 }
             }
         };
     }
 
-    // Test fast and slow versions of unescape and unescape_attribute.
+    // Test matchgen and map versions of `unescape` and `unescape_attribute`.
     macro_rules! test_both {
         ($name:ident, unescape ($input:expr) == $expected:expr) => {
             paste! {
@@ -792,40 +784,14 @@ mod tests {
         include_str!("../../tests/corpus/all-entities-expanded.txt");
     test_both!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 
-    #[cfg(feature = "unescape_fast")]
-    #[test]
-    fn fast_invalid_utf8() {
-        assert!(
-            unescape_bytes_in((Matchgen, ContextGeneral), &b"\xa1"[..])
-                == &b"\xa1"[..]
-        );
-    }
-
-    #[cfg(feature = "unescape")]
-    #[test]
-    fn slow_invalid_utf8() {
-        assert!(
-            unescape_bytes_in((Phf, ContextGeneral), &b"\xa1"[..])
-                == &b"\xa1"[..]
-        );
-    }
-    #[cfg(feature = "unescape_fast")]
-    #[test]
-    fn fast_attribute_invalid_utf8() {
-        assert!(
-            unescape_bytes_in((Matchgen, ContextAttribute), &b"\xa1"[..])
-                == &b"\xa1"[..]
-        );
-    }
-
-    #[cfg(feature = "unescape")]
-    #[test]
-    fn slow_attribute_invalid_utf8() {
-        assert!(
-            unescape_bytes_in((Phf, ContextAttribute), &b"\xa1"[..])
-                == &b"\xa1"[..]
-        );
-    }
+    test!(
+        invalid_utf8,
+        unescape_bytes_in(ContextGeneral, &b"\xa1"[..]) == &b"\xa1"[..]
+    );
+    test!(
+        attribute_invalid_utf8,
+        unescape_bytes_in(ContextAttribute, &b"\xa1"[..]) == &b"\xa1"[..]
+    );
 
     #[test]
     fn correct_numeric_entity_euro() {
@@ -855,7 +821,7 @@ mod tests {
     /// `&times` is a prefix for `&timesbar;` and a few other entities, but
     /// never for another bare entity.
     ///
-    /// Logic in `match_entity::<(Phf, ContextGeneral)>()` depends on this.
+    /// Logic in `match_entity::<(Map, ContextGeneral)>()` depends on this.
     #[test]
     fn bare_entity_prefix_rule() {
         let all_bare: Vec<_> = ALL_SOURCE

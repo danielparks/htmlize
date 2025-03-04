@@ -1,6 +1,6 @@
 [package]
 name = "htmlize"
-version = "1.0.6"
+version = "2.0.0"
 authors = ["Daniel Parks <oss-htmlize@demonhorse.org>"]
 description = "Correctly encode and decode HTML entities in UTF-8"
 homepage = "https://github.com/danielparks/htmlize"
@@ -11,7 +11,7 @@ keywords = ["html", "entities", "escape", "unescape", "decode"]
 categories = ["web-programming", "encoding"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.74.1"
 
 [package.metadata.docs.rs]
 all-features = true
@@ -19,7 +19,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
 default = []
-unescape = ["entities", "_unescape_either"]
+unescape = ["_unescape_either", "dep:hashify", "dep:serde_json"]
 unescape_fast = ["_unescape_either", "dep:matchgen", "dep:serde_json"]
 entities = ["dep:phf", "dep:phf_codegen", "dep:serde_json"]
 # Enable iai benchmarks
@@ -36,10 +36,10 @@ phf_codegen = { version = "0.11.1", optional = true }
 serde_json = { version = "1.0", optional = true }
 
 [dependencies]
+hashify = { version = "0.2.6", optional = true }
 memchr = "2.5.0"
 pastey = "0.1.0"
 phf = { version = "0.11.1", default-features = false, optional = true }
-hashify = "0.2.6"
 
 [dev-dependencies]
 assert2 = "0.3.7"

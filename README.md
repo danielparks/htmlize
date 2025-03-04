@@ -2,7 +2,7 @@
 
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
-![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
+![Rust version 1.74.1+](https://img.shields.io/badge/Rust%20version-1.74.1%2B-success)
 
 Htmlize handles both encoding raw strings to be safely inserted in HTML, and
 decoding HTML text with entities to get back a raw string. It closely follows
@@ -134,8 +134,8 @@ The `escape` functions are all available with no features enabled.
     performance of of the `unescape` version is already pretty good, so I don’t
     recommend enabling this unless you really need it.
 
-  * `unescape`: provide normal version of `unescape()`. This will
-    automatically enable the `entities` feature.
+  * `unescape`: provide normal version of `unescape()`. Enabling this will add a
+    dependency on [hashify] and may slow builds by a few seconds.
 
   * `entities`: build `ENTITIES` map. Enabling this will add a dependency
     on [phf] and may slow builds by a few seconds.
@@ -225,6 +225,7 @@ additional terms or conditions.
 [`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_bytes_in.html
 [`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
 [official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+[hashify]: https://crates.io/crates/hashify
 [phf]: https://crates.io/crates/phf
 [features]: https://docs.rs/htmlize/1.0.6/htmlize/index.html#features
 [iai]: https://crates.io/crates/iai
