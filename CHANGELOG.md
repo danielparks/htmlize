@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Switch dependency from [paste], which is no longer maintained, to a new fork,
+  [pastey], which is.
+
+[paste]: https://github.com/dtolnay/paste
+[pastey]: https://github.com/as1100k/pastey
+
 ## Release 1.0.5 (2024-03-14)
 
 * Exclude more files from final package to significantly reduce package size.

@@ -5,7 +5,7 @@
 #[allow(clippy::wildcard_imports)]
 use htmlize::*;
 use iai::black_box;
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 mod util;

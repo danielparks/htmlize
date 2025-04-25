@@ -17,7 +17,7 @@
 //! in the public API, but it still builds the slow versions so that all
 //! functions can be tested.
 
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 use std::char;
 use std::num::IntErrorKind;
@@ -729,7 +729,7 @@ where
 mod tests {
     use super::*;
     use assert2::assert;
-    use paste::paste;
+    use pastey::paste;
 
     // Test fast and slow versions of a function.
     macro_rules! test {
