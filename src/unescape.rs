@@ -77,7 +77,7 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 /// `context` may be:
 ///
 ///   * `Context::General`: use the rules for text outside of an attribute.
-///      This is usually what you want.
+///     This is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
@@ -118,7 +118,7 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 /// `context` may be:
 ///
 ///   * `Context::General`: use the rules for text outside of an attribute.
-///      This is usually what you want.
+///     This is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
