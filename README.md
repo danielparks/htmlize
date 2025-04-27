@@ -189,20 +189,20 @@ additional terms or conditions.
 
 [docs.rs]: https://docs.rs/htmlize/latest/htmlize/
 [crates.io]: https://crates.io/crates/htmlize
-[`escape_text()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_text.html
-[`escape_text_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_text_bytes.html
-[`escape_attribute()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_attribute.html
-[`escape_attribute_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_attribute_bytes.html
-[`escape_all_quotes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_all_quotes.html
-[`escape_all_quotes_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_all_quotes_bytes.html
-[`unescape()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape.html
-[`unescape_attribute()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_attribute.html
-[`unescape_in()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_in.html
-[`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_bytes_in.html
+[`escape_text()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_text.html
+[`escape_text_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_text_bytes.html
+[`escape_attribute()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_attribute.html
+[`escape_attribute_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_attribute_bytes.html
+[`escape_all_quotes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_all_quotes.html
+[`escape_all_quotes_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_all_quotes_bytes.html
+[`unescape()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape.html
+[`unescape_attribute()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_attribute.html
+[`unescape_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_in.html
+[`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_bytes_in.html
 [`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
 [official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
-[features]: https://docs.rs/htmlize/1.0.5/htmlize/index.html#features
+[features]: https://docs.rs/htmlize/1.0.6/htmlize/index.html#features
 [iai]: https://crates.io/crates/iai
 [criterion]: https://crates.io/crates/criterion
 [`cargo criterion`]: https://crates.io/crates/cargo-criterion
