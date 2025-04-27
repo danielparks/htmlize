@@ -17,7 +17,7 @@
 //! in the public API, but it still builds the slow versions so that all
 //! functions can be tested.
 
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 use std::char;
 use std::num::IntErrorKind;
@@ -77,7 +77,7 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 /// `context` may be:
 ///
 ///   * `Context::General`: use the rules for text outside of an attribute.
-///      This is usually what you want.
+///     This is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
@@ -118,7 +118,7 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 /// `context` may be:
 ///
 ///   * `Context::General`: use the rules for text outside of an attribute.
-///      This is usually what you want.
+///     This is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
@@ -729,7 +729,7 @@ where
 mod tests {
     use super::*;
     use assert2::assert;
-    use paste::paste;
+    use pastey::paste;
 
     // Test fast and slow versions of a function.
     macro_rules! test {

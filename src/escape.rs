@@ -1,6 +1,6 @@
 //! # Functions to escape raw text into HTML
 
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 /// Find a `u8` in a slice. You may specify as many bytes to search for as you
@@ -231,7 +231,7 @@ escape_fn! {
 mod tests {
     use super::*;
     use assert2::assert;
-    use paste::paste;
+    use pastey::paste;
 
     macro_rules! test {
         ($name:ident, $($test:tt)+) => {

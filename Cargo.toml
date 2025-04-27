@@ -1,6 +1,6 @@
 [package]
 name = "htmlize"
-version = "1.0.5"
+version = "1.0.6"
 authors = ["Daniel Parks <oss-htmlize@demonhorse.org>"]
 description = "Encode and decode HTML entities in UTF-8 according to the standard"
 homepage = "https://github.com/danielparks/htmlize"
@@ -37,7 +37,7 @@ serde_json = { version = "1.0", optional = true }
 
 [dependencies]
 memchr = "2.5.0"
-paste = "1.0.11"
+pastey = "0.1.0"
 phf = { version = "0.11.1", default-features = false, optional = true }
 
 [dev-dependencies]
