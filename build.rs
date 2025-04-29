@@ -36,7 +36,6 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
     writeln!(out, "\
-        #[allow(clippy::doc_markdown)] // Doesn’t work correctly here.\n\
         /// A map of all valid HTML entities to their expansions.\n\
         ///\n\
         /// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the\n\
