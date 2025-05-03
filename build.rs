@@ -101,14 +101,6 @@ fn generate_entities_rs(entities: &[(String, String)]) {
 /// next bytes in an iterator are an HTML entity.
 #[cfg(feature = "unescape_fast")]
 fn generate_matcher_rs(entities: &[(String, String)]) {
-    use std::env;
-    use std::fs::File;
-    use std::io::{BufWriter, Write};
-    use std::path::Path;
-
-    let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("matcher.rs");
-    let mut out = BufWriter::new(File::create(out_path).unwrap());
-
     let mut matcher = matchgen::TreeMatcher::new(
         "fn entity_matcher",
         "(bool, &'static [u8])",
@@ -123,9 +115,8 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
         .doc("Used in `match_entity()`.")
         .disable_clippy(true)
         .input_type(matchgen::Input::Iterator)
-        .render(&mut out)
+        .write_to_out_dir("matcher.rs")
         .unwrap();
-    writeln!(out).unwrap();
 }
 
 /// Load HTML entities as `vec![...("&gt;", ">")...]`.
