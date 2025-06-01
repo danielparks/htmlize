@@ -81,8 +81,8 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
-/// [named entities] without trailing semicolons are treated differently. They
-/// not expanded if they are followed by an alphanumeric character or or `=`.
+/// [named entities] without trailing semicolons are not expanded when followed
+/// by an alphanumeric character or `=`.
 ///
 /// For example:
 ///

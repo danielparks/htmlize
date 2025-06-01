@@ -1,3 +1,8 @@
+//! Htmlize handles escaping raw strings so that they can be safely embedded
+//! into HTML, as well as unescaping strings from HTML to get back a raw string.
+//!
+//! This only deals with HTML entities; it does not add or remove HTML tags.
+//!
 //! # Which `escape` function to use
 //!
 //! Generally, if the text goes in an attribute, use [`escape_attribute()`],
@@ -15,6 +20,10 @@
 //! because sometimes it’s convenient to wrap attribute values in single quotes.
 //!
 //! # Which `unescape` function to use
+//!
+//! All `unescape` functions require the `unescape` or `unescape_fast` feature
+//! to be enabled. See the [features](#features) section below for an
+//! explanation of the trade-offs.
 //!
 //! [`unescape()`] is probably fine for most uses. To be strictly correct, you
 //! should use [`unescape_attribute()`] for attribute values.
