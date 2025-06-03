@@ -4,8 +4,8 @@
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
 ![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
 
-If you only need to escape text for embedding into HTML then installing is as
-simple as running:
+If you only need to escape text for embedding into HTML, then adding htmlize to
+your crate is as simple as:
 
 ```sh
 cargo add htmlize
@@ -14,11 +14,12 @@ cargo add htmlize
 If you want to unescape entities back into raw text, see [Unescaping entities
 into text](#unescaping-entities-into-text) below.
 
+This only deals with HTML entities; it does not add or remove HTML tags.
+
 ## Escaping text into entities
 
-The `escape` functions should cover most cases where you need to safely embed a
-string in HTML. Generally, if the text goes in an attribute, use
-[`escape_attribute()`], otherwise use [`escape_text()`].
+If the text goes in an attribute, use [`escape_attribute()`], otherwise use
+[`escape_text()`].
 
 |                         | `&` | `<` | `>` | `"` | `'` |
 |-------------------------|:---:|:---:|:---:|:---:|:---:|
@@ -28,6 +29,10 @@ string in HTML. Generally, if the text goes in an attribute, use
 
 You should almost never need [`escape_all_quotes()`], but it is included because
 sometimes it’s convenient to wrap attribute values in single quotes.
+
+For other characters, e.g. “★”, I recommend just using the character directly
+rather than escaping it with an entity. Please file an [issue][issues] with your
+use case if you need to encode other entities.
 
 ### `escape_text(string) -> string`
 
@@ -62,7 +67,8 @@ cargo add htmlize --features unescape
 
 ### `unescape(string) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities in general.
+This follows the [official WHATWG algorithm] for expanding entities outside of
+attributes, i.e. in the text.
 
 Strictly speaking, this does not correctly handle text from the value of
 attributes. It’s probably fine for most uses, but if you know that the input
