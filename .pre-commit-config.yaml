@@ -1,0 +1,40 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ["--fix=no"]
+      - id: no-commit-to-branch
+  - repo: local
+    hooks:
+      - id: cargo clippy
+        name: cargo clippy
+        language: system
+        entry: cargo clippy --all-targets --all-features
+        types: [rust]
+        pass_filenames: false
+      - id: cargo doc
+        name: cargo doc
+        language: system
+        entry: sh -c 'RUSTDOCFLAGS=-Dwarnings cargo doc --all-features --no-deps --document-private-items'
+        types: [rust]
+        pass_filenames: false
+      - id: cargo fmt
+        name: cargo fmt
+        language: system
+        entry: cargo fmt --check
+        types: [rust]
+        pass_filenames: false
