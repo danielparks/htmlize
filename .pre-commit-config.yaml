@@ -24,17 +24,17 @@ repos:
         name: cargo clippy
         language: system
         entry: cargo clippy --all-targets --all-features
-        types: [rust]
+        files: (\.rs|Cargo\.toml)$
         pass_filenames: false
       - id: cargo doc
         name: cargo doc
         language: system
         entry: sh -c 'RUSTDOCFLAGS=-Dwarnings cargo doc --all-features --no-deps --document-private-items'
-        types: [rust]
+        files: \.rs$
         pass_filenames: false
       - id: cargo fmt
         name: cargo fmt
         language: system
         entry: cargo fmt --check
-        types: [rust]
+        files: (\.rs|rustfmt\.toml)$
         pass_filenames: false
