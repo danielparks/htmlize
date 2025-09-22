@@ -23,13 +23,13 @@ repos:
       - id: cargo clippy
         name: cargo clippy
         language: system
-        entry: cargo clippy --all-targets --all-features
+        entry: cargo clippy --all-targets --all-features -- -D warnings
         files: (\.rs|Cargo\.toml)$
         pass_filenames: false
       - id: cargo doc
         name: cargo doc
         language: system
-        entry: sh -c 'RUSTDOCFLAGS=-Dwarnings cargo doc --all-features --no-deps --document-private-items'
+        entry: sh -c 'RUSTDOCFLAGS=-Dwarnings cargo doc --all-features --workspace --no-deps --document-private-items'
         files: \.rs$
         pass_filenames: false
       - id: cargo fmt
