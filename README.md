@@ -1,11 +1,12 @@
-# Encode and decode HTML entities according to the standard
+# Correctly encode and decode HTML entities
 
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
 ![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
 
-Htmlize handles escaping raw strings so that they can be safely embedded into
-HTML, as well as unescaping strings from HTML to get back a raw string.
+Htmlize handles both encoding raw strings to be safely inserted in HTML, and
+decoding HTML text with entities to get back a raw string. It closely follows
+the [official WHATWG spec] for encoding and decoding text.
 
 ```rust
 use htmlize::{escape_attribute, escape_text};
@@ -84,7 +85,7 @@ cargo add htmlize --features unescape
 
 ### `unescape(string) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities outside of
+This follows the [official WHATWG spec] for expanding entities outside of
 attributes, i.e. in the text.
 
 Strictly speaking, this does not correctly handle text from the value of
@@ -97,7 +98,7 @@ more information.
 
 ### `unescape_attribute(string) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities found in the
+This follows the [official WHATWG spec] for expanding entities found in the
 value of an attribute.
 
 The only difference is in how this handles named entities without a trailing
@@ -108,9 +109,9 @@ for more information.
 
 ### `unescape_in(string, Htmlize::Context) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities based on
-the context where they are found. See the [reference
-documentation][`unescape_in()`] for more information.
+This follows the [official WHATWG spec] for expanding entities based on the
+context where they are found. See the [reference documentation][`unescape_in()`]
+for more information.
 
 [Reference][`unescape_in()`].
 
@@ -223,7 +224,7 @@ additional terms or conditions.
 [`unescape_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_in.html
 [`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_bytes_in.html
 [`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
-[official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+[official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
 [features]: https://docs.rs/htmlize/1.0.6/htmlize/index.html#features
 [iai]: https://crates.io/crates/iai

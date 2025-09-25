@@ -1,5 +1,6 @@
-//! Htmlize handles escaping raw strings so that they can be safely embedded
-//! into HTML, as well as unescaping strings from HTML to get back a raw string.
+//! Htmlize handles both encoding raw strings to be safely inserted in HTML, and
+//! decoding HTML text with entities to get back a raw string. It closely
+//! follows the [official WHATWG spec] for encoding and decoding text.
 //!
 //! ```rust
 //! # use assert2::assert;
@@ -91,6 +92,7 @@ assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
 //! Currently the minimum supported Rust version (MSRV) is **1.60**. Future
 //! increases in the MSRV will require a major version bump.
 //!
+//! [official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 //! [phf]: https://crates.io/crates/phf
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
