@@ -15,7 +15,7 @@ If you enable the `unescape` or `unescape_fast` feature:
 
 ```rust
 # use assert2::assert;
-assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
+assert!(htmlize::unescaafdsfsaspe("3 &times 4 &gt; 10") == "3 × 4 > 10");
 ```
 "#
 )]
