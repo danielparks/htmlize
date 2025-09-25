@@ -1,14 +1,33 @@
 //! Htmlize handles escaping raw strings so that they can be safely embedded
 //! into HTML, as well as unescaping strings from HTML to get back a raw string.
 //!
+//! ```rust
+//! # use assert2::assert;
+//! use htmlize::{escape_attribute, escape_text};
+//! assert!(escape_attribute("ab & < > \" '") == "ab &amp; &lt; &gt; &quot; '");
+//! assert!(escape_text("ab & < > \" '") == "ab &amp; &lt; &gt; \" '");
+//! ```
+//!
+#![cfg_attr(
+    any(feature = "unescape", feature = "unescape_fast"),
+    doc = r#"
+If you enable the `unescape` or `unescape_fast` feature:
+
+```rust
+# use assert2::assert;
+assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
+```
+"#
+)]
+//!
 //! This only deals with HTML entities; it does not add or remove HTML tags.
 //!
 //! # Which `escape` function to use
 //!
-//! Generally, if the text goes in an attribute, use [`escape_attribute()`],
-//! otherwise, use [`escape_text()`]. If you need bytes (`[u8]`) instead of a
-//! `String`, use the `_bytes` version of the functions:
-//! [`escape_attribute_bytes()`] and [`escape_text_bytes()`].
+//! If the text goes in an attribute, use [`escape_attribute()`], otherwise, use
+//! [`escape_text()`]. If you need bytes (`[u8]`) instead of a `String`, use the
+//! `_bytes` version of the functions: [`escape_attribute_bytes()`] and
+//! [`escape_text_bytes()`].
 //!
 //! |                         | `&` | `<` | `>` | `"` | `'` |
 //! |-------------------------|:---:|:---:|:---:|:---:|:---:|

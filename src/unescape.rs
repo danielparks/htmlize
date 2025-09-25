@@ -1,5 +1,14 @@
 //! # Functions to unescape HTML into raw text
 //!
+//! ```rust
+//! use htmlize::{unescape, unescape_in, Context};
+//! # use assert2::check as assert;
+//!
+//! assert!(unescape("1&times2&lt;3") == "1×2<3");
+//! assert!(unescape_in("1&times2&lt;3", Context::Attribute) == "1&times2<3");
+//! assert!(unescape_in("3 &times 5 &lt; 16", Context::Attribute) == "3 × 5 < 16");
+//! ```
+//!
 //! See the normative reference for HTML5 entities:
 //! <https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references>
 //!
@@ -52,6 +61,10 @@ macro_rules! call_unescape {
 
 /// Expand all valid entities.
 ///
+/// ```rust
+/// assert!(htmlize::unescape("1&times2&lt;3") == "1×2<3");
+/// ```
+///
 /// This is appropriate to use on any text outside of an attribute. See
 /// [`unescape_in()`] for more information.
 ///
@@ -61,6 +74,14 @@ pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
 }
 
 /// Expand all valid entities in an attribute.
+///
+/// ```rust
+/// use htmlize::unescape_attribute;
+/// # use assert2::check as assert;
+///
+/// assert!(unescape_attribute("1&times2&lt;3") == "1&times2<3");
+/// assert!(unescape_attribute("1 &times 2 &lt; 3") == "1 × 2 < 3");
+/// ```
 ///
 /// This is only appropriate for the value of an attribute. See
 /// [`unescape_in()`] for more information.
@@ -87,7 +108,7 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 /// For example:
 ///
 /// ```rust
-/// use htmlize::*;
+/// use htmlize::{unescape_in, Context};
 /// # use assert2::check as assert;
 ///
 /// assert!(unescape_in("&times",   Context::General)   == "×");

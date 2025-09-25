@@ -4,6 +4,23 @@
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
 ![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
 
+Htmlize handles escaping raw strings so that they can be safely embedded into
+HTML, as well as unescaping strings from HTML to get back a raw string.
+
+```rust
+use htmlize::{escape_attribute, escape_text};
+assert!(escape_attribute("abc & < > \" '") == "abc &amp; &lt; &gt; &quot; '");
+assert!(escape_text("abc & < > \" '") == "abc &amp; &lt; &gt; \" '");
+```
+
+If you enable the `unescape` or `unescape_fast` feature:
+
+```rust
+assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
+```
+
+## Quick start
+
 If you only need to escape text for embedding into HTML, then adding htmlize to
 your crate is as simple as:
 
