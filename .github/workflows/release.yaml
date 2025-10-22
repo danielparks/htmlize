@@ -1,9 +1,8 @@
-# Mostly copied from https://github.com/taiki-e/cargo-hack/blob/72a9fc95377c453a18026329577c59fa60bfa737/.github/workflows/release.yml
+# Mostly copied from https://github.com/taiki-e/cargo-hack/blob/main/.github/workflows/release.yml
 name: Release
 
 permissions:
-  # TODO: once `releases: write` is supported, use it instead.
-  contents: write
+  contents: read
 
 on:
   push:
@@ -12,31 +11,20 @@ on:
 
 env:
   CARGO_INCREMENTAL: 0
+  CARGO_NET_GIT_FETCH_WITH_CLI: true
   CARGO_NET_RETRY: 10
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   RUSTFLAGS: -D warnings
   RUSTUP_MAX_RETRIES: 10
 
-defaults:
-  run:
-    # Setting shell: bash explicitly activates pipefail
-    shell: bash
-
 jobs:
   create-release:
     if: github.repository_owner == 'danielparks'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: danielparks/github-actions/create-release@main
         with:
-          persist-credentials: false
-      - name: Install Rust
-        run: rustup update stable --no-self-update
-      - run: cargo package
-      - uses: taiki-e/create-gh-release-action@v1
-        with:
-          changelog: CHANGELOG.md
-          title: Release $version
-          branch: main
           token: ${{ secrets.GITHUB_TOKEN }}
