@@ -7,6 +7,9 @@ on:
       - main
   pull_request:
 
+env:
+  CLICOLOR: 1
+
 jobs:
   clippy:
     name: cargo clippy
@@ -68,3 +71,11 @@ jobs:
       - run: cargo test --features unescape
       - run: cargo test --features entities
       - run: cargo test
+
+  typos:
+    name: typos
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: crate-ci/typos@v1.38.1

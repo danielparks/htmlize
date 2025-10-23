@@ -316,7 +316,7 @@ include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
 ///     point to the next character after the entity.
 ///   * It doesn’t find a match: returns `None` and `iter` is updated to point
 ///     to the next character than could plausibly start an entity (not
-///     necessarily b'&', though; the only gaurantee is that we didn’t skip a
+///     necessarily b'&', though; the only guarantee is that we didn’t skip a
 ///     potential entity).
 ///
 /// This version uses matchgen instead of the `ENTITIES` map. It is faster at
@@ -375,7 +375,7 @@ const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 ///     point to the next character after the entity.
 ///   * It doesn’t find a match: returns `None` and `iter` is updated to point
 ///     to the next character than could plausibly start an entity (not
-///     necessarily b'&', though; the only gaurantee is that we didn’t skip a
+///     necessarily b'&', though; the only guarantee is that we didn’t skip a
 ///     potential entity).
 ///
 /// This version uses the [`ENTITIES`] map instead of matchgen. It is slower at
@@ -500,8 +500,8 @@ fn match_entity_slow<'a>(
 fn match_numeric_entity(
     iter: &mut slice::Iter<u8>,
 ) -> Option<Cow<'static, [u8]>> {
-    assert_next_eq(iter, Some(b'&'), "match_numeric_entity() expexted '&'");
-    assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expexted '#'");
+    assert_next_eq(iter, Some(b'&'), "match_numeric_entity() expected '&'");
+    assert_next_eq(iter, Some(b'#'), "match_numeric_entity() expected '#'");
 
     let number = match peek(iter) {
         c @ Some(b'x' | b'X') => {
