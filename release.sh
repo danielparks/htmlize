@@ -31,6 +31,10 @@ check-changes () {
   }
 }
 
+crate-names () {
+  cargo metadata --format-version 1 --no-deps | jq -r '.packages[].name'
+}
+
 auto-pr () {
   pr_url=$((gh pr view --json url,closed 2>/dev/null || true) \
     | jq -r 'select(.closed | not) | .url')
@@ -101,7 +105,22 @@ awk-in-place Cargo.toml '
   }
   { print }'
 
+# Fix docs.rs links in README, if present
+for name in $(crate-names) ; do
+  awk-in-place README.md '{
+      sub(/https:\/\/docs\.rs\/'"$name"'\/[0-9]+.[0-9]+.[0-9]+\//, \
+        "https://docs.rs/'"$name"'/'$version'/")
+      print
+    }'
+done
+
 cargo check --quiet
+
+# Do semver checks only if there is a version on crates.io to compare to.
+# FIXME: can’t tell if crates.io search failed for another reason.
+if (cd / && cargo info "$(crate-names | head -1)" &>/dev/null) ; then
+  cargo semver-checks || { echo ; confirm 'Release anyway?' ; }
+fi
 
 awk-in-place CHANGELOG.md '
   /^## / && !done {
