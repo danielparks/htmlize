@@ -3,16 +3,32 @@
 
 pub mod inputs;
 
-macro_rules! benchmark {
-    ( $group:expr, $function:ident, $size_name:expr, $input:expr ) => {{
+macro_rules! benchmark_name {
+    (
+        $group:expr, $name:expr, $function:ident, $size_name:expr, $input:expr
+    ) => {{
         let input = $input;
         $group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
         $group.bench_with_input(
-            BenchmarkId::new(stringify!($function), $size_name),
+            BenchmarkId::new($name, $size_name),
             input,
             |b, input| b.iter(|| $function(&*input)),
         );
     }};
+}
+
+pub(crate) use benchmark_name;
+
+macro_rules! benchmark {
+    ( $group:expr, $function:ident, $size_name:expr, $input:expr ) => {
+        crate::util::benchmark_name!(
+            $group,
+            stringify!($function),
+            $function,
+            $size_name,
+            $input
+        )
+    };
 }
 
 pub(crate) use benchmark;
