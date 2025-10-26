@@ -83,8 +83,13 @@ fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
 }
 
 /// A map-based matcher.
-#[cfg(feature = "unescape")]
-pub struct Map;
+#[cfg(any(
+    feature = "unescape",
+    feature = "unescape_quick",
+    feature = "unescape_phf"
+))]
+#[derive(Debug, Default)]
+pub struct Map<E: Expander>(pub std::marker::PhantomData<E>);
 
 /// A matchgen-based matcher.
 #[cfg(feature = "unescape_fast")]
@@ -209,8 +214,12 @@ impl Matcher for (Matchgen, ContextGeneral) {
 /// A panic message we use repeatedly.
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 
-#[cfg(feature = "unescape")]
-impl Matcher for (Map, ContextAttribute) {
+#[cfg(any(
+    feature = "unescape",
+    feature = "unescape_quick",
+    feature = "unescape_phf"
+))]
+impl<E: Expander> Matcher for (Map<E>, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
@@ -277,12 +286,16 @@ impl Matcher for (Map, ContextAttribute) {
         // See `unescape_in()` documentation for examples.
         //
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-        expand_entity(candidate).map(Into::into)
+        E::expand(candidate).map(Into::into)
     }
 }
 
-#[cfg(feature = "unescape")]
-impl Matcher for (Map, ContextGeneral) {
+#[cfg(any(
+    feature = "unescape",
+    feature = "unescape_quick",
+    feature = "unescape_phf"
+))]
+impl<E: Expander> Matcher for (Map<E>, ContextGeneral) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
@@ -325,7 +338,7 @@ impl Matcher for (Map, ContextGeneral) {
 
         if has_semicolon {
             #[allow(clippy::len_zero, reason = "clarity")]
-            if let Some(expansion) = expand_entity(candidate) {
+            if let Some(expansion) = E::expand(candidate) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(candidate.len() >= 1);
@@ -346,7 +359,7 @@ impl Matcher for (Map, ContextGeneral) {
         for check_len in
             ENTITY_MIN_LENGTH..=min(candidate.len(), BARE_ENTITY_MAX_LENGTH)
         {
-            if let Some(expansion) = expand_entity(&candidate[..check_len]) {
+            if let Some(expansion) = E::expand(&candidate[..check_len]) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(check_len >= 1);
@@ -358,6 +371,59 @@ impl Matcher for (Map, ContextGeneral) {
 
         // Did not find a match.
         None
+    }
+}
+
+/// Something that can expand an HTML entity.
+#[cfg(any(
+    feature = "unescape",
+    feature = "unescape_quick",
+    feature = "unescape_phf"
+))]
+pub trait Expander {
+    /// Expand an entity, if possible.
+    fn expand<'a>(entity: &[u8]) -> Option<&'a [u8]>;
+}
+
+/// Stub to allow signaling use of `hashify` for entity matching.
+#[cfg(feature = "unescape")]
+#[derive(Default)]
+pub struct Hashify;
+
+#[cfg(feature = "unescape")]
+impl Expander for Hashify {
+    // FIXME implement this directly.
+    #[inline]
+    fn expand<'a>(entity: &[u8]) -> Option<&'a [u8]> {
+        expand_entity(entity)
+    }
+}
+
+/// Stub to allow signaling use of `quickphf` for entity matching.
+#[cfg(feature = "unescape_quick")]
+#[derive(Default)]
+pub struct QuickPhf;
+
+#[cfg(feature = "unescape_quick")]
+impl Expander for QuickPhf {
+    #[inline]
+    fn expand<'a>(entity: &[u8]) -> Option<&'a [u8]> {
+        crate::ENTITIES_QUICK
+            .get(entity)
+            .map(|expansion| &**expansion)
+    }
+}
+
+/// Stub to allow signaling use of `phf` for entity matching.
+#[cfg(feature = "unescape_phf")]
+#[derive(Default)]
+pub struct PhfMap;
+
+#[cfg(feature = "unescape_phf")]
+impl Expander for PhfMap {
+    #[inline]
+    fn expand<'a>(entity: &[u8]) -> Option<&'a [u8]> {
+        crate::ENTITIES.get(entity).map(|expansion| &**expansion)
     }
 }
 
@@ -607,7 +673,7 @@ mod tests {
     use assert2::{assert, check};
     use pastey::paste;
 
-    // Test matchgen and map versions of an unescape function.
+    // Test various versions of an unescape function.
     macro_rules! test {
         ($name:ident, unescape ($($input:tt)+) == $expected:expr) => {
             test!($name, unescape_in(ContextGeneral, $($input)+) == $expected);
@@ -625,14 +691,26 @@ mod tests {
 
                 #[cfg(feature = "unescape")]
                 #[test]
-                fn [<map_ $name>]() {
-                    assert!($func((Map, $context), $($input)+) == $expected);
+                fn [<hashify_ $name>]() {
+                    assert!($func((Map::<Hashify>::default(), $context), $($input)+) == $expected);
+                }
+
+                #[cfg(feature = "unescape_quick")]
+                #[test]
+                fn [<quick_ $name>]() {
+                    assert!($func((Map::<QuickPhf>::default(), $context), $($input)+) == $expected);
+                }
+
+                #[cfg(feature = "unescape_phf")]
+                #[test]
+                fn [<phf_ $name>]() {
+                    assert!($func((Map::<PhfMap>::default(), $context), $($input)+) == $expected);
                 }
             }
         };
     }
 
-    // Test matchgen and map versions of `unescape` and `unescape_attribute`.
+    // Test various versions of `unescape()` and `unescape_attribute()`.
     macro_rules! test_both {
         ($name:ident, unescape ($input:expr) == $expected:expr) => {
             paste! {

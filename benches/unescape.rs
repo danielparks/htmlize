@@ -45,8 +45,26 @@ fn benchmarks(c: &mut Criterion) {
         #[cfg(feature = "unescape")]
         util::benchmark_name!(
             group,
-            "map",
-            (Map, ContextGeneral),
+            "hashify",
+            (Map::<Hashify>::default(), ContextGeneral),
+            &name,
+            &input
+        );
+
+        #[cfg(feature = "unescape_phf")]
+        util::benchmark_name!(
+            group,
+            "phf",
+            (Map::<PhfMap>::default(), ContextGeneral),
+            &name,
+            &input
+        );
+
+        #[cfg(feature = "unescape_quick")]
+        util::benchmark_name!(
+            group,
+            "quickphf",
+            (Map::<QuickPhf>::default(), ContextGeneral),
             &name,
             &input
         );
@@ -69,8 +87,26 @@ fn benchmarks(c: &mut Criterion) {
         #[cfg(feature = "unescape")]
         util::benchmark_name!(
             group,
-            "map",
-            (Map, ContextAttribute),
+            "hashify",
+            (Map::<Hashify>::default(), ContextAttribute),
+            &name,
+            &input
+        );
+
+        #[cfg(feature = "unescape_phf")]
+        util::benchmark_name!(
+            group,
+            "phf",
+            (Map::<PhfMap>::default(), ContextAttribute),
+            &name,
+            &input
+        );
+
+        #[cfg(feature = "unescape_quick")]
+        util::benchmark_name!(
+            group,
+            "quickphf",
+            (Map::<QuickPhf>::default(), ContextAttribute),
             &name,
             &input
         );
