@@ -1,38 +1,10 @@
 //! Internal unescape code
 
-use super::Context;
 use std::borrow::Cow;
 use std::char;
 use std::num::IntErrorKind;
 use std::result::Result;
 use std::slice;
-
-/// See [`unescape()`].
-#[allow(
-    dead_code,
-    reason = "with subset of features this is only called via macro"
-)]
-#[inline]
-pub fn unescape<'a, M: Matcher, S: Into<Cow<'a, str>>>(
-    matcher: M,
-    escaped: S,
-) -> Cow<'a, str> {
-    unescape_in(matcher, escaped, Context::General)
-}
-
-/// See [`unescape_attribute()`].
-#[allow(
-    dead_code,
-    reason = "with subset of features this is only called via macro"
-)]
-#[inline]
-pub fn unescape_attribute<'a, M: Matcher, S: Into<Cow<'a, str>>>(
-    matcher: M,
-    escaped: S,
-) -> Cow<'a, str> {
-    unescape_in(matcher, escaped, Context::Attribute)
-}
-
 /// See [`super::unescape_in()`].
 ///
 /// # Panics
@@ -42,11 +14,10 @@ pub fn unescape_attribute<'a, M: Matcher, S: Into<Cow<'a, str>>>(
 pub fn unescape_in<'a, M: Matcher, S: Into<Cow<'a, str>>>(
     _matcher: M,
     escaped: S,
-    context: Context,
 ) -> Cow<'a, str> {
     let escaped = escaped.into();
     let bytes = escaped.as_bytes();
-    match unescape_in_internal::<M>(bytes, context) {
+    match unescape_in_internal::<M>(bytes) {
         Some(buffer) => String::from_utf8(buffer).unwrap().into(),
         None => escaped,
     }
@@ -57,10 +28,9 @@ pub fn unescape_in<'a, M: Matcher, S: Into<Cow<'a, str>>>(
 pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
     _matcher: M,
     escaped: S,
-    context: Context,
 ) -> Cow<'a, [u8]> {
     let escaped = escaped.into();
-    match unescape_in_internal::<M>(&escaped, context) {
+    match unescape_in_internal::<M>(&escaped) {
         Some(buffer) => buffer.into(),
         None => escaped,
     }
@@ -69,10 +39,7 @@ pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
 /// Code that actually does the unescaping.
 #[allow(clippy::inline_always)]
 #[inline(always)]
-fn unescape_in_internal<M: Matcher>(
-    escaped: &[u8],
-    context: Context,
-) -> Option<Vec<u8>> {
+fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
     let mut remainder = escaped;
     let mut iter = remainder.iter();
 
@@ -84,7 +51,7 @@ fn unescape_in_internal<M: Matcher>(
         #[allow(clippy::arithmetic_side_effects)]
         let i = remainder.len() - iter.as_slice().len();
 
-        if let Some(expansion) = M::match_entity(&mut iter, context) {
+        if let Some(expansion) = M::match_entity(&mut iter) {
             // All but two entities are as long or longer than their
             // expansion, so allocating the output buffer to be the
             // same size as the input will usually prevent multiple
@@ -108,7 +75,7 @@ fn unescape_in_internal<M: Matcher>(
                 #[allow(clippy::arithmetic_side_effects)]
                 let i = remainder.len() - iter.as_slice().len();
 
-                if let Some(expansion) = M::match_entity(&mut iter, context) {
+                if let Some(expansion) = M::match_entity(&mut iter) {
                     buffer.extend_from_slice(&remainder[..i]);
                     buffer.extend_from_slice(&expansion);
                     remainder = iter.as_slice();
@@ -123,30 +90,24 @@ fn unescape_in_internal<M: Matcher>(
     None
 }
 
-/// Interface for an entity matching algorithm.
-pub trait Matcher {
-    /// Match an entity
-    fn match_entity<'a>(
-        iter: &'a mut slice::Iter<u8>,
-        context: Context,
-    ) -> Option<Cow<'a, [u8]>>;
-}
-
-// Include function to match entities at the start of an iterator. Used in
-// `match_entity()`.
-//
-// fn entity_matcher<'a, I>(iter: &mut I) -> Option<(bool, &'static [u8])>
-// where
-//     I: Iterator<Item = &'a u8> + Clone,
-#[cfg(feature = "unescape_fast")]
-include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
+/// A Phf-based matcher.
+#[cfg(feature = "unescape")]
+pub struct Phf;
 
 /// A matchgen-based matcher.
 #[cfg(feature = "unescape_fast")]
 pub struct Matchgen;
 
-#[cfg(feature = "unescape_fast")]
-impl Matcher for Matchgen {
+/// Unescape context: from inside an HTML attribute.
+#[derive(Clone, Copy, Debug)]
+pub struct ContextAttribute;
+
+/// Unescape context: from anywhere outside of an HTML attribute, i.e. regular
+/// text. This is generally what you want.
+pub struct ContextGeneral;
+
+/// Interface for an entity matching algorithm.
+pub trait Matcher {
     /// Match an entity at the beginning of `iter`. Either:
     ///
     ///   * It finds a match: returns `Some(expansion)` and `iter` is updated to
@@ -158,9 +119,23 @@ impl Matcher for Matchgen {
     ///
     /// This version uses matchgen instead of the `ENTITIES` map. It is faster
     /// at runtime but slower to build.
+    fn match_entity<'a>(iter: &'a mut slice::Iter<u8>)
+        -> Option<Cow<'a, [u8]>>;
+}
+
+// Include function to match entities at the start of an iterator. Used in
+// `match_entity()`.
+//
+// fn entity_matcher<'a, I>(iter: &mut I) -> Option<(bool, &'static [u8])>
+// where
+//     I: Iterator<Item = &'a u8> + Clone,
+#[cfg(feature = "unescape_fast")]
+include!(concat!(env!("OUT_DIR"), "/matcher.rs"));
+
+#[cfg(feature = "unescape_fast")]
+impl Matcher for (Matchgen, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
-        context: Context,
     ) -> Option<Cow<'a, [u8]>> {
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
@@ -169,68 +144,61 @@ impl Matcher for Matchgen {
             return match_numeric_entity(iter);
         }
 
-        if context == Context::Attribute {
-            // In an attribute entities ending with an alphanumeric character or
-            // '=' instead of ';' are passed through without expansion.
-            //
-            // See `unescape_in()` documentation for examples.
-            //
-            // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            if let Some((closed, expansion)) = entity_matcher(iter) {
-                if !closed {
-                    if let Some(next) = peek(iter) {
-                        if next == b'=' || next.is_ascii_alphanumeric() {
-                            return None;
-                        }
+        // In an attribute entities ending with an alphanumeric character or
+        // '=' instead of ';' are passed through without expansion.
+        //
+        // See `unescape_in()` documentation for examples.
+        //
+        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+        if let Some((closed, expansion)) = entity_matcher(iter) {
+            if !closed {
+                if let Some(next) = peek(iter) {
+                    if next == b'=' || next.is_ascii_alphanumeric() {
+                        return None;
                     }
                 }
+            }
 
-                Some(expansion.into())
-            } else {
-                // Move past initial b'&'.
+            Some(expansion.into())
+        } else {
+            // Move past initial b'&'.
+            iter.next();
+            None
+        }
+    }
+}
+
+#[cfg(feature = "unescape_fast")]
+impl Matcher for (Matchgen, ContextGeneral) {
+    fn match_entity<'a>(
+        iter: &'a mut slice::Iter<u8>,
+    ) -> Option<Cow<'a, [u8]>> {
+        assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
+
+        if Some(b'#') == peek_n(iter, 1) {
+            // Numeric entity.
+            return match_numeric_entity(iter);
+        }
+
+        entity_matcher(iter)
+            .map(|(_, expansion)| expansion.into())
+            .or_else(|| {
+                // No match; move past initial b'&'.
                 iter.next();
                 None
-            }
-        } else {
-            entity_matcher(iter)
-                .map(|(_, expansion)| expansion.into())
-                .or_else(|| {
-                    // No match; move past initial b'&'.
-                    iter.next();
-                    None
-                })
-        }
+            })
     }
 }
 
 /// A panic message we use repeatedly.
 const PEEK_MATCH_ERROR: &str = "iter.next() did not match previous peek(iter)";
 
-/// A Phf-based matcher.
 #[cfg(feature = "unescape")]
-pub struct Phf;
-
-#[cfg(feature = "unescape")]
-impl Matcher for Phf {
-    /// Match an entity at the beginning of `iter`. Either:
-    ///
-    ///   * It finds a match: returns `Some(expansion)` and `iter` is updated to
-    ///     point to the next character after the entity.
-    ///   * It doesn’t find a match: returns `None` and `iter` is updated to
-    ///     point to the next character than could plausibly start an entity
-    ///     (not necessarily b'&', though; the only guarantee is that we didn’t
-    ///     skip a potential entity).
-    ///
-    /// This version uses the [`ENTITIES`] map instead of matchgen. It is slower
-    /// at runtime but faster to build.
-    ///
-    /// [`ENTITIES`]: crate::ENTITIES
+impl Matcher for (Phf, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
-        context: Context,
     ) -> Option<Cow<'a, [u8]>> {
         use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
-        use std::cmp::min;
 
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
@@ -239,16 +207,15 @@ impl Matcher for Phf {
             return match_numeric_entity(iter);
         }
 
-        // Create a second iter so we can to look ahead to find the longest
-        // matching entity. We’ll update the original iter before we return.
-        let mut candidate_iter = iter.clone();
-        assert_next_eq(&mut candidate_iter, Some(b'&'), PEEK_MATCH_ERROR);
+        let raw = &iter.as_slice();
+
+        assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
 
         // Find longest possible candidate. (Start at 1 since we got the '&'.)
         for _ in 1..ENTITY_MAX_LENGTH {
-            if let Some(c) = peek(&candidate_iter) {
+            if let Some(c) = peek(iter) {
                 if c.is_ascii_alphanumeric() {
-                    candidate_iter.next();
+                    iter.next();
                     continue;
                 }
             }
@@ -256,16 +223,12 @@ impl Matcher for Phf {
             break;
         }
 
-        match peek(&candidate_iter) {
+        match peek(iter) {
             Some(b';') => {
                 // Actually consume the semicolon.
-                assert_next_eq(
-                    &mut candidate_iter,
-                    Some(b';'),
-                    PEEK_MATCH_ERROR,
-                );
+                assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
             }
-            Some(b'=') if context == Context::Attribute => {
+            Some(b'=') => {
                 // In an attribute, entities ending with an alphanumeric
                 // character or '=' instead of ';' are passed through without
                 // expansion.
@@ -286,7 +249,6 @@ impl Matcher for Phf {
                 // semicolon, which by definition will be longer.)
                 //
                 // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-                *iter = candidate_iter;
                 return None;
             }
             _ => {
@@ -295,7 +257,75 @@ impl Matcher for Phf {
             }
         }
 
+        // `iter` was advanced since `raw` was generated, so
+        // `iter.as_slice().len()` will always be less than `raw.len()`.
+        debug_assert!(raw.len() >= iter.as_slice().len());
+        #[allow(clippy::arithmetic_side_effects)]
+        let candidate = &raw[..raw.len() - iter.as_slice().len()];
+
+        if candidate.len() < ENTITY_MIN_LENGTH {
+            // Couldn’t possibly match. Don’t expand.
+            return None;
+        }
+
+        // If candidate does not exactly match an entity, then don't expand
+        // it. The spec says that entities *in attributes* must be
+        // terminated with a semicolon, EOF, or some character *other* than
+        // [a-zA-Z0-9=].
+        //
+        // See `unescape_in()` documentation for examples.
+        //
+        // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+        if let Some(&expansion) = ENTITIES.get(candidate) {
+            Some(expansion.into())
+        } else {
+            // Did not find a match.
+            None
+        }
+    }
+}
+
+#[cfg(feature = "unescape")]
+impl Matcher for (Phf, ContextGeneral) {
+    fn match_entity<'a>(
+        iter: &'a mut slice::Iter<u8>,
+    ) -> Option<Cow<'a, [u8]>> {
+        use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
+        use std::cmp::min;
+
+        assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
+
+        if Some(b'#') == peek_n(iter, 1) {
+            // Numeric entity.
+            return match_numeric_entity(iter);
+        }
+
         let raw = &iter.as_slice();
+
+        // Create a second iter so we can to look ahead to find the longest
+        // matching entity. We’ll update the original iter before we return.
+        let mut candidate_iter = iter.clone();
+        assert_next_eq(&mut candidate_iter, Some(b'&'), PEEK_MATCH_ERROR);
+
+        // Find longest possible candidate. (Start at 1 since we got the '&'.)
+        for _ in 1..ENTITY_MAX_LENGTH {
+            if let Some(c) = peek(&candidate_iter) {
+                if c.is_ascii_alphanumeric() {
+                    candidate_iter.next();
+                    continue;
+                }
+            }
+
+            break;
+        }
+
+        if peek(&candidate_iter) == Some(b';') {
+            // Actually consume the semicolon.
+            assert_next_eq(&mut candidate_iter, Some(b';'), PEEK_MATCH_ERROR);
+        } else {
+            // missing-semicolon-after-character-reference: ignore; continue
+            // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
+        }
 
         // Both `raw` and `candidate_iter` were generated from `iter`, then
         // `candidate_iter` was advanced, so `candidate_iter.as_slice().len()`
@@ -310,33 +340,17 @@ impl Matcher for Phf {
             return None;
         }
 
-        if context == Context::Attribute {
-            // If candidate does not exactly match an entity, then don't expand
-            // it. The spec says that entities *in attributes* must be
-            // terminated with a semicolon, EOF, or some character *other* than
-            // [a-zA-Z0-9=].
-            //
-            // See `unescape_in()` documentation for examples.
-            //
-            // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-            if let Some(&expansion) = ENTITIES.get(candidate) {
-                *iter = candidate_iter;
+        // Find longest matching entity.
+        let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
+        for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
+            if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
+                // Found a match. check_len starts at ENTITY_MIN_LENGTH,
+                // which must always be greater than 0, so `check_len - 1`
+                // is safe.
+                debug_assert!(check_len >= 1);
+                #[allow(clippy::arithmetic_side_effects)]
+                iter.nth(check_len - 1); // Update iter. nth(0) == next().
                 return Some(expansion.into());
-            }
-        } else {
-            // Find longest matching entity.
-            let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
-            for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
-                if let Some(&expansion) = ENTITIES.get(&candidate[..check_len])
-                {
-                    // Found a match. check_len starts at ENTITY_MIN_LENGTH,
-                    // which must always be greater than 0, so `check_len - 1`
-                    // is safe.
-                    debug_assert!(check_len >= 1);
-                    #[allow(clippy::arithmetic_side_effects)]
-                    iter.nth(check_len - 1); // Update iter. nth(0) == next().
-                    return Some(expansion.into());
-                }
             }
         }
 
@@ -605,18 +619,33 @@ mod tests {
 
     // Test fast and slow versions of a function.
     macro_rules! test {
-        ($name:ident, $function:ident ($($input:tt)+) == $expected:expr) => {
+        ($name:ident, unescape ($($input:tt)+) == $expected:expr) => {
             paste! {
                 #[cfg(feature = "unescape_fast")]
                 #[test]
                 fn [<fast_ $name>]() {
-                    assert!($function(Matchgen, $($input)+) == $expected);
+                    assert!(unescape_in((Matchgen, ContextGeneral), $($input)+) == $expected);
                 }
 
                 #[cfg(feature = "unescape")]
                 #[test]
                 fn [<slow_ $name>]() {
-                    assert!($function(Phf, $($input)+) == $expected);
+                    assert!(unescape_in((Phf, ContextGeneral), $($input)+) == $expected);
+                }
+            }
+        };
+        ($name:ident, unescape_attribute ($($input:tt)+) == $expected:expr) => {
+            paste! {
+                #[cfg(feature = "unescape_fast")]
+                #[test]
+                fn [<fast_ $name>]() {
+                    assert!(unescape_in((Matchgen, ContextAttribute), $($input)+) == $expected);
+                }
+
+                #[cfg(feature = "unescape")]
+                #[test]
+                fn [<slow_ $name>]() {
+                    assert!(unescape_in((Phf, ContextAttribute), $($input)+) == $expected);
                 }
             }
         };
@@ -759,14 +788,40 @@ mod tests {
         include_str!("../../tests/corpus/all-entities-expanded.txt");
     test_both!(all_entities, unescape(ALL_SOURCE) == ALL_EXPANDED);
 
-    test!(
-        invalid_utf8,
-        unescape_bytes_in(&b"\xa1"[..], Context::General) == &b"\xa1"[..]
-    );
-    test!(
-        attribute_invalid_utf8,
-        unescape_bytes_in(&b"\xa1"[..], Context::Attribute) == &b"\xa1"[..]
-    );
+    #[cfg(feature = "unescape_fast")]
+    #[test]
+    fn fast_invalid_utf8() {
+        assert!(
+            unescape_bytes_in((Matchgen, ContextGeneral), &b"\xa1"[..])
+                == &b"\xa1"[..]
+        );
+    }
+
+    #[cfg(feature = "unescape")]
+    #[test]
+    fn slow_invalid_utf8() {
+        assert!(
+            unescape_bytes_in((Phf, ContextGeneral), &b"\xa1"[..])
+                == &b"\xa1"[..]
+        );
+    }
+    #[cfg(feature = "unescape_fast")]
+    #[test]
+    fn fast_attribute_invalid_utf8() {
+        assert!(
+            unescape_bytes_in((Matchgen, ContextAttribute), &b"\xa1"[..])
+                == &b"\xa1"[..]
+        );
+    }
+
+    #[cfg(feature = "unescape")]
+    #[test]
+    fn slow_attribute_invalid_utf8() {
+        assert!(
+            unescape_bytes_in((Phf, ContextAttribute), &b"\xa1"[..])
+                == &b"\xa1"[..]
+        );
+    }
 
     #[test]
     fn correct_numeric_entity_euro() {

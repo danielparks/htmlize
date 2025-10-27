@@ -43,11 +43,21 @@ fn benchmarks(c: &mut Criterion) {
         let input = util::inputs::make_sample(128, entity, "a");
 
         #[cfg(feature = "unescape")]
-        util::benchmark_name!(group, "phf", unescape, Phf, &name, &input);
+        util::benchmark_name!(
+            group,
+            "phf",
+            (Phf, ContextGeneral),
+            &name,
+            &input
+        );
 
         #[cfg(feature = "unescape_fast")]
         util::benchmark_name!(
-            group, "matchgen", unescape, Matchgen, &name, &input
+            group,
+            "matchgen",
+            (Matchgen, ContextGeneral),
+            &name,
+            &input
         );
     }
     group.finish();
@@ -60,8 +70,7 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "phf",
-            unescape_attribute,
-            Phf,
+            (Phf, ContextAttribute),
             &name,
             &input
         );
@@ -70,8 +79,7 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "matchgen",
-            unescape_attribute,
-            Matchgen,
+            (Matchgen, ContextAttribute),
             &name,
             &input
         );

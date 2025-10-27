@@ -5,14 +5,18 @@ pub mod inputs;
 
 macro_rules! benchmark_name {
     (
-        $group:expr, $name:expr, $function:ident, $matcher:expr, $size_name:expr, $input:expr
+        $group:expr, $name:expr, $matcher:expr, $size_name:expr, $input:expr
     ) => {{
         let input = $input;
         $group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
         $group.bench_with_input(
             BenchmarkId::new($name, $size_name),
             input,
-            |b, input| b.iter(|| $function($matcher, &*input)),
+            |b, input| {
+                b.iter(|| {
+                    htmlize::unescape::internal::unescape_in($matcher, &*input)
+                })
+            },
         );
     }};
 }

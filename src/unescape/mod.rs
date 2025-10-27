@@ -19,7 +19,6 @@
 //! Some entities are prefixes for multiple other entities. For example:
 //!   &times &times; &timesb; &timesbar; &timesd;
 
-use pastey::paste;
 use std::borrow::Cow;
 
 /// The context for an input string.
@@ -34,21 +33,6 @@ pub enum Context {
     Attribute,
 }
 
-/// Call the internal version of the unescape function.
-///
-/// Uses the appropriate matcher depending on the selected features.
-macro_rules! call_unescape {
-    ($function:ident($($args:expr),+)) => {
-        paste! {
-            #[cfg(feature = "unescape_fast")]
-            return internal::$function(internal::Matchgen, $($args),+);
-
-            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
-            return internal::$function(internal::Phf, $($args),+);
-        }
-    }
-}
-
 /// Expand all valid entities.
 ///
 /// ```rust
@@ -60,7 +44,17 @@ macro_rules! call_unescape {
 ///
 /// To work with bytes (`[u8]`) instead of strings, see [`unescape_bytes_in()`].
 pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
-    call_unescape!(unescape_in(escaped, Context::General));
+    #[cfg(feature = "unescape_fast")]
+    return internal::unescape_in(
+        (internal::Matchgen, internal::ContextGeneral),
+        escaped,
+    );
+
+    #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+    return internal::unescape_in(
+        (internal::Phf, internal::ContextGeneral),
+        escaped,
+    );
 }
 
 /// Expand all valid entities in an attribute.
@@ -80,7 +74,17 @@ pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
 pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
     escaped: S,
 ) -> Cow<'a, str> {
-    call_unescape!(unescape_in(escaped, Context::Attribute));
+    #[cfg(feature = "unescape_fast")]
+    return internal::unescape_in(
+        (internal::Matchgen, internal::ContextAttribute),
+        escaped,
+    );
+
+    #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+    return internal::unescape_in(
+        (internal::Phf, internal::ContextAttribute),
+        escaped,
+    );
 }
 
 /// Expand all valid entities in a given context.
@@ -121,7 +125,34 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
     escaped: S,
     context: Context,
 ) -> Cow<'a, str> {
-    call_unescape!(unescape_in(escaped, context));
+    match context {
+        Context::Attribute => {
+            #[cfg(feature = "unescape_fast")]
+            return internal::unescape_in(
+                (internal::Matchgen, internal::ContextAttribute),
+                escaped,
+            );
+
+            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+            return internal::unescape_in(
+                (internal::Phf, internal::ContextAttribute),
+                escaped,
+            );
+        }
+        Context::General => {
+            #[cfg(feature = "unescape_fast")]
+            return internal::unescape_in(
+                (internal::Matchgen, internal::ContextGeneral),
+                escaped,
+            );
+
+            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+            return internal::unescape_in(
+                (internal::Phf, internal::ContextGeneral),
+                escaped,
+            );
+        }
+    }
 }
 
 /// Expand all valid entities in a given context.
@@ -162,7 +193,34 @@ pub fn unescape_bytes_in<'a, S: Into<Cow<'a, [u8]>>>(
     escaped: S,
     context: Context,
 ) -> Cow<'a, [u8]> {
-    call_unescape!(unescape_bytes_in(escaped, context));
+    match context {
+        Context::Attribute => {
+            #[cfg(feature = "unescape_fast")]
+            return internal::unescape_bytes_in(
+                (internal::Matchgen, internal::ContextAttribute),
+                escaped,
+            );
+
+            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+            return internal::unescape_bytes_in(
+                (internal::Phf, internal::ContextAttribute),
+                escaped,
+            );
+        }
+        Context::General => {
+            #[cfg(feature = "unescape_fast")]
+            return internal::unescape_bytes_in(
+                (internal::Matchgen, internal::ContextGeneral),
+                escaped,
+            );
+
+            #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
+            return internal::unescape_bytes_in(
+                (internal::Phf, internal::ContextGeneral),
+                escaped,
+            );
+        }
+    }
 }
 
 // Need these to be public for benchmarks
