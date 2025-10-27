@@ -8,7 +8,7 @@ use criterion::{
     Throughput,
 };
 #[allow(clippy::wildcard_imports)]
-use htmlize::*;
+use htmlize::unescape::internal::*;
 use std::time::Duration;
 
 #[macro_use]
@@ -43,10 +43,12 @@ fn benchmarks(c: &mut Criterion) {
         let input = util::inputs::make_sample(128, entity, "a");
 
         #[cfg(feature = "unescape")]
-        util::benchmark_name!(group, "phf", unescape_slow, &name, &input);
+        util::benchmark_name!(group, "phf", unescape, Phf, &name, &input);
 
         #[cfg(feature = "unescape_fast")]
-        util::benchmark_name!(group, "matchgen", unescape_fast, &name, &input);
+        util::benchmark_name!(
+            group, "matchgen", unescape, Matchgen, &name, &input
+        );
     }
     group.finish();
 
@@ -58,7 +60,8 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "phf",
-            unescape_attribute_slow,
+            unescape_attribute,
+            Phf,
             &name,
             &input
         );
@@ -67,7 +70,8 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "matchgen",
-            unescape_attribute_fast,
+            unescape_attribute,
+            Matchgen,
             &name,
             &input
         );

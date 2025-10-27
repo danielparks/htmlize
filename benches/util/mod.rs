@@ -5,14 +5,14 @@ pub mod inputs;
 
 macro_rules! benchmark_name {
     (
-        $group:expr, $name:expr, $function:ident, $size_name:expr, $input:expr
+        $group:expr, $name:expr, $function:ident, $matcher:expr, $size_name:expr, $input:expr
     ) => {{
         let input = $input;
         $group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
         $group.bench_with_input(
             BenchmarkId::new($name, $size_name),
             input,
-            |b, input| b.iter(|| $function(&*input)),
+            |b, input| b.iter(|| $function($matcher, &*input)),
         );
     }};
 }
@@ -20,15 +20,15 @@ macro_rules! benchmark_name {
 pub(crate) use benchmark_name;
 
 macro_rules! benchmark {
-    ( $group:expr, $function:ident, $size_name:expr, $input:expr ) => {
-        crate::util::benchmark_name!(
-            $group,
-            stringify!($function),
-            $function,
-            $size_name,
-            $input
-        )
-    };
+    ( $group:expr, $function:ident, $size_name:expr, $input:expr ) => {{
+        let input = $input;
+        $group.throughput(Throughput::Bytes(input.len().try_into().unwrap()));
+        $group.bench_with_input(
+            BenchmarkId::new(stringify!($function), $size_name),
+            input,
+            |b, input| b.iter(|| $function(&*input)),
+        );
+    }};
 }
 
 pub(crate) use benchmark;

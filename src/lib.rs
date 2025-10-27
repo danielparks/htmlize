@@ -121,10 +121,15 @@ macro_rules! feature {
 mod escape;
 pub use escape::*;
 
+#[cfg(all(feature = "bench", not(doc)))]
+pub mod unescape;
+
 feature! {
     #![any(feature = "unescape", feature = "unescape_fast")]
 
+    #[cfg(not(all(feature = "bench", not(doc))))]
     mod unescape;
+
     pub use unescape::*;
 }
 
