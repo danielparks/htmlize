@@ -666,6 +666,12 @@ mod tests {
     test_both!(bare_times_bang, unescape("&times!") == "×!");
 
     test!(bare_entity_char, unescape("&timesa") == "×a");
+    test!(other_entity, unescape("&timesbar;") == "⨱"); // To confirm next test
+    test!(bare_entity_almost_other, unescape("&timesbar") == "×bar");
+    test!(
+        bare_entity_long_suffix,
+        unescape("&timesbarrrrrr") == "×barrrrrr"
+    );
     test!(bare_entity_equal, unescape("&times=") == "×=");
     test!(bare_entity_char_semicolon, unescape("&timesa;") == "×a;");
     test!(bare_entity_equal_semicolon, unescape("&times=;") == "×=;");
