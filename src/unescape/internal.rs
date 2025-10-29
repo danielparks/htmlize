@@ -197,7 +197,7 @@ impl Matcher for (Phf, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
+        use crate::{ENTITIES, ENTITY_MIN_LENGTH};
 
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
@@ -208,20 +208,7 @@ impl Matcher for (Phf, ContextAttribute) {
 
         let raw = &iter.as_slice();
 
-        assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
-
-        // Find longest possible candidate. (Start at 1 since we got the '&'.)
-        for _ in 1..ENTITY_MAX_LENGTH {
-            if let Some(c) = peek(iter) {
-                if c.is_ascii_alphanumeric() {
-                    iter.next();
-                    continue;
-                }
-            }
-
-            break;
-        }
-
+        find_longest_candidate(iter);
         match peek(iter) {
             Some(b';') => {
                 // Actually consume the semicolon.
@@ -303,20 +290,8 @@ impl Matcher for (Phf, ContextGeneral) {
         // Create a backup of `iter` so we can revert if we need to look ahead
         // further than the length of the entity.
         let original_iter = iter.clone();
-        assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
 
-        // Find longest possible candidate. (Start at 1 since we got the '&'.)
-        for _ in 1..ENTITY_MAX_LENGTH {
-            if let Some(c) = peek(iter) {
-                if c.is_ascii_alphanumeric() {
-                    iter.next();
-                    continue;
-                }
-            }
-
-            break;
-        }
-
+        find_longest_candidate(iter);
         if peek(iter) == Some(b';') {
             // Actually consume the semicolon.
             assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
@@ -483,6 +458,23 @@ fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
             .map(|c| c.to_string().into_bytes().into())
             // Should never fall back since we handle all the cases above.
             .unwrap_or_else(|| REPLACEMENT_CHAR_BYTES.into()),
+    }
+}
+
+/// Advance `iter` to consume longest possible candidate (alphanumeric only).
+fn find_longest_candidate(iter: &mut slice::Iter<u8>) {
+    assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
+
+    // Start at 1 since we got the '&'.
+    for _ in 1..crate::ENTITY_MAX_LENGTH {
+        if let Some(c) = peek(iter) {
+            if c.is_ascii_alphanumeric() {
+                iter.next();
+                continue;
+            }
+        }
+
+        break;
     }
 }
 
