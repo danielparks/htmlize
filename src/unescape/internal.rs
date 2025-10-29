@@ -300,16 +300,16 @@ impl Matcher for (Phf, ContextGeneral) {
 
         let raw = &iter.as_slice();
 
-        // Create a second iter so we can to look ahead to find the longest
-        // matching entity. We’ll update the original iter before we return.
-        let mut candidate_iter = iter.clone();
-        assert_next_eq(&mut candidate_iter, Some(b'&'), PEEK_MATCH_ERROR);
+        // Create a backup of `iter` so we can revert if we need to look ahead
+        // further than the length of the entity.
+        let original_iter = iter.clone();
+        assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
 
         // Find longest possible candidate. (Start at 1 since we got the '&'.)
         for _ in 1..ENTITY_MAX_LENGTH {
-            if let Some(c) = peek(&candidate_iter) {
+            if let Some(c) = peek(iter) {
                 if c.is_ascii_alphanumeric() {
-                    candidate_iter.next();
+                    iter.next();
                     continue;
                 }
             }
@@ -317,24 +317,22 @@ impl Matcher for (Phf, ContextGeneral) {
             break;
         }
 
-        if peek(&candidate_iter) == Some(b';') {
+        if peek(iter) == Some(b';') {
             // Actually consume the semicolon.
-            assert_next_eq(&mut candidate_iter, Some(b';'), PEEK_MATCH_ERROR);
+            assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
         } else {
             // missing-semicolon-after-character-reference: ignore; continue
             // https://html.spec.whatwg.org/multipage/parsing.html#parse-error-missing-semicolon-after-character-reference
         }
 
-        // Both `raw` and `candidate_iter` were generated from `iter`, then
-        // `candidate_iter` was advanced, so `candidate_iter.as_slice().len()`
-        // will always be less than `raw.len()`.
-        debug_assert!(raw.len() >= candidate_iter.as_slice().len());
+        // `raw` was generated from `iter`, so `iter.as_slice().len()` will
+        // always be less than `raw.len()`.
+        debug_assert!(raw.len() >= iter.as_slice().len());
         #[allow(clippy::arithmetic_side_effects)]
-        let candidate = &raw[..raw.len() - candidate_iter.as_slice().len()];
+        let candidate = &raw[..raw.len() - iter.as_slice().len()];
 
         if candidate.len() < ENTITY_MIN_LENGTH {
             // Couldn’t possibly match. Don’t expand.
-            *iter = candidate_iter;
             return None;
         }
 
@@ -345,6 +343,7 @@ impl Matcher for (Phf, ContextGeneral) {
                 // Found a match. check_len starts at ENTITY_MIN_LENGTH,
                 // which must always be greater than 0, so `check_len - 1`
                 // is safe.
+                *iter = original_iter;
                 debug_assert!(check_len >= 1);
                 #[allow(clippy::arithmetic_side_effects)]
                 iter.nth(check_len - 1); // Update iter. nth(0) == next().
@@ -353,7 +352,6 @@ impl Matcher for (Phf, ContextGeneral) {
         }
 
         // Did not find a match.
-        *iter = candidate_iter;
         None
     }
 }
