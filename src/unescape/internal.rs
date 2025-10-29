@@ -37,18 +37,12 @@ pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
 
 /// Code that actually does the unescaping.
 fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
-    let mut remainder = escaped;
-    let mut iter = remainder.iter();
+    let mut amp_iter = memchr::memchr_iter(b'&', escaped);
+    while let Some(i) = amp_iter.next() {
+        let mut byte_iter = escaped[i..].iter();
+        if let Some(expansion) = M::match_entity(&mut byte_iter) {
+            // We know there is at least one expansion.
 
-    while advance_until(&mut iter, |&c| c == b'&') {
-        // `iter` was generated from `remainder`, so
-        // `iter.as_slice().len()` will always be less than or equal
-        // to `remainder.len()`.
-        debug_assert!(remainder.len() >= iter.as_slice().len());
-        #[allow(clippy::arithmetic_side_effects)]
-        let i = remainder.len() - iter.as_slice().len();
-
-        if let Some(expansion) = M::match_entity(&mut iter) {
             // All but two entities are as long or longer than their expansion,
             // so allocating the output buffer to be the same size as the input
             // will usually prevent multiple allocations and generally won’t
@@ -57,27 +51,28 @@ fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
             // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both
             // five byte entities with six byte expansions.
             let mut buffer = Vec::with_capacity(escaped.len());
-
-            buffer.extend_from_slice(&remainder[..i]);
+            buffer.extend_from_slice(&escaped[..i]);
             buffer.extend_from_slice(&expansion);
-            remainder = iter.as_slice();
 
-            while advance_until(&mut iter, |&c| c == b'&') {
-                // `remainder` was generated from `iter` before
-                // `iter` was advanced, so `iter.as_slice()` will
-                // always be shorter than or equal to `remainder`.
-                debug_assert!(remainder.len() >= iter.as_slice().len());
-                #[allow(clippy::arithmetic_side_effects)]
-                let i = remainder.len() - iter.as_slice().len();
-
-                if let Some(expansion) = M::match_entity(&mut iter) {
-                    buffer.extend_from_slice(&remainder[..i]);
+            #[allow(
+                clippy::arithmetic_side_effects,
+                reason = "byte_iter.as_slice().len() has to be < escaped.len()"
+            )]
+            let mut last_end = escaped.len() - byte_iter.as_slice().len();
+            for i in amp_iter {
+                let mut byte_iter = escaped[i..].iter();
+                #[allow(
+                    clippy::arithmetic_side_effects,
+                    reason = "byte_iter.as_slice().len() has to be < escaped.len()"
+                )]
+                if let Some(expansion) = M::match_entity(&mut byte_iter) {
+                    buffer.extend_from_slice(&escaped[last_end..i]);
                     buffer.extend_from_slice(&expansion);
-                    remainder = iter.as_slice();
+                    last_end = escaped.len() - byte_iter.as_slice().len();
                 }
             }
 
-            buffer.extend_from_slice(remainder);
+            buffer.extend_from_slice(&escaped[last_end..]);
             return Some(buffer);
         }
     }
@@ -472,27 +467,6 @@ fn find_longest_candidate(iter: &mut slice::Iter<u8>) {
 
         break;
     }
-}
-
-/// Advance `iter` until `predicate` returns `true`.
-///
-/// This leaves `iter` pointing to the entry _before_ the one `predicate` found.
-/// In other words, `iter.next()` will return the one `predicate` found next.
-///
-/// Returns `true` if there is more `iter` to consume and `false` if `iter` is
-/// used up.
-fn advance_until<P>(iter: &mut slice::Iter<u8>, mut predicate: P) -> bool
-where
-    P: FnMut(&u8) -> bool,
-{
-    for c in iter.as_slice() {
-        if predicate(c) {
-            return true;
-        }
-        iter.next();
-    }
-
-    false
 }
 
 /// Advance iterator while `predicate` matches (`next()` will return the first
