@@ -5,6 +5,7 @@ use std::char;
 use std::num::IntErrorKind;
 use std::result::Result;
 use std::slice;
+
 /// See [`super::unescape_in()`].
 ///
 /// # Panics
@@ -52,15 +53,13 @@ fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
         let i = remainder.len() - iter.as_slice().len();
 
         if let Some(expansion) = M::match_entity(&mut iter) {
-            // All but two entities are as long or longer than their
-            // expansion, so allocating the output buffer to be the
-            // same size as the input will usually prevent multiple
-            // allocations and generally won’t over-allocate by very
-            // much.
+            // All but two entities are as long or longer than their expansion,
+            // so allocating the output buffer to be the same size as the input
+            // will usually prevent multiple allocations and generally won’t
+            // over-allocate by very much.
             //
-            // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒)
-            // which are both five byte entities with six byte
-            // expansions.
+            // The two entities are `&nGg;` (≫⃒) and `&nLl;` (≪⃒) which are both
+            // five byte entities with six byte expansions.
             let mut buffer = Vec::with_capacity(escaped.len());
 
             buffer.extend_from_slice(&remainder[..i]);
@@ -144,8 +143,8 @@ impl Matcher for (Matchgen, ContextAttribute) {
             return match_numeric_entity(iter);
         }
 
-        // In an attribute entities ending with an alphanumeric character or
-        // '=' instead of ';' are passed through without expansion.
+        // In an attribute entities ending with an alphanumeric character or '='
+        // instead of ';' are passed through without expansion.
         //
         // See `unescape_in()` documentation for examples.
         //
@@ -257,8 +256,8 @@ impl Matcher for (Phf, ContextAttribute) {
             }
         }
 
-        // `iter` was advanced since `raw` was generated, so
-        // `iter.as_slice().len()` will always be less than `raw.len()`.
+        // `raw` was generated from `iter`, so `iter.as_slice().len()` will
+        // always be less than `raw.len()`.
         debug_assert!(raw.len() >= iter.as_slice().len());
         #[allow(clippy::arithmetic_side_effects)]
         let candidate = &raw[..raw.len() - iter.as_slice().len()];
@@ -268,10 +267,9 @@ impl Matcher for (Phf, ContextAttribute) {
             return None;
         }
 
-        // If candidate does not exactly match an entity, then don't expand
-        // it. The spec says that entities *in attributes* must be
-        // terminated with a semicolon, EOF, or some character *other* than
-        // [a-zA-Z0-9=].
+        // If candidate does not exactly match an entity, then don't expand it.
+        // The spec says that entities *in attributes* must be terminated with a
+        // semicolon, EOF, or some character *other* than [a-zA-Z0-9=].
         //
         // See `unescape_in()` documentation for examples.
         //
