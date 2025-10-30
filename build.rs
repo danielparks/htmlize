@@ -54,10 +54,14 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let mut map_builder = phf_codegen::Map::<&[u8]>::new();
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::MAX;
+    let mut bare_max_len: usize = 0;
     for (name, glyph) in entities {
         map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
+        if !name.ends_with(';') {
+            bare_max_len = max(bare_max_len, name.len());
+        }
 
         // `{:28}` would pad the output inside the backticks.
         let name = format!("`{name}`");
@@ -91,7 +95,10 @@ fn generate_entities_rs(entities: &[(String, String)]) {
         pub const ENTITY_MAX_LENGTH: usize = {max_len};\n\
         \n\
         /// Length of shortest entity including ‘&’ and possibly ‘;’.\n\
-        pub const ENTITY_MIN_LENGTH: usize = {min_len};"
+        pub const ENTITY_MIN_LENGTH: usize = {min_len};\n\
+        \n\
+        /// Length of longest semicolon-less entity including ‘&’.\n\
+        pub const BARE_ENTITY_MAX_LENGTH: usize = {bare_max_len};"
     )
     .unwrap();
 }

@@ -1,8 +1,11 @@
 //! Internal unescape code
 
-use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
+use crate::{
+    BARE_ENTITY_MAX_LENGTH, ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH,
+};
 use std::borrow::Cow;
 use std::char;
+use std::cmp::min;
 use std::num::IntErrorKind;
 use std::result::Result;
 use std::slice;
@@ -314,7 +317,9 @@ impl Matcher for (Phf, ContextGeneral) {
         //
         // The implication is that we can search for the shortest match first,
         // since if it matches there can be no other match.
-        for check_len in ENTITY_MIN_LENGTH..=candidate.len() {
+        for check_len in
+            ENTITY_MIN_LENGTH..=min(candidate.len(), BARE_ENTITY_MAX_LENGTH)
+        {
             if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
                 // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
