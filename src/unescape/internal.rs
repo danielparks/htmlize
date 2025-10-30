@@ -1,5 +1,6 @@
 //! Internal unescape code
 
+use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
 use std::borrow::Cow;
 use std::char;
 use std::num::IntErrorKind;
@@ -188,8 +189,6 @@ impl Matcher for (Phf, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{ENTITIES, ENTITY_MIN_LENGTH};
-
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -252,12 +251,7 @@ impl Matcher for (Phf, ContextAttribute) {
         // See `unescape_in()` documentation for examples.
         //
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-        if let Some(&expansion) = ENTITIES.get(candidate) {
-            Some(expansion.into())
-        } else {
-            // Did not find a match.
-            None
-        }
+        ENTITIES.get(candidate).map(|&expansion| expansion.into())
     }
 }
 
@@ -266,9 +260,6 @@ impl Matcher for (Phf, ContextGeneral) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
-        use crate::{ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH};
-        use std::cmp::min;
-
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -283,7 +274,8 @@ impl Matcher for (Phf, ContextGeneral) {
         let original_iter = iter.clone();
 
         find_longest_candidate(iter);
-        if peek(iter) == Some(b';') {
+        let has_semicolon = peek(iter) == Some(b';');
+        if has_semicolon {
             // Actually consume the semicolon.
             assert_next_eq(iter, Some(b';'), PEEK_MATCH_ERROR);
         } else {
@@ -302,13 +294,29 @@ impl Matcher for (Phf, ContextGeneral) {
             return None;
         }
 
-        // Find longest matching entity.
-        let max_len = min(candidate.len(), ENTITY_MAX_LENGTH);
-        for check_len in (ENTITY_MIN_LENGTH..=max_len).rev() {
+        if has_semicolon {
+            #[allow(clippy::len_zero, reason = "clarity")]
+            if let Some(&expansion) = ENTITIES.get(candidate) {
+                // Found a match. It has to be longer than 1 byte.
+                *iter = original_iter;
+                debug_assert!(candidate.len() >= 1);
+                #[allow(clippy::arithmetic_side_effects)]
+                iter.nth(candidate.len() - 1); // Update iter. nth(0) == next().
+                return Some(expansion.into());
+            }
+        }
+
+        // No semicolon or it didn’t match.
+        //
+        // No entity without a semicolon is a prefix for another entity without
+        // a semicolon. So, `&times` is a prefix for `&timesbar;`, but never for
+        // another bare entity. See test `bare_entity_prefix_rule()`.
+        //
+        // The implication is that we can search for the shortest match first,
+        // since if it matches there can be no other match.
+        for check_len in ENTITY_MIN_LENGTH..=candidate.len() {
             if let Some(&expansion) = ENTITIES.get(&candidate[..check_len]) {
-                // Found a match. check_len starts at ENTITY_MIN_LENGTH,
-                // which must always be greater than 0, so `check_len - 1`
-                // is safe.
+                // Found a match. It has to be longer than 1 byte.
                 *iter = original_iter;
                 debug_assert!(check_len >= 1);
                 #[allow(clippy::arithmetic_side_effects)]
@@ -457,7 +465,7 @@ fn find_longest_candidate(iter: &mut slice::Iter<u8>) {
     assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
 
     // Start at 1 since we got the '&'.
-    for _ in 1..crate::ENTITY_MAX_LENGTH {
+    for _ in 1..ENTITY_MAX_LENGTH {
         if let Some(c) = peek(iter) {
             if c.is_ascii_alphanumeric() {
                 iter.next();
@@ -563,7 +571,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use assert2::assert;
+    use assert2::{assert, check};
     use pastey::paste;
 
     // Test fast and slow versions of a function.
@@ -672,7 +680,16 @@ mod tests {
     test_both!(extra_ampersands, unescape("&&amp;&") == "&&&");
     test_both!(two_entities, unescape("AND &amp;&AMP; and") == "AND && and");
     test_both!(
-        long_entity,
+        long_valid_entity,
+        unescape("&CounterClockwiseContourIntegral;") == "∳"
+    );
+    test_both!(
+        long_invalid_entity,
+        unescape("&CounterClockwiseContourIntegralX;")
+            == "&CounterClockwiseContourIntegralX;"
+    );
+    test_both!(
+        very_long_invalid_entity,
         unescape("&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;")
             == "&aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;"
     );
@@ -799,6 +816,28 @@ mod tests {
         match correct_numeric_entity(b'z'.into()) {
             Cow::Borrowed(_) => panic!("expected owned"),
             Cow::Owned(ref s) => assert!(s == b"z"),
+        }
+    }
+
+    /// No bare entity may be a prefix for another bare entity. For example,
+    /// `&times` is a prefix for `&timesbar;` and a few other entities, but
+    /// never for another bare entity.
+    ///
+    /// Logic in `match_entity::<(Phf, ContextGeneral)>()` depends on this.
+    #[test]
+    fn bare_entity_prefix_rule() {
+        let all_bare: Vec<_> = ALL_SOURCE
+            .split_ascii_whitespace()
+            .filter(|entity| entity.ends_with(';'))
+            .collect();
+        for bare in &all_bare {
+            check!(
+                all_bare
+                    .iter()
+                    .find(|other| other.starts_with(bare) && *other != bare)
+                    == None,
+                "No bare entity may be a prefix for another bare entity"
+            );
         }
     }
 }
