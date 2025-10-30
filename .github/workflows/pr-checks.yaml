@@ -69,6 +69,7 @@ jobs:
       - run: cargo build --tests --all-features
       - run: cargo test --all-features
       - run: cargo test --features unescape
+      - run: cargo test --features unescape_fast
       - run: cargo test --features entities
       - run: cargo test
 

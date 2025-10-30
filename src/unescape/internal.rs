@@ -1,11 +1,7 @@
 //! Internal unescape code
 
-use crate::{
-    BARE_ENTITY_MAX_LENGTH, ENTITIES, ENTITY_MAX_LENGTH, ENTITY_MIN_LENGTH,
-};
 use std::borrow::Cow;
 use std::char;
-use std::cmp::min;
 use std::num::IntErrorKind;
 use std::result::Result;
 use std::slice;
@@ -192,6 +188,7 @@ impl Matcher for (Phf, ContextAttribute) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
+        use crate::{ENTITIES, ENTITY_MIN_LENGTH};
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -263,6 +260,9 @@ impl Matcher for (Phf, ContextGeneral) {
     fn match_entity<'a>(
         iter: &'a mut slice::Iter<u8>,
     ) -> Option<Cow<'a, [u8]>> {
+        use crate::{BARE_ENTITY_MAX_LENGTH, ENTITIES, ENTITY_MIN_LENGTH};
+        use std::cmp::min;
+
         assert_peek_eq(iter, Some(b'&'), "match_entity() expected '&'");
 
         if Some(b'#') == peek_n(iter, 1) {
@@ -466,7 +466,9 @@ fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
 }
 
 /// Advance `iter` to consume longest possible candidate (alphanumeric only).
+#[cfg(feature = "unescape")]
 fn find_longest_candidate(iter: &mut slice::Iter<u8>) {
+    use crate::ENTITY_MAX_LENGTH;
     assert_next_eq(iter, Some(b'&'), PEEK_MATCH_ERROR);
 
     // Start at 1 since we got the '&'.
