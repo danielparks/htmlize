@@ -11,7 +11,6 @@ use std::slice;
 /// # Panics
 ///
 /// Panics if the unescaped bytes are invalid UTF-8.
-#[inline]
 pub fn unescape_in<'a, M: Matcher, S: Into<Cow<'a, str>>>(
     _matcher: M,
     escaped: S,
@@ -25,7 +24,6 @@ pub fn unescape_in<'a, M: Matcher, S: Into<Cow<'a, str>>>(
 }
 
 /// See [`super::unescape_bytes_in()`].
-#[inline]
 pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
     _matcher: M,
     escaped: S,
@@ -38,8 +36,6 @@ pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
 }
 
 /// Code that actually does the unescaping.
-#[allow(clippy::inline_always)]
-#[inline(always)]
 fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
     let mut remainder = escaped;
     let mut iter = remainder.iter();
@@ -485,7 +481,6 @@ fn find_longest_candidate(iter: &mut slice::Iter<u8>) {
 ///
 /// Returns `true` if there is more `iter` to consume and `false` if `iter` is
 /// used up.
-#[inline]
 fn advance_until<P>(iter: &mut slice::Iter<u8>, mut predicate: P) -> bool
 where
     P: FnMut(&u8) -> bool,
@@ -502,7 +497,6 @@ where
 
 /// Advance iterator while `predicate` matches (`next()` will return the first
 /// byte that doesn’t match) and return a slice of the bytes that didn’t match.
-#[inline]
 fn slice_while<'a, P>(
     iter: &mut slice::Iter<'a, u8>,
     mut predicate: P,
@@ -515,7 +509,6 @@ where
 
 /// Advance iterator until the byte _before_ `predicate` matches and return a
 /// slice of the bytes matched.
-#[inline]
 fn slice_until<'a, P>(iter: &mut slice::Iter<'a, u8>, predicate: P) -> &'a [u8]
 where
     P: FnMut(&u8) -> bool,
@@ -527,31 +520,26 @@ where
 }
 
 /// Move to the next value in `iter` and assert that it equals `expected`.
-#[inline]
 fn assert_next_eq(iter: &mut slice::Iter<u8>, expected: Option<u8>, msg: &str) {
     assert_eq!(iter.next().copied(), expected, "{msg}");
 }
 
 /// Peek the next value in `iter` and assert that it equals `expected`.
-#[inline]
 fn assert_peek_eq(iter: &slice::Iter<u8>, expected: Option<u8>, msg: &str) {
     assert_eq!(peek(iter), expected, "{msg}");
 }
 
 /// Peek at the next value in `iter` without changing the `iter`.
-#[inline]
 fn peek(iter: &slice::Iter<u8>) -> Option<u8> {
     peek_n(iter, 0)
 }
 
 /// Peek at a future value in `iter` without changing the `iter`.
-#[inline]
 fn peek_n(iter: &slice::Iter<u8>, n: usize) -> Option<u8> {
     iter.as_slice().get(n).copied()
 }
 
 /// Like `position()`, but stops _before_ the found value.
-#[inline]
 fn position_peek<P>(
     iter: &mut slice::Iter<u8>,
     mut predicate: P,
@@ -582,7 +570,6 @@ where
 ///
 /// This uses `&u8` instead of `u8` so that you can pass `u8::is_ascii_digit` as
 /// a predicate to `position_peek()` and friends.
-#[inline]
 fn try_fold_peek<T, F>(
     iter: &mut slice::Iter<u8>,
     initial: T,
