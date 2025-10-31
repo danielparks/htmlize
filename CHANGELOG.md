@@ -6,9 +6,11 @@ All notable changes to this project will be documented in this file.
 
 * Major performance improvements when unescaping text in many cases (for both
   the `unescape` and `unescape_fast` features).
-* Clarify examples in documentation and README.
+* Major improvements in build time for the `unescape_fast` features (went from
+  8 seconds to 3 seconds on my laptop).
 * Add `BARE_ENTITY_MAX_LENGTH` constant that contains the length of the longest
   entity without a semicolon (enabled with feature `entities`).
+* Clarify examples in documentation and README.
 * Fix a few spelling mistakes in documentation.
 
 ## Release 1.0.6 (2025-04-26)

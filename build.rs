@@ -121,7 +121,7 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     matcher
         .doc("Used in `match_entity()`.")
         .disable_clippy(true)
-        .input_type(matchgen::Input::Iterator)
+        .input_type(matchgen::Input::Slice)
         .write_to_out_dir("matcher.rs")
         .unwrap();
 }

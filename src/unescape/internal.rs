@@ -36,6 +36,8 @@ pub fn unescape_bytes_in<'a, M: Matcher, S: Into<Cow<'a, [u8]>>>(
 }
 
 /// Code that actually does the unescaping.
+///
+/// Returns `None` if no changes would be made.
 fn unescape_in_internal<M: Matcher>(escaped: &[u8]) -> Option<Vec<u8>> {
     let mut amp_iter = memchr::memchr_iter(b'&', escaped);
     while let Some(i) = amp_iter.next() {
@@ -134,13 +136,25 @@ impl Matcher for (Matchgen, ContextAttribute) {
             return match_numeric_entity(iter);
         }
 
+        let slice = iter.as_slice();
+        let (expansion, rest) = entity_matcher(slice);
+        #[allow(
+            clippy::arithmetic_side_effects,
+            reason = "rest is a subslice of slice"
+        )]
+        let consumed = slice.len() - rest.len();
+        if consumed > 0 {
+            #[allow(clippy::arithmetic_side_effects, reason = "checked")]
+            iter.nth(consumed - 1); // nth(0) is equivalent to next()
+        }
+
         // In an attribute entities ending with an alphanumeric character or '='
         // instead of ';' are passed through without expansion.
         //
         // See `unescape_in()` documentation for examples.
         //
         // https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
-        if let Some((closed, expansion)) = entity_matcher(iter) {
+        if let Some((closed, expansion)) = expansion {
             if !closed {
                 if let Some(next) = peek(iter) {
                     if next == b'=' || next.is_ascii_alphanumeric() {
@@ -170,7 +184,18 @@ impl Matcher for (Matchgen, ContextGeneral) {
             return match_numeric_entity(iter);
         }
 
-        entity_matcher(iter)
+        let slice = iter.as_slice();
+        let (expansion, rest) = entity_matcher(slice);
+        #[allow(
+            clippy::arithmetic_side_effects,
+            reason = "rest is a subslice of slice"
+        )]
+        let consumed = slice.len() - rest.len();
+        if consumed > 0 {
+            #[allow(clippy::arithmetic_side_effects, reason = "checked")]
+            iter.nth(consumed - 1); // nth(0) is equivalent to next()
+        }
+        expansion
             .map(|(_, expansion)| expansion.into())
             .or_else(|| {
                 // No match; move past initial b'&'.

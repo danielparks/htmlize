@@ -129,7 +129,7 @@ The `escape` functions are all available with no features enabled.
   * `unescape_fast`: provide fast version of [`unescape()`]. This does _not_
     enable the `entities` feature automatically.
 
-    This takes perhaps 30 seconds longer to build than `unescape`, but the
+    This takes perhaps 2 seconds longer to build than `unescape`, but the
     performance is significantly better in the worst cases. That said, the
     performance of of the `unescape` version is already pretty good, so I don’t
     recommend enabling this unless you really need it.
