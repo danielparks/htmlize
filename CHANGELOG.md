@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## main branch
 
+* Major performance improvements when unescaping text in many cases (for both
+  the `unescape` and `unescape_fast` features).
+* Major improvements in build time for the `unescape_fast` features (went from
+  8 seconds to 3 seconds on my laptop).
+* Add `BARE_ENTITY_MAX_LENGTH` constant that contains the length of the longest
+  entity without a semicolon (enabled with feature `entities`).
+* Clarify examples in documentation and README.
+* Fix a few spelling mistakes in documentation.
+
+## Release 1.0.6 (2025-04-26)
+
+* Switch dependency from [paste], which is no longer maintained, to a new fork,
+  [pastey], which is.
+
+[paste]: https://github.com/dtolnay/paste
+[pastey]: https://github.com/as1100k/pastey
+
 ## Release 1.0.5 (2024-03-14)
 
 * Exclude more files from final package to significantly reduce package size.

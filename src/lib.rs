@@ -1,9 +1,34 @@
+//! Htmlize handles both encoding raw strings to be safely inserted in HTML, and
+//! decoding HTML text with entities to get back a raw string. It closely
+//! follows the [official WHATWG spec] for encoding and decoding text.
+//!
+//! ```rust
+//! # use assert2::assert;
+//! use htmlize::{escape_attribute, escape_text};
+//! assert!(escape_attribute("ab & < > \" '") == "ab &amp; &lt; &gt; &quot; '");
+//! assert!(escape_text("ab & < > \" '") == "ab &amp; &lt; &gt; \" '");
+//! ```
+//!
+#![cfg_attr(
+    any(feature = "unescape", feature = "unescape_fast"),
+    doc = r#"
+If you enable the `unescape` or `unescape_fast` feature:
+
+```rust
+# use assert2::assert;
+assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
+```
+"#
+)]
+//!
+//! This only deals with HTML entities; it does not add or remove HTML tags.
+//!
 //! # Which `escape` function to use
 //!
-//! Generally, if the text goes in an attribute, use [`escape_attribute()`],
-//! otherwise, use [`escape_text()`]. If you need bytes (`[u8]`) instead of a
-//! `String`, use the `_bytes` version of the functions:
-//! [`escape_attribute_bytes()`] and [`escape_text_bytes()`].
+//! If the text goes in an attribute, use [`escape_attribute()`], otherwise, use
+//! [`escape_text()`]. If you need bytes (`[u8]`) instead of a `String`, use the
+//! `_bytes` version of the functions: [`escape_attribute_bytes()`] and
+//! [`escape_text_bytes()`].
 //!
 //! |                         | `&` | `<` | `>` | `"` | `'` |
 //! |-------------------------|:---:|:---:|:---:|:---:|:---:|
@@ -15,6 +40,10 @@
 //! because sometimes it’s convenient to wrap attribute values in single quotes.
 //!
 //! # Which `unescape` function to use
+//!
+//! All `unescape` functions require the `unescape` or `unescape_fast` feature
+//! to be enabled. See the [features](#features) section below for an
+//! explanation of the trade-offs.
 //!
 //! [`unescape()`] is probably fine for most uses. To be strictly correct, you
 //! should use [`unescape_attribute()`] for attribute values.
@@ -33,7 +62,7 @@
 //!   * `unescape_fast`: provide fast version of [`unescape()`]. This does _not_
 //!     enable the `entities` feature automatically.
 //!
-//!     This takes perhaps 30 seconds longer to build than `unescape`, but the
+//!     This takes perhaps 2 seconds longer to build than `unescape`, but the
 //!     performance is significantly better in the worst cases. That said, the
 //!     performance of of the `unescape` version is already pretty good, so I
 //!     don’t recommend enabling this unless you really need it.
@@ -63,6 +92,7 @@
 //! Currently the minimum supported Rust version (MSRV) is **1.60**. Future
 //! increases in the MSRV will require a major version bump.
 //!
+//! [official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 //! [phf]: https://crates.io/crates/phf
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
@@ -91,10 +121,15 @@ macro_rules! feature {
 mod escape;
 pub use escape::*;
 
+#[cfg(all(feature = "bench", not(doc)))]
+pub mod unescape;
+
 feature! {
     #![any(feature = "unescape", feature = "unescape_fast")]
 
+    #[cfg(not(all(feature = "bench", not(doc))))]
     mod unescape;
+
     pub use unescape::*;
 }
 

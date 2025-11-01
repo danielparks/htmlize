@@ -1,0 +1,47 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ["--fix=no"]
+        exclude: "^target/"
+      - id: no-commit-to-branch
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.38.1
+    hooks:
+      - id: typos
+        args: []
+        exclude: "^target/"
+  - repo: local
+    hooks:
+      - id: cargo clippy
+        name: cargo clippy
+        language: system
+        entry: cargo clippy --all-targets --all-features -- -D warnings
+        files: (\.rs|Cargo\.toml)$
+        pass_filenames: false
+      - id: cargo doc
+        name: cargo doc
+        language: system
+        entry: sh -c 'RUSTDOCFLAGS=-Dwarnings cargo doc --all-features --workspace --no-deps --document-private-items'
+        files: \.rs$
+        pass_filenames: false
+      - id: cargo fmt
+        name: cargo fmt
+        language: system
+        entry: cargo fmt --check
+        files: (\.rs|rustfmt\.toml)$
+        pass_filenames: false

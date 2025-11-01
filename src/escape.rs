@@ -1,6 +1,6 @@
 //! # Functions to escape raw text into HTML
 
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 /// Find a `u8` in a slice. You may specify as many bytes to search for as you
@@ -110,10 +110,10 @@ escape_fn! {
     ///
     /// ```rust
     /// use htmlize::escape_text;
+    /// # use assert2::assert;
     ///
-    /// assert_eq!(
-    ///     escape_text(r#"Björk & Борис O'Brien <3, "love > hate""#),
-    ///     r#"Björk &amp; Борис O'Brien &lt;3, "love &gt; hate""#
+    /// assert!(
+    ///     escape_text("test: &<>\"'é×😀") == "test: &amp;&lt;&gt;\"'é×😀"
     /// );
     /// ```
     ///
@@ -127,10 +127,11 @@ escape_fn! {
     ///
     /// ```rust
     /// use htmlize::escape_text_bytes;
+    /// # use assert2::assert;
     ///
-    /// assert_eq!(
-    ///     escape_text_bytes(b"test: &<>\"'".as_slice()),
-    ///     b"test: &amp;&lt;&gt;\"'".as_slice()
+    /// assert!(
+    ///     escape_text_bytes(b"test: &<>\"'\xFF".as_slice())
+    ///         == b"test: &amp;&lt;&gt;\"'\xFF".as_slice()
     /// );
     /// ```
     ///
@@ -149,10 +150,11 @@ escape_fn! {
     ///
     /// ```rust
     /// use htmlize::escape_attribute;
+    /// # use assert2::assert;
     ///
-    /// assert_eq!(
-    ///     escape_attribute(r#"Björk & Борис O'Brien <3, "love > hate""#),
-    ///     "Björk &amp; Борис O'Brien &lt;3, &quot;love &gt; hate&quot;"
+    /// assert!(
+    ///     escape_attribute("test: &<>\"'é×😀")
+    ///         == "test: &amp;&lt;&gt;&quot;'é×😀"
     /// );
     /// ```
     ///
@@ -165,9 +167,9 @@ escape_fn! {
     /// ```rust
     /// use htmlize::escape_attribute_bytes;
     ///
-    /// assert_eq!(
-    ///     escape_attribute_bytes(b"test: &<>\"'".as_slice()),
-    ///     b"test: &amp;&lt;&gt;&quot;'".as_slice()
+    /// assert!(
+    ///     escape_attribute_bytes(b"test: &<>\"'\xFF".as_slice())
+    ///         == b"test: &amp;&lt;&gt;&quot;'\xFF".as_slice()
     /// );
     /// ```
     ///
@@ -190,10 +192,11 @@ escape_fn! {
     ///
     /// ```rust
     /// use htmlize::escape_all_quotes;
+    /// # use assert2::assert;
     ///
-    /// assert_eq!(
-    ///     escape_all_quotes(r#"Björk & Борис O'Brien <3, "love > hate""#),
-    ///     "Björk &amp; Борис O&apos;Brien &lt;3, &quot;love &gt; hate&quot;"
+    /// assert!(
+    ///     escape_all_quotes("test: &<>\"'é×😀")
+    ///         == "test: &amp;&lt;&gt;&quot;&apos;é×😀"
     /// );
     /// ```
     ///
@@ -208,10 +211,11 @@ escape_fn! {
     ///
     /// ```rust
     /// use htmlize::escape_all_quotes_bytes;
+    /// # use assert2::assert;
     ///
-    /// assert_eq!(
-    ///     escape_all_quotes_bytes(b"test: &<>\"'".as_slice()),
-    ///     b"test: &amp;&lt;&gt;&quot;&apos;".as_slice()
+    /// assert!(
+    ///     escape_all_quotes_bytes(b"test: &<>\"'\xFF".as_slice())
+    ///         == b"test: &amp;&lt;&gt;&quot;&apos;\xFF".as_slice()
     /// );
     /// ```
     ///
@@ -231,7 +235,7 @@ escape_fn! {
 mod tests {
     use super::*;
     use assert2::assert;
-    use paste::paste;
+    use pastey::paste;
 
     macro_rules! test {
         ($name:ident, $($test:tt)+) => {

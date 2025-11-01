@@ -1,11 +1,29 @@
-# Encode and decode HTML entities according to the standard
+# Correctly encode and decode HTML entities
 
 [![docs.rs](https://img.shields.io/docsrs/htmlize)][docs.rs]
 [![Crates.io](https://img.shields.io/crates/v/htmlize)][crates.io]
 ![Rust version 1.60+](https://img.shields.io/badge/Rust%20version-1.60%2B-success)
 
-If you only need to escape text for embedding into HTML then installing is as
-simple as running:
+Htmlize handles both encoding raw strings to be safely inserted in HTML, and
+decoding HTML text with entities to get back a raw string. It closely follows
+the [official WHATWG spec] for encoding and decoding text.
+
+```rust
+use htmlize::{escape_attribute, escape_text};
+assert!(escape_attribute("abc & < > \" '") == "abc &amp; &lt; &gt; &quot; '");
+assert!(escape_text("abc & < > \" '") == "abc &amp; &lt; &gt; \" '");
+```
+
+If you enable the `unescape` or `unescape_fast` feature:
+
+```rust
+assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
+```
+
+## Quick start
+
+If you only need to escape text for embedding into HTML, then adding htmlize to
+your crate is as simple as:
 
 ```sh
 cargo add htmlize
@@ -14,11 +32,12 @@ cargo add htmlize
 If you want to unescape entities back into raw text, see [Unescaping entities
 into text](#unescaping-entities-into-text) below.
 
+This only deals with HTML entities; it does not add or remove HTML tags.
+
 ## Escaping text into entities
 
-The `escape` functions should cover most cases where you need to safely embed a
-string in HTML. Generally, if the text goes in an attribute, use
-[`escape_attribute()`], otherwise use [`escape_text()`].
+If the text goes in an attribute, use [`escape_attribute()`], otherwise use
+[`escape_text()`].
 
 |                         | `&` | `<` | `>` | `"` | `'` |
 |-------------------------|:---:|:---:|:---:|:---:|:---:|
@@ -28,6 +47,10 @@ string in HTML. Generally, if the text goes in an attribute, use
 
 You should almost never need [`escape_all_quotes()`], but it is included because
 sometimes it’s convenient to wrap attribute values in single quotes.
+
+For other characters, e.g. “★”, I recommend just using the character directly
+rather than escaping it with an entity. Please file an [issue][issues] with your
+use case if you need to encode other entities.
 
 ### `escape_text(string) -> string`
 
@@ -62,7 +85,8 @@ cargo add htmlize --features unescape
 
 ### `unescape(string) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities in general.
+This follows the [official WHATWG spec] for expanding entities outside of
+attributes, i.e. in the text.
 
 Strictly speaking, this does not correctly handle text from the value of
 attributes. It’s probably fine for most uses, but if you know that the input
@@ -74,7 +98,7 @@ more information.
 
 ### `unescape_attribute(string) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities found in the
+This follows the [official WHATWG spec] for expanding entities found in the
 value of an attribute.
 
 The only difference is in how this handles named entities without a trailing
@@ -85,9 +109,9 @@ for more information.
 
 ### `unescape_in(string, Htmlize::Context) -> string`
 
-This follows the [official WHATWG algorithm] for expanding entities based on
-the context where they are found. See the [reference
-documentation][`unescape_in()`] for more information.
+This follows the [official WHATWG spec] for expanding entities based on the
+context where they are found. See the [reference documentation][`unescape_in()`]
+for more information.
 
 [Reference][`unescape_in()`].
 
@@ -105,7 +129,7 @@ The `escape` functions are all available with no features enabled.
   * `unescape_fast`: provide fast version of [`unescape()`]. This does _not_
     enable the `entities` feature automatically.
 
-    This takes perhaps 30 seconds longer to build than `unescape`, but the
+    This takes perhaps 2 seconds longer to build than `unescape`, but the
     performance is significantly better in the worst cases. That said, the
     performance of of the `unescape` version is already pretty good, so I don’t
     recommend enabling this unless you really need it.
@@ -171,8 +195,8 @@ This is stable. I have no features planned for the future, though I’m open to
 
 ## License
 
-This project dual-licensed under the Apache 2 and MIT licenses. You may choose
-to use either.
+Unless otherwise noted, this project is dual-licensed under the Apache 2 and MIT
+licenses. You may choose to use either.
 
   * [Apache License, Version 2.0](LICENSE-APACHE)
   * [MIT license](LICENSE-MIT)
@@ -189,20 +213,20 @@ additional terms or conditions.
 
 [docs.rs]: https://docs.rs/htmlize/latest/htmlize/
 [crates.io]: https://crates.io/crates/htmlize
-[`escape_text()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_text.html
-[`escape_text_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_text_bytes.html
-[`escape_attribute()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_attribute.html
-[`escape_attribute_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_attribute_bytes.html
-[`escape_all_quotes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_all_quotes.html
-[`escape_all_quotes_bytes()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.escape_all_quotes_bytes.html
-[`unescape()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape.html
-[`unescape_attribute()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_attribute.html
-[`unescape_in()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_in.html
-[`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.5/htmlize/fn.unescape_bytes_in.html
+[`escape_text()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_text.html
+[`escape_text_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_text_bytes.html
+[`escape_attribute()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_attribute.html
+[`escape_attribute_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_attribute_bytes.html
+[`escape_all_quotes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_all_quotes.html
+[`escape_all_quotes_bytes()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.escape_all_quotes_bytes.html
+[`unescape()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape.html
+[`unescape_attribute()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_attribute.html
+[`unescape_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_in.html
+[`unescape_bytes_in()`]: https://docs.rs/htmlize/1.0.6/htmlize/fn.unescape_bytes_in.html
 [`Cow`]: https://doc.rust-lang.org/std/borrow/enum.Cow.html
-[official WHATWG algorithm]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+[official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
 [phf]: https://crates.io/crates/phf
-[features]: https://docs.rs/htmlize/1.0.5/htmlize/index.html#features
+[features]: https://docs.rs/htmlize/1.0.6/htmlize/index.html#features
 [iai]: https://crates.io/crates/iai
 [criterion]: https://crates.io/crates/criterion
 [`cargo criterion`]: https://crates.io/crates/cargo-criterion

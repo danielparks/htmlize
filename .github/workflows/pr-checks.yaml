@@ -7,37 +7,16 @@ on:
       - main
   pull_request:
 
+env:
+  CLICOLOR: 1
+
 jobs:
-  test:
-    name: cargo test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - run: cargo build --tests --all-features
-      - run: cargo test --all-features
-      - run: cargo test --features unescape
-      - run: cargo test --features entities
-      - run: cargo test
-
-  fmt:
-    name: cargo fmt
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: rustfmt
-      - uses: actions-rust-lang/rustfmt@v1
-
   clippy:
     name: cargo clippy
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: clippy
@@ -52,17 +31,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          rust-version: "1.85.0"
+
+  fmt:
+    name: cargo fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+      - uses: actions-rust-lang/rustfmt@v1
 
   msrv:
     name: cargo msrv
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: Swatinem/rust-cache@v2
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-msrv
       - run: cargo msrv verify
+
+  test:
+    name: cargo test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo build --tests --all-features
+      - run: cargo test --all-features
+      - run: cargo test --features unescape
+      - run: cargo test --features unescape_fast
+      - run: cargo test --features entities
+      - run: cargo test
+
+  typos:
+    name: typos
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: crate-ci/typos@v1.38.1

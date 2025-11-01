@@ -2,18 +2,23 @@
 
 #![allow(clippy::missing_docs_in_private_items, missing_docs)]
 
+use criterion::measurement::WallTime;
 use criterion::{
-    criterion_group, criterion_main, BenchmarkId, Criterion, Throughput,
+    criterion_group, criterion_main, BenchmarkGroup, BenchmarkId, Criterion,
+    Throughput,
 };
 #[allow(clippy::wildcard_imports)]
-use htmlize::*;
+use htmlize::unescape::internal::*;
 use std::time::Duration;
 
 #[macro_use]
 mod util;
 
-fn benchmarks(c: &mut Criterion) {
-    let mut group = c.benchmark_group("unescape");
+fn init_group<'a>(
+    c: &'a mut Criterion,
+    name: &'static str,
+) -> BenchmarkGroup<'a, WallTime> {
+    let mut group = c.benchmark_group(name);
     group
         .noise_threshold(0.10)
         .significance_level(0.01)
@@ -21,7 +26,11 @@ fn benchmarks(c: &mut Criterion) {
         .sample_size(300)
         .warm_up_time(Duration::from_secs(1))
         .measurement_time(Duration::from_secs(10));
+    group
+}
 
+#[allow(clippy::significant_drop_tightening, reason = "buggy lint")]
+fn benchmarks(c: &mut Criterion) {
     let test_inputs = [
         ("normal", "&lt;"),
         ("bare", "&lta"),
@@ -29,21 +38,52 @@ fn benchmarks(c: &mut Criterion) {
         ("invalid", "&xxa"),
     ];
 
+    let mut group = init_group(c, "unescape");
     for (name, entity) in test_inputs {
-        let name = format!("sample_128_{name}");
         let input = util::inputs::make_sample(128, entity, "a");
 
         #[cfg(feature = "unescape")]
-        util::benchmark!(group, unescape_slow, &name, &input);
-        #[cfg(feature = "unescape")]
-        util::benchmark!(group, unescape_attribute_slow, &name, &input);
+        util::benchmark_name!(
+            group,
+            "phf",
+            (Phf, ContextGeneral),
+            &name,
+            &input
+        );
 
         #[cfg(feature = "unescape_fast")]
-        util::benchmark!(group, unescape_fast, &name, &input);
-        #[cfg(feature = "unescape_fast")]
-        util::benchmark!(group, unescape_attribute_fast, &name, &input);
+        util::benchmark_name!(
+            group,
+            "matchgen",
+            (Matchgen, ContextGeneral),
+            &name,
+            &input
+        );
     }
+    group.finish();
 
+    let mut group = init_group(c, "unescape_attribute");
+    for (name, entity) in test_inputs {
+        let input = util::inputs::make_sample(128, entity, "a");
+
+        #[cfg(feature = "unescape")]
+        util::benchmark_name!(
+            group,
+            "phf",
+            (Phf, ContextAttribute),
+            &name,
+            &input
+        );
+
+        #[cfg(feature = "unescape_fast")]
+        util::benchmark_name!(
+            group,
+            "matchgen",
+            (Matchgen, ContextAttribute),
+            &name,
+            &input
+        );
+    }
     group.finish();
 }
 

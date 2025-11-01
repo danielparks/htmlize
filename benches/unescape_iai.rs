@@ -3,9 +3,9 @@
 #![allow(clippy::missing_docs_in_private_items, missing_docs)]
 
 #[allow(clippy::wildcard_imports)]
-use htmlize::*;
+use htmlize::unescape::internal::*;
 use iai::black_box;
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 mod util;
@@ -16,22 +16,22 @@ macro_rules! iai_benchmarks {
             $(
                 #[cfg(feature = "unescape")]
                 fn [<iai_slow_unescape_ $name>]() -> Cow<'static, str> {
-                    unescape_slow(black_box($input))
+                    unescape_in((Phf, ContextGeneral), black_box($input))
                 }
 
                 #[cfg(feature = "unescape")]
                 fn [<iai_slow_unescape_attribute_ $name>]() -> Cow<'static, str> {
-                    unescape_attribute_slow(black_box($input))
+                    unescape_in((Phf, ContextAttribute), black_box($input))
                 }
 
                 #[cfg(feature = "unescape_fast")]
                 fn [<iai_fast_unescape_ $name>]() -> Cow<'static, str> {
-                    unescape_fast(black_box($input))
+                    unescape_in((Matchgen, ContextGeneral), black_box($input))
                 }
 
                 #[cfg(feature = "unescape_fast")]
                 fn [<iai_fast_unescape_attribute_ $name>]() -> Cow<'static, str> {
-                    unescape_attribute_fast(black_box($input))
+                    unescape_in((Matchgen, ContextAttribute), black_box($input))
                 }
             )+
 

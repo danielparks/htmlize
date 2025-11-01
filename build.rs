@@ -36,7 +36,6 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let mut out = BufWriter::new(File::create(out_path).unwrap());
 
     writeln!(out, "\
-        #[allow(clippy::doc_markdown)] // Doesn’t work correctly here.\n\
         /// A map of all valid HTML entities to their expansions.\n\
         ///\n\
         /// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the\n\
@@ -57,10 +56,14 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let mut map_builder = phf_codegen::Map::<&[u8]>::new();
     let mut max_len: usize = 0;
     let mut min_len: usize = usize::MAX;
+    let mut bare_max_len: usize = 0;
     for (name, glyph) in entities {
         map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
+        if !name.ends_with(';') {
+            bare_max_len = max(bare_max_len, name.len());
+        }
 
         {
             use std::fmt::Write;
@@ -104,6 +107,9 @@ pub const ENTITY_MAX_LENGTH: usize = {max_len};
 /// Length of shortest entity including ‘&’ and possibly ‘;’.
 pub const ENTITY_MIN_LENGTH: usize = {min_len};
 
+/// Length of longest semicolon-less entity including ‘&’.
+pub const BARE_ENTITY_MAX_LENGTH: usize = {bare_max_len};
+
 /// Get an unescaped character by its HTML entity
 pub(crate) fn get_entity(candidate: &[u8]) -> Option<&[u8]> {{
     hashify::map! {{
@@ -121,14 +127,6 @@ pub(crate) fn get_entity(candidate: &[u8]) -> Option<&[u8]> {{
 /// next bytes in an iterator are an HTML entity.
 #[cfg(feature = "unescape_fast")]
 fn generate_matcher_rs(entities: &[(String, String)]) {
-    use std::env;
-    use std::fs::File;
-    use std::io::{BufWriter, Write};
-    use std::path::Path;
-
-    let out_path = Path::new(&env::var("OUT_DIR").unwrap()).join("matcher.rs");
-    let mut out = BufWriter::new(File::create(out_path).unwrap());
-
     let mut matcher = matchgen::TreeMatcher::new(
         "fn entity_matcher",
         "(bool, &'static [u8])",
@@ -142,10 +140,9 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     matcher
         .doc("Used in `match_entity()`.")
         .disable_clippy(true)
-        .input_type(matchgen::Input::Iterator)
-        .render(&mut out)
+        .input_type(matchgen::Input::Slice)
+        .write_to_out_dir("matcher.rs")
         .unwrap();
-    writeln!(out).unwrap();
 }
 
 /// Load HTML entities as `vec![...("&gt;", ">")...]`.
