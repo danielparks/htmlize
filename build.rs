@@ -120,7 +120,6 @@ fn generate_matcher_rs(entities: &[(String, String)]) {
     }
     matcher
         .doc("Used in `match_entity()`.")
-        .collapse_nested_single_arms(false)
         .disable_clippy(true)
         .input_type(matchgen::Input::Slice)
         .write_to_out_dir("matcher.rs")
