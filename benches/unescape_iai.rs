@@ -15,22 +15,22 @@ macro_rules! iai_benchmarks {
         paste! {
             $(
                 #[cfg(feature = "unescape")]
-                fn [<iai_slow_unescape_ $name>]() -> Cow<'static, str> {
+                fn [<iai_map_unescape_ $name>]() -> Cow<'static, str> {
                     unescape_in((Phf, ContextGeneral), black_box($input))
                 }
 
                 #[cfg(feature = "unescape")]
-                fn [<iai_slow_unescape_attribute_ $name>]() -> Cow<'static, str> {
+                fn [<iai_map_unescape_attribute_ $name>]() -> Cow<'static, str> {
                     unescape_in((Phf, ContextAttribute), black_box($input))
                 }
 
                 #[cfg(feature = "unescape_fast")]
-                fn [<iai_fast_unescape_ $name>]() -> Cow<'static, str> {
+                fn [<iai_matchgen_unescape_ $name>]() -> Cow<'static, str> {
                     unescape_in((Matchgen, ContextGeneral), black_box($input))
                 }
 
                 #[cfg(feature = "unescape_fast")]
-                fn [<iai_fast_unescape_attribute_ $name>]() -> Cow<'static, str> {
+                fn [<iai_matchgen_unescape_attribute_ $name>]() -> Cow<'static, str> {
                     unescape_in((Matchgen, ContextAttribute), black_box($input))
                 }
             )+
@@ -38,26 +38,26 @@ macro_rules! iai_benchmarks {
             #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             iai::main!(
                 $(
-                    [<iai_slow_unescape_ $name>],
-                    [<iai_slow_unescape_attribute_ $name>],
+                    [<iai_map_unescape_ $name>],
+                    [<iai_map_unescape_attribute_ $name>],
                 )+
             );
 
             #[cfg(all(feature = "unescape", feature = "unescape_fast"))]
             iai::main!(
                 $(
-                    [<iai_slow_unescape_ $name>],
-                    [<iai_slow_unescape_attribute_ $name>],
-                    [<iai_fast_unescape_ $name>],
-                    [<iai_fast_unescape_attribute_ $name>],
+                    [<iai_map_unescape_ $name>],
+                    [<iai_map_unescape_attribute_ $name>],
+                    [<iai_matchgen_unescape_ $name>],
+                    [<iai_matchgen_unescape_attribute_ $name>],
                 )+
             );
 
             #[cfg(all(not(feature = "unescape"), feature = "unescape_fast"))]
             iai::main!(
                 $(
-                    [<iai_fast_unescape_ $name>],
-                    [<iai_fast_unescape_attribute_ $name>],
+                    [<iai_matchgen_unescape_ $name>],
+                    [<iai_matchgen_unescape_attribute_ $name>],
                 )+
             );
         }
