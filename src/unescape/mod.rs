@@ -52,7 +52,7 @@ pub fn unescape<'a, S: Into<Cow<'a, str>>>(escaped: S) -> Cow<'a, str> {
 
     #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
     return internal::unescape_in(
-        (internal::Phf, internal::ContextGeneral),
+        (internal::Map::<PhfMap>::default(), internal::ContextGeneral),
         escaped,
     );
 }
@@ -82,7 +82,10 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 
     #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
     return internal::unescape_in(
-        (internal::Phf, internal::ContextAttribute),
+        (
+            internal::Map::<PhfMap>::default(),
+            internal::ContextAttribute,
+        ),
         escaped,
     );
 }
@@ -135,7 +138,10 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 
             #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             return internal::unescape_in(
-                (internal::Phf, internal::ContextAttribute),
+                (
+                    internal::Map::<PhfMap>::default(),
+                    internal::ContextAttribute,
+                ),
                 escaped,
             );
         }
@@ -148,7 +154,7 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 
             #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             return internal::unescape_in(
-                (internal::Phf, internal::ContextGeneral),
+                (internal::Map::<PhfMap>::default(), internal::ContextGeneral),
                 escaped,
             );
         }
@@ -203,7 +209,10 @@ pub fn unescape_bytes_in<'a, S: Into<Cow<'a, [u8]>>>(
 
             #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             return internal::unescape_bytes_in(
-                (internal::Phf, internal::ContextAttribute),
+                (
+                    internal::Map::<PhfMap>::default(),
+                    internal::ContextAttribute,
+                ),
                 escaped,
             );
         }
@@ -216,7 +225,7 @@ pub fn unescape_bytes_in<'a, S: Into<Cow<'a, [u8]>>>(
 
             #[cfg(all(feature = "unescape", not(feature = "unescape_fast")))]
             return internal::unescape_bytes_in(
-                (internal::Phf, internal::ContextGeneral),
+                (internal::Map::<PhfMap>::default(), internal::ContextGeneral),
                 escaped,
             );
         }

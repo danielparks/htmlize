@@ -16,12 +16,12 @@ macro_rules! iai_benchmarks {
             $(
                 #[cfg(feature = "unescape")]
                 fn [<iai_slow_unescape_ $name>]() -> Cow<'static, str> {
-                    unescape_in((Phf, ContextGeneral), black_box($input))
+                    unescape_in((Map::<PhfMap>::default(), ContextGeneral), black_box($input))
                 }
 
                 #[cfg(feature = "unescape")]
                 fn [<iai_slow_unescape_attribute_ $name>]() -> Cow<'static, str> {
-                    unescape_in((Phf, ContextAttribute), black_box($input))
+                    unescape_in((Map::<PhfMap>::default(), ContextAttribute), black_box($input))
                 }
 
                 #[cfg(feature = "unescape_fast")]
