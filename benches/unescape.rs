@@ -45,7 +45,7 @@ fn benchmarks(c: &mut Criterion) {
         #[cfg(feature = "unescape")]
         util::benchmark_name!(
             group,
-            "phf",
+            "map",
             (Phf, ContextGeneral),
             &name,
             &input
@@ -69,7 +69,7 @@ fn benchmarks(c: &mut Criterion) {
         #[cfg(feature = "unescape")]
         util::benchmark_name!(
             group,
-            "phf",
+            "map",
             (Phf, ContextAttribute),
             &name,
             &input
