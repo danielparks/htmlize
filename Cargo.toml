@@ -73,6 +73,11 @@ name = "unescape"
 harness = false
 required-features = ["bench", "_unescape_either"]
 
+[[bench]]
+name = "hash"
+harness = false
+required-features = ["bench", "unescape", "unescape_phf", "unescape_quick", "unescape_fast"]
+
 [lints]
 workspace = true
 
