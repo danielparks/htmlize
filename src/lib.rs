@@ -153,13 +153,3 @@ feature! {
     }
     pub use entities::*;
 }
-
-feature! {
-    #![feature = "entities_quick"]
-
-    /// For some reason `rustdoc` doesn’t show the feature flags without `mod`.
-    mod entities_quick {
-        include!(concat!(env!("OUT_DIR"), "/entities_quick.rs"));
-    }
-    pub use entities_quick::*;
-}

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>dirty/escape_text/big History - Criterion.rs</title>
+    <style type="text/css">body {
+    font: 14px Helvetica Neue;
+    text-rendering: optimizelegibility;
+}
+
+.body {
+    width: 960px;
+    margin: auto;
+}
+
+a:link {
+    color: #1F78B4;
+    text-decoration: none;
+}
+
+h2 {
+    font-size: 36px;
+    font-weight: 300;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 300;
+}
+
+#footer {
+    height: 40px;
+    background: #888;
+    color: white;
+    font-size: larger;
+    font-weight: 300;
+}
+
+#footer a {
+    color: white;
+    text-decoration: underline;
+}
+
+#footer p {
+    text-align: center
+}
+
+        .number {
+            opacity: 0.6
+        }
+        .timestamp {
+            opacity: 0.6;
+            float: right
+        }
+        .improved {
+            color: green
+        }
+        .regressed {
+            color: brick
+        }
+
+        th.ci-bound {
+            opacity: 0.6
+        }
+
+        td.ci-bound {
+            opacity: 0.5
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body">
+        <img alt="History of dirty/escape_text/big" src="history.svg"></img>
+        <h4> <span class="number"># 20</span><span class="timestamp">2025-11-02T18:36:22-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">582.85ns</td>
+            <td class="nochange">585.08ns</td>
+            <td class="ci-bound">587.31ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">505.60MiB/s</td>
+            <td class="nochange">503.66MiB/s</td>
+            <td class="ci-bound">501.76MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+2.6410%</td>
+            <td>+3.6501%</td>
+            <td class="ci-bound">+4.5116%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-2.5730%</td>
+            <td>-3.5215%</td>
+            <td class="ci-bound">-4.3168%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 19</span><span class="timestamp">2025-11-02T17:48:23-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">554.16ns</td>
+            <td class="nochange">557.13ns</td>
+            <td class="ci-bound">560.08ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">531.76MiB/s</td>
+            <td class="nochange">528.94MiB/s</td>
+            <td class="ci-bound">526.15MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-3.9594%</td>
+            <td>-2.8918%</td>
+            <td class="ci-bound">-1.8276%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+4.1226%</td>
+            <td>+2.9779%</td>
+            <td class="ci-bound">+1.8616%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 18</span><span class="timestamp">2023-02-28T06:55:26-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">568.64ns</td>
+            <td class="nochange">571.09ns</td>
+            <td class="ci-bound">573.65ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">518.23MiB/s</td>
+            <td class="nochange">516.00MiB/s</td>
+            <td class="ci-bound">513.70MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+0.8853%</td>
+            <td>+2.0246%</td>
+            <td class="ci-bound">+3.1576%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-0.8775%</td>
+            <td>-1.9844%</td>
+            <td class="ci-bound">-3.0610%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 17</span><span class="timestamp">2023-02-03T23:03:08-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">563.29ns</td>
+            <td class="nochange">567.11ns</td>
+            <td class="ci-bound">571.64ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">523.15MiB/s</td>
+            <td class="nochange">519.63MiB/s</td>
+            <td class="ci-bound">515.51MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-1.0774%</td>
+            <td>-0.0971%</td>
+            <td class="ci-bound">+0.9756%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+1.0891%</td>
+            <td>+0.0972%</td>
+            <td class="ci-bound">-0.9662%</td>
+        </tr>
+        </table>
+        Change within noise threshold.<hr>
+        <h4> <span class="number"># 16</span><span class="timestamp">2023-01-31T06:03:15-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">557.22ns</td>
+            <td class="nochange">560.69ns</td>
+            <td class="ci-bound">564.36ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">528.85MiB/s</td>
+            <td class="nochange">525.58MiB/s</td>
+            <td class="ci-bound">522.16MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-2.5292%</td>
+            <td>-1.4788%</td>
+            <td class="ci-bound">-0.5030%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+2.5948%</td>
+            <td>+1.5010%</td>
+            <td class="ci-bound">+0.5055%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 15</span><span class="timestamp">2023-01-21T07:25:27-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">571.86ns</td>
+            <td class="nochange">574.06ns</td>
+            <td class="ci-bound">576.33ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">515.31MiB/s</td>
+            <td class="nochange">513.33MiB/s</td>
+            <td class="ci-bound">511.31MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-1.3532%</td>
+            <td>-0.4747%</td>
+            <td class="ci-bound">+0.5859%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+1.3718%</td>
+            <td>+0.4770%</td>
+            <td class="ci-bound">-0.5825%</td>
+        </tr>
+        </table>
+        Change within noise threshold.<hr>
+        <h4> <span class="number"># 14</span><span class="timestamp">2023-01-21T06:23:12-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">575.03ns</td>
+            <td class="nochange">576.91ns</td>
+            <td class="ci-bound">578.83ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">512.47MiB/s</td>
+            <td class="nochange">510.80MiB/s</td>
+            <td class="ci-bound">509.10MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-2.6993%</td>
+            <td>-1.7041%</td>
+            <td class="ci-bound">-0.8869%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+2.7742%</td>
+            <td>+1.7337%</td>
+            <td class="ci-bound">+0.8948%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 13</span><span class="timestamp">2023-01-21T06:19:03-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">585.39ns</td>
+            <td class="nochange">586.83ns</td>
+            <td class="ci-bound">588.33ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">503.40MiB/s</td>
+            <td class="nochange">502.17MiB/s</td>
+            <td class="ci-bound">500.88MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-0.4602%</td>
+            <td>+0.7171%</td>
+            <td class="ci-bound">+1.9012%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+0.4623%</td>
+            <td>-0.7120%</td>
+            <td class="ci-bound">-1.8657%</td>
+        </tr>
+        </table>
+        Change within noise threshold.<hr>
+        <h4> <span class="number"># 12</span><span class="timestamp">2023-01-21T06:14:32-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">580.46ns</td>
+            <td class="nochange">582.93ns</td>
+            <td class="ci-bound">585.66ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">507.67MiB/s</td>
+            <td class="nochange">505.52MiB/s</td>
+            <td class="ci-bound">503.17MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-0.8632%</td>
+            <td>+0.0359%</td>
+            <td class="ci-bound">+1.0688%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+0.8707%</td>
+            <td>-0.0358%</td>
+            <td class="ci-bound">-1.0575%</td>
+        </tr>
+        </table>
+        Change within noise threshold.<hr>
+        <h4> <span class="number"># 11</span><span class="timestamp">2023-01-21T06:10:01-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">584.83ns</td>
+            <td class="nochange">588.60ns</td>
+            <td class="ci-bound">592.58ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">503.89MiB/s</td>
+            <td class="nochange">500.65MiB/s</td>
+            <td class="ci-bound">497.29MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+0.0699%</td>
+            <td>+1.0421%</td>
+            <td class="ci-bound">+1.9319%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-0.0699%</td>
+            <td>-1.0313%</td>
+            <td class="ci-bound">-1.8953%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 10</span><span class="timestamp">2023-01-21T06:05:36-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">575.53ns</td>
+            <td class="nochange">577.66ns</td>
+            <td class="ci-bound">579.86ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">512.02MiB/s</td>
+            <td class="nochange">510.13MiB/s</td>
+            <td class="ci-bound">508.20MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-1.1829%</td>
+            <td>+0.0443%</td>
+            <td class="ci-bound">+1.2075%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+1.1970%</td>
+            <td>-0.0443%</td>
+            <td class="ci-bound">-1.1931%</td>
+        </tr>
+        </table>
+        Change within noise threshold.<hr>
+        <h4> <span class="number"># 9</span><span class="timestamp">2023-01-21T06:01:06-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">573.35ns</td>
+            <td class="nochange">575.67ns</td>
+            <td class="ci-bound">578.17ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">513.97MiB/s</td>
+            <td class="nochange">511.90MiB/s</td>
+            <td class="ci-bound">509.68MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+1.4304%</td>
+            <td>+2.4897%</td>
+            <td class="ci-bound">+3.7587%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-1.4102%</td>
+            <td>-2.4292%</td>
+            <td class="ci-bound">-3.6225%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 8</span><span class="timestamp">2023-01-14T18:24:45-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">561.70ns</td>
+            <td class="nochange">564.41ns</td>
+            <td class="ci-bound">567.22ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">524.63MiB/s</td>
+            <td class="nochange">522.11MiB/s</td>
+            <td class="ci-bound">519.52MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+0.6780%</td>
+            <td>+1.6101%</td>
+            <td class="ci-bound">+2.5047%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-0.6734%</td>
+            <td>-1.5846%</td>
+            <td class="ci-bound">-2.4435%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 7</span><span class="timestamp">2023-01-13T17:17:23-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">549.33ns</td>
+            <td class="nochange">552.49ns</td>
+            <td class="ci-bound">556.08ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">536.45MiB/s</td>
+            <td class="nochange">533.37MiB/s</td>
+            <td class="ci-bound">529.93MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-7.2539%</td>
+            <td>-6.2681%</td>
+            <td class="ci-bound">-5.3659%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+7.8212%</td>
+            <td>+6.6873%</td>
+            <td class="ci-bound">+5.6701%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 6</span><span class="timestamp">2023-01-13T17:13:56-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">584.68ns</td>
+            <td class="nochange">587.38ns</td>
+            <td class="ci-bound">590.64ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">504.01MiB/s</td>
+            <td class="nochange">501.70MiB/s</td>
+            <td class="ci-bound">498.92MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+3.8659%</td>
+            <td>+4.9929%</td>
+            <td class="ci-bound">+6.1350%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-3.7220%</td>
+            <td>-4.7555%</td>
+            <td class="ci-bound">-5.7804%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 5</span><span class="timestamp">2023-01-13T17:08:41-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">557.99ns</td>
+            <td class="nochange">560.60ns</td>
+            <td class="ci-bound">563.39ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">528.12MiB/s</td>
+            <td class="nochange">525.66MiB/s</td>
+            <td class="ci-bound">523.06MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-4.6827%</td>
+            <td>-3.7719%</td>
+            <td class="ci-bound">-2.8542%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+4.9127%</td>
+            <td>+3.9197%</td>
+            <td class="ci-bound">+2.9381%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 4</span><span class="timestamp">2023-01-13T17:03:21-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">584.31ns</td>
+            <td class="nochange">586.24ns</td>
+            <td class="ci-bound">588.12ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">504.33MiB/s</td>
+            <td class="nochange">502.67MiB/s</td>
+            <td class="ci-bound">501.06MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-7.6026%</td>
+            <td>-6.8081%</td>
+            <td class="ci-bound">-5.9849%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+8.2282%</td>
+            <td>+7.3055%</td>
+            <td class="ci-bound">+6.3659%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 3</span><span class="timestamp">2023-01-13T16:59:54-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">628.23ns</td>
+            <td class="nochange">632.44ns</td>
+            <td class="ci-bound">636.96ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">469.07MiB/s</td>
+            <td class="nochange">465.95MiB/s</td>
+            <td class="ci-bound">462.64MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">+3.8417%</td>
+            <td>+5.3656%</td>
+            <td class="ci-bound">+6.5975%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">-3.6996%</td>
+            <td>-5.0924%</td>
+            <td class="ci-bound">-6.1892%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 2</span><span class="timestamp">2023-01-13T16:57:55-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">593.99ns</td>
+            <td class="nochange">597.41ns</td>
+            <td class="ci-bound">601.76ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">496.12MiB/s</td>
+            <td class="nochange">493.27MiB/s</td>
+            <td class="ci-bound">489.70MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-20.278%</td>
+            <td>-19.165%</td>
+            <td class="ci-bound">-17.947%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+25.436%</td>
+            <td>+23.709%</td>
+            <td class="ci-bound">+21.873%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 1</span><span class="timestamp">2023-01-13T16:55:56-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">734.63ns</td>
+            <td class="nochange">737.23ns</td>
+            <td class="ci-bound">740.01ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">401.14MiB/s</td>
+            <td class="nochange">399.72MiB/s</td>
+            <td class="ci-bound">398.22MiB/s</td>
+        </tr>
+        <tr>
+            <td>Change in Value:</td>
+            <td class="ci-bound">-4.7951%</td>
+            <td>-3.6790%</td>
+            <td class="ci-bound">-2.5615%</td>
+        </tr>
+        <tr>
+            <td>Change in Throughput:</td>
+            <td class="ci-bound">+5.0367%</td>
+            <td>+3.8195%</td>
+            <td class="ci-bound">+2.6288%</td>
+        </tr>
+        </table>
+        No change in performance detected.<hr>
+        <h4> <span class="number"># 0</span><span class="timestamp">2023-01-13T16:53:57-08:00</span> </h4>
+        <br>
+        <br>
+        <table>
+        <tr>
+            <th></th>
+            <th class="ci-bound"> Lower Bound</th>
+            <th>Estimate</th>
+            <th class="ci-bound">Upper Bound</th>
+        </tr>
+        <tr>
+            <td>Value:</td>
+            <td class="ci-bound">760.70ns</td>
+            <td class="nochange">763.30ns</td>
+            <td class="ci-bound">765.83ns</td>
+        </tr>
+        <tr>
+            <td>Throughput:</td>
+            <td class="ci-bound">387.39MiB/s</td>
+            <td class="nochange">386.07MiB/s</td>
+            <td class="ci-bound">384.79MiB/s</td>
+        </tr>
+        </table>
+    </div>
+    <div id="footer">
+        <p>This report was generated by <a href="https://github.com/bheisler/cargo-criterion">cargo-criterion</a></p>
+    </div>
+</body>
+
+</html>

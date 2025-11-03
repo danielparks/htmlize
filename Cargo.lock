@@ -268,8 +268,6 @@ dependencies = [
  "pastey",
  "phf",
  "phf_codegen",
- "quickphf",
- "quickphf_codegen",
  "serde_json",
 ]
 
@@ -475,30 +473,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b368fba921b0dce7e60f5e04ec15e565b3303972b42bcfde1d0713b881959eb"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "quickdiv"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "affb828694e2f006fdcd24d9096eab97dea9f100ee36b19886c9ea4531d49483"
-
-[[package]]
-name = "quickphf"
-version = "0.1.0"
-source = "git+https://github.com/AlexTMjugador/quickphf.git?branch=feat/support-array-key-vals#e7a043dc7bf764be385929265ca9c9358c6c5ee8"
-dependencies = [
- "quickdiv",
- "wyhash",
-]
-
-[[package]]
-name = "quickphf_codegen"
-version = "0.1.1"
-source = "git+https://github.com/AlexTMjugador/quickphf.git?branch=feat/support-array-key-vals#e7a043dc7bf764be385929265ca9c9358c6c5ee8"
-dependencies = [
- "quickdiv",
- "quickphf",
 ]
 
 [[package]]
@@ -857,15 +831,6 @@ name = "windows_x86_64_msvc"
 version = "0.48.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a515f5799fe4961cb532f983ce2b23082366b898e52ffbce459c86f67c8378a"
-
-[[package]]
-name = "wyhash"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baf6e163c25e3fac820b4b453185ea2dea3b6a3e0a721d4d23d75bd33734c295"
-dependencies = [
- "rand_core",
-]
 
 [[package]]
 name = "yansi"

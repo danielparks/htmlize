@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>clean Summary - Criterion.rs</title>
+    <style type="text/css">body {
+    font: 14px Helvetica Neue;
+    text-rendering: optimizelegibility;
+}
+
+.body {
+    width: 960px;
+    margin: auto;
+}
+
+a:link {
+    color: #1F78B4;
+    text-decoration: none;
+}
+
+h2 {
+    font-size: 36px;
+    font-weight: 300;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 300;
+}
+
+#footer {
+    height: 40px;
+    background: #888;
+    color: white;
+    font-size: larger;
+    font-weight: 300;
+}
+
+#footer a {
+    color: white;
+    text-decoration: underline;
+}
+
+#footer p {
+    text-align: center
+}
+    </style>
+</head>
+
+<body>
+    <div class="body">
+        <h2>clean</h2>
+        <h3>Violin Plot</h3>
+        <a href="violin.svg">
+            <img src="violin.svg" alt="Violin Plot" />
+        </a>
+        <p>This chart shows the relationship between function/parameter and iteration time. The thickness of the shaded
+            region indicates the probability that a measurement of the given function/parameter would take a particular
+            length of time.</p>
+        <h3>Line Chart</h3>
+        <img src="lines.svg" alt="Line Chart" />
+        <p>This chart shows the mean measured time for each function as the input (or the size of the input) increases.</p>
+        <section class="plots">
+            <a href="../clean/escape_text/small/index.html">
+                <h4>clean/escape_text/small</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text/small/pdf.svg">
+                                <img src="../clean/escape_text/small/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text/small/regression.svg">
+                                <img src="../clean/escape_text/small/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes/small/index.html">
+                <h4>clean/escape_all_quotes/small</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes/small/pdf.svg">
+                                <img src="../clean/escape_all_quotes/small/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes/small/regression.svg">
+                                <img src="../clean/escape_all_quotes/small/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_text_bytes/small/index.html">
+                <h4>clean/escape_text_bytes/small</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text_bytes/small/pdf.svg">
+                                <img src="../clean/escape_text_bytes/small/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text_bytes/small/regression.svg">
+                                <img src="../clean/escape_text_bytes/small/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes_bytes/small/index.html">
+                <h4>clean/escape_all_quotes_bytes/small</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/small/pdf.svg">
+                                <img src="../clean/escape_all_quotes_bytes/small/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/small/regression.svg">
+                                <img src="../clean/escape_all_quotes_bytes/small/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_text/medium/index.html">
+                <h4>clean/escape_text/medium</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text/medium/pdf.svg">
+                                <img src="../clean/escape_text/medium/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text/medium/regression.svg">
+                                <img src="../clean/escape_text/medium/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes/medium/index.html">
+                <h4>clean/escape_all_quotes/medium</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes/medium/pdf.svg">
+                                <img src="../clean/escape_all_quotes/medium/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes/medium/regression.svg">
+                                <img src="../clean/escape_all_quotes/medium/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_text_bytes/medium/index.html">
+                <h4>clean/escape_text_bytes/medium</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text_bytes/medium/pdf.svg">
+                                <img src="../clean/escape_text_bytes/medium/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text_bytes/medium/regression.svg">
+                                <img src="../clean/escape_text_bytes/medium/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes_bytes/medium/index.html">
+                <h4>clean/escape_all_quotes_bytes/medium</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/medium/pdf.svg">
+                                <img src="../clean/escape_all_quotes_bytes/medium/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/medium/regression.svg">
+                                <img src="../clean/escape_all_quotes_bytes/medium/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_text/big/index.html">
+                <h4>clean/escape_text/big</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text/big/pdf.svg">
+                                <img src="../clean/escape_text/big/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text/big/regression.svg">
+                                <img src="../clean/escape_text/big/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes/big/index.html">
+                <h4>clean/escape_all_quotes/big</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes/big/pdf.svg">
+                                <img src="../clean/escape_all_quotes/big/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes/big/regression.svg">
+                                <img src="../clean/escape_all_quotes/big/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_text_bytes/big/index.html">
+                <h4>clean/escape_text_bytes/big</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_text_bytes/big/pdf.svg">
+                                <img src="../clean/escape_text_bytes/big/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_text_bytes/big/regression.svg">
+                                <img src="../clean/escape_text_bytes/big/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="plots">
+            <a href="../clean/escape_all_quotes_bytes/big/index.html">
+                <h4>clean/escape_all_quotes_bytes/big</h4>
+            </a>
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/big/pdf.svg">
+                                <img src="../clean/escape_all_quotes_bytes/big/pdf_small.svg" alt="PDF of Slope" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../clean/escape_all_quotes_bytes/big/regression.svg">
+                                <img src="../clean/escape_all_quotes_bytes/big/regression_small.svg" alt="Regression" width="450"
+                                    height="300" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <div id="footer">
+        <p>This report was generated by <a href="https://github.com/bheisler/cargo-criterion">cargo-criterion</a></p>
+    </div>
+</body>
+
+</html>

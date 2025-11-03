@@ -14,8 +14,7 @@ fn main() {
     #[cfg(any(
         feature = "unescape_fast",
         feature = "unescape",
-        feature = "entities",
-        feature = "entities_quick"
+        feature = "entities"
     ))]
     let entities = load_entities("entities.json");
 
@@ -30,9 +29,6 @@ fn main() {
 
     #[cfg(feature = "entities")]
     generate_entities_rs(&entities);
-
-    #[cfg(feature = "entities_quick")]
-    generate_entities_quick_rs(&entities);
 }
 
 /// Generate entities.rs file containing all valid HTML entities in a
@@ -98,72 +94,6 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     .unwrap();
 }
 
-/// Generate `entities_quick.rs` file containing all valid HTML entities in a
-/// [`quickphf::PhfMap`]. It also generates documentation with a table of all
-/// the entities and their expansions.
-#[cfg(feature = "entities_quick")]
-fn generate_entities_quick_rs(entities: &[(String, String)]) {
-    use std::env;
-    use std::fs::File;
-    use std::io::{BufWriter, Write};
-    use std::path::Path;
-
-    let out_path =
-        Path::new(&env::var("OUT_DIR").unwrap()).join("entities_quick.rs");
-    let mut out = BufWriter::new(File::create(out_path).unwrap());
-
-    writeln!(out, "\
-        /// A map of all valid HTML entities to their expansions.\n\
-        ///\n\
-        /// The keys of the map are full entity byte strings, e.g. `b\"&copy;\"`, and the\n\
-        /// values are their expansions, e.g. `b\"©\"`.\n\
-        ///\n\
-        /// See the [WHATWG HTML spec][spec] for the canonical list of entities with\n\
-        /// their codepoints and glyphs. The [entities.json][] file linked there is\n\
-        /// used to generate this constant.\n\
-        ///\n\
-        /// [spec]: https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references\n\
-        /// [entities.json]: https://html.spec.whatwg.org/entities.json\n\
-        ///\n\
-        /// Entity                         | Codepoints         | Glyph\n\
-        /// -------------------------------|--------------------|------").unwrap();
-
-    let (keys, values): (Vec<_>, Vec<_>) = entities
-        .iter()
-        .inspect(|(name, glyph)| {
-            // `{:28}` would pad the output inside the backticks.
-            let name = format!("`{name}`");
-
-            let codepoints = glyph
-                .chars()
-                .map(|c| format!("U+{:06X}", u32::from(c)))
-                .collect::<Vec<_>>()
-                .join(", ");
-
-            // Suppress a few inconvenient glyphs. Newline adds an extra line, and
-            // tab causes a clippy warning. Backticks are actually fine, but it’s
-            // correct to escape them.
-            let glyph = match glyph.as_str() {
-                "\n" | "\t" => "",
-                "`" => "\\`",
-                v => v,
-            };
-
-            writeln!(out, "/// {name:30} | {codepoints:18} | {glyph}",)
-                .unwrap();
-        })
-        .map(|(name, glyph)| (name.as_bytes(), glyph.as_bytes()))
-        .unzip();
-
-    writeln!(out, "#[allow(clippy::unreadable_literal)]").unwrap();
-    writeln!(
-        out,
-        "pub static ENTITIES_QUICK: quickphf::PhfMap<&[u8], &[u8]> = {};",
-        quickphf_codegen::build_map(&keys, &values),
-    )
-    .unwrap();
-}
-
 /// Generate `entities_length.rs` file containing constants with the minimum
 /// and maximum entity lengths.
 #[cfg(any(feature = "unescape", feature = "entities"))]
@@ -222,7 +152,7 @@ fn generate_unescape_entity_rs(entities: &[(String, String)]) {
         /// Get expansion or `None` for a candidate HTML entity byte string.\n\
         #[must_use]\n\
         #[allow(clippy::too_many_lines)]\n\
-        fn expand_entity(candidate: &[u8]) -> Option<&'static [u8]> {{\n\
+        fn expand_entity(candidate: &[u8]) -> Option<&[u8]> {{\n\
             hashify::map! {{\n\
                 candidate,\n\
                 &[u8],"
