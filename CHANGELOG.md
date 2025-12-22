@@ -9,9 +9,23 @@ All notable changes to this project will be documented in this file.
 * Major improvements in build time for the `unescape_fast` features (went from
   8 seconds to 3 seconds on my laptop).
 * Add `BARE_ENTITY_MAX_LENGTH` constant that contains the length of the longest
-  entity without a semicolon (enabled with feature `entities`).
+  entity without a semicolon (enabled with features `entities` or `unescape`).
 * Clarify examples in documentation and README.
 * Fix a few spelling mistakes in documentation.
+
+### Breaking changes
+
+* `unescape`: Use [hashify] to map entity byte strings to their expansions. This
+  is faster than the old [phf] map, but still slower than [matchgen] in
+  `unescape_fast`. Thanks to [xamgore] for the PR!
+* The `unescape` feature no longer automatically enables the `entities` feature.
+  If you need the `ENTITIES` map, enable the `entities` feature.
+* Updated minimum supported Rust version (MSRV) to 1.74.1 to support [hashify].
+
+[hashify]: https://crates.io/crates/hashify
+[matchgen]: https://crates.io/crates/matchgen
+[phf]: https://crates.io/crates/phf
+[xamgore]: https://github.com/xamgore
 
 ## Release 1.0.6 (2025-04-26)
 
