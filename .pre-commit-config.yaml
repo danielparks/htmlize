@@ -17,14 +17,14 @@ repos:
       - id: detect-private-key
       - id: mixed-line-ending
         args: ["--fix=no"]
-        exclude: "^target/"
+        exclude: "target/"
       - id: no-commit-to-branch
   - repo: https://github.com/crate-ci/typos
     rev: v1.41.0
     hooks:
       - id: typos
         args: []
-        exclude: "^target/"
+        exclude: "target/"
   - repo: local
     hooks:
       - id: cargo clippy

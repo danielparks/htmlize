@@ -5,3 +5,19 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    # Security updates only:
+    open-pull-requests-limit: 0
+    groups:
+      cargo-dependencies:
+        applies-to: security-updates
+        patterns:
+          - "*"
