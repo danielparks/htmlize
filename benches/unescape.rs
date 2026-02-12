@@ -46,7 +46,7 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "map",
-            (Phf, ContextGeneral),
+            (Map, ContextGeneral),
             &name,
             &input
         );
@@ -70,7 +70,7 @@ fn benchmarks(c: &mut Criterion) {
         util::benchmark_name!(
             group,
             "map",
-            (Phf, ContextAttribute),
+            (Map, ContextAttribute),
             &name,
             &input
         );

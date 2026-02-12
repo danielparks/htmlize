@@ -1,7 +1,7 @@
 desc: I1 cache:         32768 B, 64 B, 8-way associative
 desc: D1 cache:         32768 B, 64 B, 8-way associative
 desc: LL cache:         8388608 B, 64 B, 16-way associative
-cmd: /work/target/release/deps/escape_iai-18ad593b5882cc04 --iai-run 11
+cmd: /work/target/release/deps/escape_iai-d9badc890670443e --iai-run 11
 events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
 fl=./csu/../csu/libc-start.c
 fn=__libc_start_main@@GLIBC_2.34
@@ -2255,7 +2255,7 @@ fn=__GI___tunable_set_val
 fn=__GI___tunables_init
 71 175 0 0 35 0 0 0 0 0
 74 68 0 0 0 0 0 0 0 0
-77 3675 1 1 525 17 17 0 0 0
+77 3675 1 1 525 18 18 0 0 0
 81 68 1 1 0 0 0 0 0 0
 86 136 0 0 0 0 0 0 0 0
 273 7 0 0 1 0 0 0 0 0
@@ -2504,7 +2504,7 @@ fn=dl_main
 311 2 0 0 0 0 0 1 0 0
 862 1 0 0 1 0 0 0 0 0
 864 1 1 1 0 0 0 1 0 0
-870 1 0 0 1 0 0 0 0 0
+870 1 0 0 1 1 1 0 0 0
 873 1 0 0 0 0 0 1 0 0
 875 1 0 0 0 0 0 1 0 0
 880 1 0 0 0 0 0 1 0 0
@@ -5729,13 +5729,13 @@ fn=strcspn
 86 13 0 0 13 0 0 0 0 0
 87 13 0 0 13 0 0 0 0 0
 88 13 0 0 0 0 0 0 0 0
-90 13 0 0 13 1 1 0 0 0
+90 13 0 0 13 0 0 0 0 0
 91 13 0 0 13 0 0 0 0 0
 92 13 0 0 0 0 0 0 0 0
 94 13 0 0 13 0 0 0 0 0
 95 13 0 0 13 0 0 0 0 0
 96 13 0 0 0 0 0 0 0 0
-98 13 0 0 13 0 0 0 0 0
+98 13 0 0 13 1 1 0 0 0
 99 13 0 0 13 0 0 0 0 0
 100 13 0 0 0 0 0 0 0 0
 102 1 0 0 0 0 0 0 0 0
@@ -5896,4 +5896,4 @@ fn=std::sys::pal::unix::stack_overflow::thread_info::set_current_info
 0 82 8 8 25 2 1 27 2 2
 fn=std::sys::sync::once::futex::Once::call
 0 96 4 3 33 4 1 22 0 0
-summary: 381900 1748 1701 93529 2995 2277 39694 1066 988
+summary: 381900 1748 1701 93529 2997 2279 39694 1066 988
