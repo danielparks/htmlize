@@ -188,12 +188,16 @@ root@d0a0db46770d:/work# cargo bench --features iai iai
    Compiling htmlize [...]
 ```
 
-## Development status
+## Development
 
 This is stable. I have no features planned for the future, though I’m open to
 [suggestions][issues].
 
-## License
+### LLM use
+
+This crate includes no LLM (AI) produced code.
+
+### License
 
 Unless otherwise noted, this project is dual-licensed under the Apache 2 and MIT
 licenses. You may choose to use either.
