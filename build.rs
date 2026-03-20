@@ -81,7 +81,7 @@ fn generate_entities_rs(entities: &[(String, String)]) {
             v => v,
         };
 
-        writeln!(out, "/// {name:30} | {codepoints:18} | {glyph}",).unwrap();
+        writeln!(out, "/// {name:30} | {codepoints:18} | {glyph}").unwrap();
     }
 
     let map = map_builder.build();
