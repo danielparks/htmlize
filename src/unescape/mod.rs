@@ -18,6 +18,10 @@
 //!
 //! Some entities are prefixes for multiple other entities. For example:
 //!   &times &times; &timesb; &timesbar; &timesd;
+#![expect(
+    clippy::doc_paragraphs_missing_punctuation,
+    reason = "false alarm on module docs"
+)]
 
 use std::borrow::Cow;
 

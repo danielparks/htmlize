@@ -1,4 +1,4 @@
-//! Internal unescape code
+//! Internal unescape code.
 
 use std::borrow::Cow;
 use std::char;
