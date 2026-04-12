@@ -67,8 +67,8 @@ assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
 //!     performance of of the `unescape` version is already pretty good, so I
 //!     don’t recommend enabling this unless you really need it.
 //!
-//!   * `unescape`: provide normal version of [`unescape()`]. This will
-//!     automatically enable the `entities` feature.
+//!   * `unescape`: provide normal version of [`unescape()`]. Enabling this will
+//!     add a dependency on [hashify] and may slow builds by a few seconds.
 //!
 //!   * `entities`: build [`ENTITIES`] map. Enabling this will add a dependency
 //!     on [phf] and may slow builds by a few seconds.
@@ -89,10 +89,11 @@ assert!(htmlize::unescape("3 &times 4 &gt; 10") == "3 × 4 > 10");
 //!
 //! # Minimum supported Rust version
 //!
-//! Currently the minimum supported Rust version (MSRV) is **1.60**. Future
+//! Currently the minimum supported Rust version (MSRV) is **1.74.1**. Future
 //! increases in the MSRV will require a major version bump.
 //!
 //! [official WHATWG spec]: https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state
+//! [hashify]: https://crates.io/crates/hashify
 //! [phf]: https://crates.io/crates/phf
 //! [iai]: https://crates.io/crates/iai
 //! [benchmarks]: https://github.com/danielparks/htmlize#benchmarks
@@ -134,8 +135,21 @@ feature! {
 }
 
 feature! {
+    #![any(feature = "unescape", feature = "entities")]
+
+    /// For some reason `rustdoc` doesn’t show the feature flags without `mod`.
+    mod entities_length {
+        include!(concat!(env!("OUT_DIR"), "/entities_length.rs"));
+    }
+    pub use entities_length::*;
+}
+
+feature! {
     #![feature = "entities"]
 
-    mod entities;
+    /// For some reason `rustdoc` doesn’t show the feature flags without `mod`.
+    mod entities {
+        include!(concat!(env!("OUT_DIR"), "/entities.rs"));
+    }
     pub use entities::*;
 }
