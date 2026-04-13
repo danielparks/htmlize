@@ -233,3 +233,5 @@ pub mod internal;
 
 #[cfg(not(all(feature = "bench", not(doc))))]
 mod internal;
+
+pub use internal::REPLACEMENT_CHAR_BYTES;
