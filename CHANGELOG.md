@@ -13,6 +13,18 @@ All notable changes to this project will be documented in this file.
 * Clarify examples in documentation and README.
 * Fix a few spelling mistakes in documentation.
 
+### Security
+
+* [RUSTSEC-2026-0097]: the [rand] crate was unsound in certain circumstances.
+  Htmlize depends on [rand] via [phf] and couldn’t trigger the unsoundness on
+  its own. Thanks to [MarkusPettersson98] for the [PR][#124]!
+
+[RUSTSEC-2026-0097]: https://rustsec.org/advisories/RUSTSEC-2026-0097
+[rand]: https://crates.io/crates/rand
+[phf]: https://crates.io/crates/phf
+[MarkusPettersson98]: https://github.com/MarkusPettersson98
+[#124]: https://github.com/danielparks/htmlize/pull/124
+
 ## Release 1.0.6 (2025-04-26)
 
 * Switch dependency from [paste], which is no longer maintained, to a new fork,
