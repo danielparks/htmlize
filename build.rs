@@ -56,7 +56,7 @@ fn generate_entities_rs(entities: &[(String, String)]) {
     let mut min_len: usize = usize::MAX;
     let mut bare_max_len: usize = 0;
     for (name, glyph) in entities {
-        map_builder.entry(name.as_bytes(), &format!("&{:?}", glyph.as_bytes()));
+        map_builder.entry(name.as_bytes(), format!("&{:?}", glyph.as_bytes()));
         max_len = max(max_len, name.len());
         min_len = min(min_len, name.len());
         if !name.ends_with(';') {
