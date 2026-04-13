@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## main branch
+## Release 1.1.0 (2026-04-13)
 
 * Major performance improvements when unescaping text in many cases (for both
   the `unescape` and `unescape_fast` features).
