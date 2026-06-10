@@ -25,6 +25,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: danielparks/github-actions/create-release@e6897e1bad61baaecaf6683db8a69747ddcf40f1 # v1.0.0
+      - uses: danielparks/github-actions/create-release@2f6c98c73f0a8130d737500b59a0fddf749b484d # v1.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
