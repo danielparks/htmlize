@@ -13,8 +13,8 @@
 //! <https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references>
 //!
 //! Entities do not always require a trailing semicolon, though the exact rules
-//! depend on whether the entity appears in an attribute value or somewhere else.
-//! See [`unescape_in()`] for more information.
+//! depend on whether the entity appears in an attribute value or somewhere
+//! else. See [`unescape_in()`] for more information.
 //!
 //! Some entities are prefixes for multiple other entities. For example:
 //!   &times &times; &timesb; &timesbar; &timesd;
@@ -95,8 +95,8 @@ pub fn unescape_attribute<'a, S: Into<Cow<'a, str>>>(
 ///
 /// `context` may be:
 ///
-///   * `Context::General`: use the rules for text outside of an attribute.
-///     This is usually what you want.
+///   * `Context::General`: use the rules for text outside of an attribute. This
+///     is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,
@@ -163,8 +163,8 @@ pub fn unescape_in<'a, S: Into<Cow<'a, str>>>(
 ///
 /// `context` may be:
 ///
-///   * `Context::General`: use the rules for text outside of an attribute.
-///     This is usually what you want.
+///   * `Context::General`: use the rules for text outside of an attribute. This
+///     is usually what you want.
 ///   * `Context::Attribute`: use the rules for attribute values.
 ///
 /// This uses the [algorithm described] in the WHATWG spec. In attributes,

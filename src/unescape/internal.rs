@@ -443,32 +443,45 @@ fn correct_numeric_entity(number: u32) -> Cow<'static, [u8]> {
 
         // control-character-reference parse error exceptions:
         0x80 => "\u{20AC}".as_bytes().into(), // EURO SIGN (€)
-        0x82 => "\u{201A}".as_bytes().into(), // SINGLE LOW-9 QUOTATION MARK (‚)
-        0x83 => "\u{0192}".as_bytes().into(), // LATIN SMALL LETTER F WITH HOOK (ƒ)
-        0x84 => "\u{201E}".as_bytes().into(), // DOUBLE LOW-9 QUOTATION MARK („)
+        0x82 => "\u{201A}".as_bytes().into(), /* SINGLE LOW-9 QUOTATION MARK
+                                                * (‚) */
+        0x83 => "\u{0192}".as_bytes().into(), /* LATIN SMALL LETTER F WITH
+                                                * HOOK (ƒ) */
+        0x84 => "\u{201E}".as_bytes().into(), /* DOUBLE LOW-9 QUOTATION MARK
+                                                * („) */
         0x85 => "\u{2026}".as_bytes().into(), // HORIZONTAL ELLIPSIS (…)
         0x86 => "\u{2020}".as_bytes().into(), // DAGGER (†)
         0x87 => "\u{2021}".as_bytes().into(), // DOUBLE DAGGER (‡)
-        0x88 => "\u{02C6}".as_bytes().into(), // MODIFIER LETTER CIRCUMFLEX ACCENT (ˆ)
+        0x88 => "\u{02C6}".as_bytes().into(), /* MODIFIER LETTER CIRCUMFLEX
+                                                * ACCENT (ˆ) */
         0x89 => "\u{2030}".as_bytes().into(), // PER MILLE SIGN (‰)
-        0x8A => "\u{0160}".as_bytes().into(), // LATIN CAPITAL LETTER S WITH CARON (Š)
-        0x8B => "\u{2039}".as_bytes().into(), // SINGLE LEFT-POINTING ANGLE QUOTATION MARK (‹)
+        0x8A => "\u{0160}".as_bytes().into(), /* LATIN CAPITAL LETTER S WITH
+                                                * CARON (Š) */
+        0x8B => "\u{2039}".as_bytes().into(), /* SINGLE LEFT-POINTING ANGLE
+                                                * QUOTATION MARK (‹) */
         0x8C => "\u{0152}".as_bytes().into(), // LATIN CAPITAL LIGATURE OE (Œ)
-        0x8E => "\u{017D}".as_bytes().into(), // LATIN CAPITAL LETTER Z WITH CARON (Ž)
+        0x8E => "\u{017D}".as_bytes().into(), /* LATIN CAPITAL LETTER Z WITH
+                                                * CARON (Ž) */
         0x91 => "\u{2018}".as_bytes().into(), // LEFT SINGLE QUOTATION MARK (‘)
-        0x92 => "\u{2019}".as_bytes().into(), // RIGHT SINGLE QUOTATION MARK (’)
+        0x92 => "\u{2019}".as_bytes().into(), /* RIGHT SINGLE QUOTATION MARK
+                                                * (’) */
         0x93 => "\u{201C}".as_bytes().into(), // LEFT DOUBLE QUOTATION MARK (“)
-        0x94 => "\u{201D}".as_bytes().into(), // RIGHT DOUBLE QUOTATION MARK (”)
+        0x94 => "\u{201D}".as_bytes().into(), /* RIGHT DOUBLE QUOTATION MARK
+                                                * (”) */
         0x95 => "\u{2022}".as_bytes().into(), // BULLET (•)
         0x96 => "\u{2013}".as_bytes().into(), // EN DASH (–)
         0x97 => "\u{2014}".as_bytes().into(), // EM DASH (—)
         0x98 => "\u{02DC}".as_bytes().into(), // SMALL TILDE (˜)
         0x99 => "\u{2122}".as_bytes().into(), // TRADE MARK SIGN (™)
-        0x9A => "\u{0161}".as_bytes().into(), // LATIN SMALL LETTER S WITH CARON (š)
-        0x9B => "\u{203A}".as_bytes().into(), // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK (›)
+        0x9A => "\u{0161}".as_bytes().into(), /* LATIN SMALL LETTER S WITH
+                                                * CARON (š) */
+        0x9B => "\u{203A}".as_bytes().into(), /* SINGLE RIGHT-POINTING ANGLE
+                                                * QUOTATION MARK (›) */
         0x9C => "\u{0153}".as_bytes().into(), // LATIN SMALL LIGATURE OE (œ)
-        0x9E => "\u{017E}".as_bytes().into(), // LATIN SMALL LETTER Z WITH CARON (ž)
-        0x9F => "\u{0178}".as_bytes().into(), // LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
+        0x9E => "\u{017E}".as_bytes().into(), /* LATIN SMALL LETTER Z WITH
+                                                * CARON (ž) */
+        0x9F => "\u{0178}".as_bytes().into(), /* LATIN CAPITAL LETTER Y WITH
+                                                * DIAERESIS (Ÿ) */
 
         // A few parse errors and other cases are handled by the catch-all.
         //

@@ -8,7 +8,6 @@
 //! assert!(escape_attribute("ab & < > \" '") == "ab &amp; &lt; &gt; &quot; '");
 //! assert!(escape_text("ab & < > \" '") == "ab &amp; &lt; &gt; \" '");
 //! ```
-//!
 #![cfg_attr(
     any(feature = "unescape", feature = "unescape_fast"),
     doc = r#"
