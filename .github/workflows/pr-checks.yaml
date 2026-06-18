@@ -78,11 +78,27 @@ jobs:
         if: ${{ !cancelled() }}
         run: cargo msrv verify
 
-      - name: cargo build
+      - name: cargo build --tests --all-features
         id: cargo_build
         if: ${{ !cancelled() }}
         run: cargo +stable build --tests --all-features
 
-      - name: cargo test
+      - name: cargo test --all-features
         if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
         run: cargo +stable test --all-features
+
+      - name: cargo test --features unescape
+        if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
+        run: cargo +stable test --features unescape
+
+      - name: cargo test --features unescape_fast
+        if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
+        run: cargo +stable test --features unescape_fast
+
+      - name: cargo test --features entities
+        if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
+        run: cargo +stable test --features entities
+
+      - name: cargo test
+        if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
+        run: cargo +stable test
