@@ -7,76 +7,82 @@ on:
       - main
   pull_request:
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   CLICOLOR: 1
 
+# These would more naturally be separate jobs, but GitHub actions “bills” each
+# job separately and rounds up to the next minute, so four 10 second jobs “cost”
+# my account 4 action minutes.
 jobs:
-  clippy:
-    name: cargo clippy
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      security-events: write # SARIF reporting for zizmor
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
       - uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1.16.1
         with:
+          toolchain: stable
           components: clippy
-      - run: cargo clippy --all-features --all-targets
-      - name: check doc lints
-        env:
-          RUSTDOCFLAGS: --document-private-items -Dwarnings
-        run: cargo doc --no-deps --all-features
 
-  deny:
-    name: cargo deny
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: EmbarkStudios/cargo-deny-action@bb137d7af7e4fb67e5f82a49c4fce4fad40782fe # v2.0.20
-        with:
-          rust-version: "1.85.0"
-
-  fmt:
-    name: cargo fmt
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1.16.1
         with:
+          toolchain: nightly
           components: rustfmt
-      - uses: actions-rust-lang/rustfmt@4066006ec54a31931b9b1fddfd38f2fdf2d27143 # v1.1.2
 
-  msrv:
-    name: cargo msrv
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+
       - uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
         with:
           tool: cargo-msrv
-      - run: cargo msrv verify
 
-  test:
-    name: cargo test
-    runs-on: ubuntu-latest
+      - uses: crate-ci/typos@37bb98842b0d8c4ffebdb75301a13db0267cef89 # v1.47.2
+        if: ${{ !cancelled() }}
 
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1.16.1
-      - run: cargo build --tests --all-features
-      - run: cargo test --all-features
-      - run: cargo test --features unescape
-      - run: cargo test --features unescape_fast
-      - run: cargo test --features entities
-      - run: cargo test
+      - uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+        if: ${{ !cancelled() }}
+        with:
+          persona: pedantic
 
-  typos:
-    name: typos
-    runs-on: ubuntu-latest
+      - uses: actions-rust-lang/rustfmt@4066006ec54a31931b9b1fddfd38f2fdf2d27143 # v1.1.2
+        if: ${{ !cancelled() }}
 
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: crate-ci/typos@f8a58b6b53f2279f71eb605f03a4ae4d10608f45 # v1.47.0
+      - uses: EmbarkStudios/cargo-deny-action@bb137d7af7e4fb67e5f82a49c4fce4fad40782fe # v2.0.20
+        if: ${{ !cancelled() }}
+        with:
+          rust-version: "1.85.0"
+
+      - name: cargo clippy
+        if: ${{ !cancelled() }}
+        run: cargo +stable clippy --all-features --all-targets
+
+      - name: cargo doc lints
+        if: ${{ !cancelled() }}
+        env:
+          RUSTDOCFLAGS: --document-private-items -Dwarnings
+        run: cargo +stable doc --no-deps --all-features
+
+      - name: cargo msrv
+        if: ${{ !cancelled() }}
+        run: cargo msrv verify
+
+      - name: cargo build
+        id: cargo_build
+        if: ${{ !cancelled() }}
+        run: cargo +stable build --tests --all-features
+
+      - name: cargo test
+        if: ${{ !cancelled() && steps.cargo_build.outcome == 'success' }}
+        run: cargo +stable test --all-features

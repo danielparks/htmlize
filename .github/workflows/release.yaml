@@ -1,13 +1,16 @@
 # Mostly copied from https://github.com/taiki-e/cargo-hack/blob/main/.github/workflows/release.yml
 name: Release
 
-permissions:
-  contents: read
-
 on:
   push:
     tags:
       - v*.*.*
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_INCREMENTAL: 0
@@ -21,9 +24,11 @@ env:
 jobs:
   create-release:
     if: github.repository_owner == 'danielparks'
+    name: Create
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
-      contents: write
+      contents: write # To create release
     steps:
       - uses: danielparks/github-actions/create-release@2f6c98c73f0a8130d737500b59a0fddf749b484d # v1.1.1
         with:
