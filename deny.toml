@@ -1,3 +1,9 @@
+[advisories]
+ignore = [
+  # crossbeam-epoch unsound (only used for benchmarks):
+  "RUSTSEC-2026-0204",
+]
+
 [graph]
 all-features = true
 
